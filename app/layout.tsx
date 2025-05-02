@@ -13,8 +13,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="ru" suppressHydrationWarning>
-      <head>
-      <!-- Yandex.Metrika counter -->
+      <body className={inter.className}>
+            <!-- Yandex.Metrika counter -->
 <script type="text/javascript" >
    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
    m[i].l=1*new Date();
@@ -31,8 +31,6 @@ export default function RootLayout({ children }) {
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/101553574" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- /Yandex.Metrika counter -->
-      </head>
-      <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
         </ThemeProvider>
