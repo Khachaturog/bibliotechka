@@ -9,10 +9,10 @@ export function ResourceCard({ resource }) {
   const router = useRouter()
   const [imageError, setImageError] = useState(false)
 
-  // Формируем URL скриншота на основе row_number, если он есть
+  // Исправленный код для формирования URL скриншота
   const screenshotUrl = resource.row_number
-    `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/screenshots/${resource.row_number}.webp`
-    : resource.screenshot_url || "/placeholder.svg"
+    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/screenshots/${resource.row_number}.webp`
+    : resource.screenshot_url || "/placeholder.svg?height=200&width=400"
 
   const handleClick = () => {
     router.push(`/resource/${resource.id}`)
@@ -31,6 +31,7 @@ export function ResourceCard({ resource }) {
             fill
             className="object-cover"
             onError={() => setImageError(true)}
+            unoptimized // Добавляем это для обхода проблем с внешними изображениями
           />
         </div>
       ) : (

@@ -34,10 +34,10 @@ export default async function ResourcePage({ params }) {
     notFound()
   }
 
-  // Формируем URL скриншота на основе row_number, если он есть
+  // Исправленный код для формирования URL скриншота
   const screenshotUrl = resource.row_number
-    ? `https://example.com/screenshots/${resource.row_number}.webp`
-    : resource.screenshot_url || "/placeholder.svg"
+    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/screenshots/${resource.row_number}.webp`
+    : resource.screenshot_url || "/placeholder.svg?height=630&width=1200"
 
   // Create an array of URLs from the resource
   const urls = []
@@ -73,6 +73,7 @@ export default async function ResourcePage({ params }) {
             width={1200}
             height={630}
             className="w-full h-auto"
+            unoptimized // Добавляем это для обхода проблем с внешними изображениями
           />
         </div>
 
