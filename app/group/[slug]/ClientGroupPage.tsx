@@ -1,8 +1,6 @@
 "use client"
 
-import { createClient } from "@/utils/supabase/server"
 import { ResourceCard } from "@/components/resource-card"
-import { Suspense } from "react"
 import { ResourceSkeleton } from "@/components/skeletons"
 import Link from "next/link"
 import { ChevronLeft, RefreshCcw } from "lucide-react"
@@ -11,86 +9,11 @@ import { createSafeId } from "@/lib/utils"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useEffect, useState } from "react"
+import { createClientComponentClient } from "@/utils/supabase/client"
 
 // Временное решение - жестко закодированные группы для обхода ошибки "Too Many Requests"
 const FALLBACK_GROUPS = ["Насмотренность", "Дизайн-система", "Тренажёры", "Сообщества", "Ресурсы"]
-
-async function GroupLinks() {
-  try {
-    const supabase = createClient()
-
-    try {
-      // Получаем все уникальные группы
-      const { data: groups, error } = await supabase.from("resources").select("group_name").order("group_name")
-
-      if (error) {
-        // Если ошибка содержит "Too Many Requests", используем резервные данные
-        if (error.message?.includes("Too Many") || error.message?.includes("429")) {
-          console.warn("Using fallback groups due to rate limiting")
-          return renderGroupLinks(FALLBACK_GROUPS)
-        }
-
-        console.error("Error fetching groups:", error)
-        return (
-          <Alert variant="destructive" className="mb-8">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Ошибка</AlertTitle>
-            <AlertDescription>
-              Не удалось загрузить список групп. Пожалуйста, попробуйте позже.
-              <Button variant="outline" size="sm" className="mt-2" onClick={() => window.location.reload()}>
-                <RefreshCcw className="h-4 w-4 mr-2" /> Обновить страницу
-              </Button>
-            </AlertDescription>
-          </Alert>
-        )
-      }
-
-      if (!groups || groups.length === 0) {
-        return null
-      }
-
-      // Получаем уникальные имена групп
-      const uniqueGroups = [...new Set(groups.map((item) => item.group_name))]
-      return renderGroupLinks(uniqueGroups)
-    } catch (error) {
-      // Если произошла непредвиденная ошибка, используем резервные данные
-      console.error("Unexpected error in GroupLinks:", error)
-      return renderGroupLinks(FALLBACK_GROUPS)
-    }
-  } catch (error) {
-    console.error("Critical error in GroupLinks:", error)
-    return (
-      <Alert variant="destructive" className="mb-8">
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Ошибка</AlertTitle>
-        <AlertDescription>
-          Произошла критическая ошибка. Пожалуйста, попробуйте позже.
-          <Button variant="outline" size="sm" className="mt-2" onClick={() => window.location.reload()}>
-            <RefreshCcw className="h-4 w-4 mr-2" /> Обновить страницу
-          </Button>
-        </AlertDescription>
-      </Alert>
-    )
-  }
-}
-
-// Функция для рендеринга ссылок на группы
-function renderGroupLinks(groups) {
-  return (
-    <div className="mb-8">
-      <h2 className="text-lg font-medium mb-3">Другие группы:</h2>
-      <div className="flex flex-wrap gap-2">
-        {groups.map((group) => (
-          <Link href={`/group/${encodeURIComponent(group)}`} key={group}>
-            <Badge variant="outline" className="cursor-pointer hover:bg-accent">
-              {group}
-            </Badge>
-          </Link>
-        ))}
-      </div>
-    </div>
-  )
-}
 
 // Временное решение - жестко закодированные подгруппы для обхода ошибки "Too Many Requests"
 const FALLBACK_RESOURCES = {
@@ -235,122 +158,185 @@ const FALLBACK_RESOURCES = {
   },
 }
 
-async function ResourcesList({ groupName }) {
-  try {
-    const supabase = createClient()
+export function ClientGroupPage({ params }) {
+  const groupName = decodeURIComponent(params.slug)
+  const [groups, setGroups] = useState([])
+  const [resources, setResources] = useState([])
+  const [resourcesBySubgroup, setResourcesBySubgroup] = useState({})
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-    try {
-      const { data: resources, error } = await supabase
-        .from("resources")
-        .select("*")
-        .eq("group_name", groupName)
-        .order("subgroup_name", { ascending: true })
-        .order("title", { ascending: true })
+  useEffect(() => {
+    const fetchGroups = async () => {
+      try {
+        const supabase = createClientComponentClient()
+        const { data, error } = await supabase.from("resources").select("group_name").order("group_name")
 
-      if (error) {
-        // Если ошибка содержит "Too Many Requests", используем резервные данные
-        if (error.message?.includes("Too Many") || error.message?.includes("429")) {
-          console.warn("Using fallback resources due to rate limiting")
-          return renderResources(FALLBACK_RESOURCES[groupName] || {})
+        if (error) {
+          if (error.message?.includes("Too Many") || error.message?.includes("429")) {
+            console.warn("Using fallback groups due to rate limiting")
+            setGroups(FALLBACK_GROUPS)
+          } else {
+            console.error("Error fetching groups:", error)
+            setError("Не удалось загрузить список групп")
+          }
+        } else if (data && data.length > 0) {
+          const uniqueGroups = [...new Set(data.map((item) => item.group_name))]
+          setGroups(uniqueGroups)
         }
-
-        console.error("Error fetching resources:", error)
-        return (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Ошибка</AlertTitle>
-            <AlertDescription>
-              Не удалось загрузить ресурсы. Пожалуйста, попробуйте позже.
-              <Button variant="outline" size="sm" className="mt-2" onClick={() => window.location.reload()}>
-                <RefreshCcw className="h-4 w-4 mr-2" /> Обновить страницу
-              </Button>
-            </AlertDescription>
-          </Alert>
-        )
+      } catch (error) {
+        console.error("Critical error in fetchGroups:", error)
+        setError("Произошла критическая ошибка")
       }
-
-      if (!resources || resources.length === 0) {
-        return (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">В этой группе пока нет ресурсов.</p>
-          </div>
-        )
-      }
-
-      // Group resources by subgroup
-      const resourcesBySubgroup = resources.reduce((acc, resource) => {
-        const subgroup = resource.subgroup_name || "Без подгруппы"
-        if (!acc[subgroup]) {
-          acc[subgroup] = []
-        }
-        acc[subgroup].push(resource)
-        return acc
-      }, {})
-
-      return renderResources(resourcesBySubgroup)
-    } catch (error) {
-      // Если произошла непредвиденная ошибка, используем резервные данные
-      console.error("Unexpected error in ResourcesList:", error)
-      return renderResources(FALLBACK_RESOURCES[groupName] || {})
     }
-  } catch (error) {
-    console.error("Critical error in ResourcesList:", error)
+
+    const fetchResources = async () => {
+      try {
+        const supabase = createClientComponentClient()
+        const { data, error } = await supabase
+          .from("resources")
+          .select("*")
+          .eq("group_name", groupName)
+          .order("subgroup_name", { ascending: true })
+          .order("title", { ascending: true })
+
+        if (error) {
+          if (error.message?.includes("Too Many") || error.message?.includes("429")) {
+            console.warn("Using fallback resources due to rate limiting")
+            setResourcesBySubgroup(FALLBACK_RESOURCES[groupName] || {})
+          } else {
+            console.error("Error fetching resources:", error)
+            setError("Не удалось загрузить ресурсы")
+          }
+        } else if (data && data.length > 0) {
+          setResources(data)
+
+          // Group resources by subgroup
+          const bySubgroup = data.reduce((acc, resource) => {
+            const subgroup = resource.subgroup_name || "Без подгруппы"
+            if (!acc[subgroup]) {
+              acc[subgroup] = []
+            }
+            acc[subgroup].push(resource)
+            return acc
+          }, {})
+
+          setResourcesBySubgroup(bySubgroup)
+        }
+      } catch (error) {
+        console.error("Critical error in fetchResources:", error)
+        setError("Произошла критическая ошибка")
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchGroups()
+    fetchResources()
+  }, [groupName])
+
+  // Функция для рендеринга ссылок на группы
+  const renderGroupLinks = () => {
+    if (error) {
+      return (
+        <Alert variant="destructive" className="mb-8">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Ошибка</AlertTitle>
+          <AlertDescription>
+            {error}
+            <Button variant="outline" size="sm" className="mt-2" onClick={() => window.location.reload()}>
+              <RefreshCcw className="h-4 w-4 mr-2" /> Обновить страницу
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )
+    }
+
+    if (groups.length === 0) {
+      return null
+    }
+
     return (
-      <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Ошибка</AlertTitle>
-        <AlertDescription>
-          Произошла критическая ошибка. Пожалуйста, попробуйте позже.
-          <Button variant="outline" size="sm" className="mt-2" onClick={() => window.location.reload()}>
-            <RefreshCcw className="h-4 w-4 mr-2" /> Обновить страницу
-          </Button>
-        </AlertDescription>
-      </Alert>
+      <div className="mb-8">
+        <h2 className="text-lg font-medium mb-3">Другие группы:</h2>
+        <div className="flex flex-wrap gap-2">
+          {groups.map((group) => (
+            <Link href={`/group/${encodeURIComponent(group)}`} key={group}>
+              <Badge variant="outline" className="cursor-pointer hover:bg-accent">
+                {group}
+              </Badge>
+            </Link>
+          ))}
+        </div>
+      </div>
     )
   }
-}
 
-// Функция для рендеринга ресурсов
-function renderResources(resourcesBySubgroup) {
-  // Создаем список подгрупп для якорных ссылок
-  const subgroups = Object.keys(resourcesBySubgroup)
+  // Функция для рендеринга ресурсов
+  const renderResources = () => {
+    if (isLoading) {
+      return <ResourceSkeleton />
+    }
 
-  return (
-    <>
-      {/* Блок с якорными ссылками на подгруппы */}
-      {subgroups.length > 1 && (
-        <div className="mb-8">
-          <h2 className="text-lg font-medium mb-3">Перейти к разделу:</h2>
-          <div className="flex flex-wrap gap-2">
-            {subgroups.map((subgroup) => (
-              <a href={`#${createSafeId(subgroup)}`} key={subgroup}>
-                <Badge variant="outline" className="cursor-pointer hover:bg-accent">
-                  {subgroup}
-                </Badge>
-              </a>
-            ))}
-          </div>
+    if (error) {
+      return (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Ошибка</AlertTitle>
+          <AlertDescription>
+            {error}
+            <Button variant="outline" size="sm" className="mt-2" onClick={() => window.location.reload()}>
+              <RefreshCcw className="h-4 w-4 mr-2" /> Обновить страницу
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )
+    }
+
+    if (resources.length === 0 && Object.keys(resourcesBySubgroup).length === 0) {
+      return (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">В этой группе пока нет ресурсов.</p>
         </div>
-      )}
+      )
+    }
 
-      <div className="space-y-12">
-        {Object.entries(resourcesBySubgroup).map(([subgroup, resources]) => (
-          <div key={subgroup} id={createSafeId(subgroup)}>
-            <h2 className="text-2xl font-semibold mb-6">{subgroup}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {resources.map((resource) => (
-                <ResourceCard key={resource.id} resource={resource} />
+    // Создаем список подгрупп для якорных ссылок
+    const subgroups = Object.keys(resourcesBySubgroup)
+
+    return (
+      <>
+        {/* Блок с якорными ссылками на подгруппы */}
+        {subgroups.length > 1 && (
+          <div className="mb-8">
+            <h2 className="text-lg font-medium mb-3">Перейти к разделу:</h2>
+            <div className="flex flex-wrap gap-2">
+              {subgroups.map((subgroup) => (
+                <a href={`#${createSafeId(subgroup)}`} key={subgroup}>
+                  <Badge variant="outline" className="cursor-pointer hover:bg-accent">
+                    {subgroup}
+                  </Badge>
+                </a>
               ))}
             </div>
           </div>
-        ))}
-      </div>
-    </>
-  )
-}
+        )}
 
-export function ClientGroupPage({ params }) {
-  const groupName = decodeURIComponent(params.slug)
+        <div className="space-y-12">
+          {Object.entries(resourcesBySubgroup).map(([subgroup, resources]) => (
+            <div key={subgroup} id={createSafeId(subgroup)}>
+              <h2 className="text-2xl font-semibold mb-6">{subgroup}</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {resources.map((resource) => (
+                  <ResourceCard key={resource.id} resource={resource} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </>
+    )
+  }
 
   return (
     <main className="container mx-auto py-10 px-4">
@@ -361,13 +347,8 @@ export function ClientGroupPage({ params }) {
 
       <h1 className="text-4xl font-bold mb-10">{groupName}</h1>
 
-      <Suspense fallback={<div>Загрузка ссылок на группы...</div>}>
-        <GroupLinks />
-      </Suspense>
-
-      <Suspense fallback={<ResourceSkeleton />}>
-        <ResourcesList groupName={groupName} />
-      </Suspense>
+      {renderGroupLinks()}
+      {renderResources()}
     </main>
   )
 }
