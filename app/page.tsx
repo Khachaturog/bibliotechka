@@ -15,9 +15,10 @@ async function GroupsList() {
     const supabase = createClient()
 
     // Получаем все уникальные группы из основной таблицы
+    // Изменяем запрос, чтобы не использовать колонку id
     const { data: resourceGroups, error: resourceError } = await supabase
       .from("resources")
-      .select("group_name, id")
+      .select("group_name")
       .order("group_name")
 
     if (resourceError) {

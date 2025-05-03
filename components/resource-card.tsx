@@ -5,6 +5,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { createClientComponentClient } from "@/utils/supabase/client"
+import { createSeoUrl } from "@/lib/utils"
 
 export function ResourceCard({ resource }) {
   const router = useRouter()
@@ -43,12 +44,9 @@ export function ResourceCard({ resource }) {
 
   const handleClick = () => {
     if (groupSlug) {
-      // Используем короткий ID, если он есть, иначе используем slug или ID
-      const resourceIdentifier = resource.short_id || resource.slug || resource.id
-      router.push(`/${groupSlug}/${resourceIdentifier}`)
-    } else {
-      // Если slug группы еще не загружен, используем старый формат URL
-      router.push(`/resource/${resource.id}`)
+      // Создаем SEO-дружественный URL
+      const seoUrl = createSeoUrl(resource.title, resource.short_id)
+      router.push(`/${groupSlug}/${seoUrl}`)
     }
   }
 

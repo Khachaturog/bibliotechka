@@ -10,8 +10,10 @@ import { formatDate, createSafeId } from "@/lib/utils"
 import { createClientComponentClient } from "@/utils/supabase/client"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react"
+import { useRouter } from "next/navigation"
 
-export function ClientResourcePage({ resourceId, groupSlug = null }) {
+export function ClientResourcePage({ resourceId, groupSlug }) {
+  const router = useRouter()
   const [resource, setResource] = useState(null)
   const [groupInfo, setGroupInfo] = useState({ displayName: "", slug: "" })
   const [isLoading, setIsLoading] = useState(true)
@@ -24,7 +26,7 @@ export function ClientResourcePage({ resourceId, groupSlug = null }) {
       try {
         const supabase = createClientComponentClient()
 
-        const { data, error } = await supabase.from("resources").select("*").eq("id", resourceId).single()
+        const { data, error } = await supabase.from("resources").select("*").eq("short_id", resourceId).single()
 
         if (error) {
           throw error
@@ -40,11 +42,9 @@ export function ClientResourcePage({ resourceId, groupSlug = null }) {
             .eq("original_name", data.group_name)
             .single()
 
-          const slug = groupSlug || translation?.slug || encodeURIComponent(data.group_name)
-
           setGroupInfo({
             displayName: translation?.display_name || data.group_name,
-            slug: slug,
+            slug: groupSlug,
           })
 
           // Create URLs array

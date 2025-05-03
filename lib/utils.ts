@@ -18,6 +18,8 @@ export function formatDate(dateString: string): string {
 
 // Функция для создания безопасных ID из строк
 export function createSafeId(text: string): string {
+  if (!text) return ""
+
   // Заменяем кириллические символы на латинские (простая транслитерация)
   const translitMap: Record<string, string> = {
     а: "a",
@@ -69,4 +71,27 @@ export function createSafeId(text: string): string {
     .replace(/[^a-z0-9]+/g, "-") // Заменяем не-алфавитно-цифровые символы на дефисы
     .replace(/^-+|-+$/g, "") // Удаляем дефисы в начале и конце строки
     .replace(/-+/g, "-") // Заменяем множественные дефисы на один
+}
+
+// Функция для создания SEO-дружественного URL
+export function createSeoUrl(title: string, shortId: string): string {
+  if (!title) return shortId
+
+  // Создаем безопасный slug из заголовка
+  const slug = createSafeId(title)
+
+  // Ограничиваем длину slug до 50 символов для предотвращения слишком длинных URL
+  const truncatedSlug = slug.length > 50 ? slug.substring(0, 50).replace(/-+$/, "") : slug
+
+  // Возвращаем slug с добавленным shortId
+  return `${truncatedSlug}-${shortId}`
+}
+
+// Функция для извлечения shortId из SEO-дружественного URL
+export function extractShortId(seoUrl: string): string {
+  if (!seoUrl) return ""
+
+  // Извлекаем последнюю часть URL после последнего дефиса
+  const parts = seoUrl.split("-")
+  return parts[parts.length - 1]
 }
