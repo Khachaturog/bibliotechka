@@ -10,47 +10,32 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react"
 import { createSafeId } from "@/lib/utils"
 import { createClientComponentClient } from "@/utils/supabase/client"
+import type { Group, Resource, Subgroup, Status } from "@/utils/supabase/types"
+import { STATUSES } from "@/utils/supabase/types"
 
-function ClientGroupPage({ initialGroupName, initialDisplayName }) {
+export function ClientGroupPage({ group }: { group: Group }) {
   const [isLoading, setIsLoading] = useState(true)
-  const [groups, setGroups] = useState([])
-  const [resources, setResources] = useState([])
-  const [resourcesBySubgroup, setResourcesBySubgroup] = useState({})
-  const [error, setError] = useState(null)
+  const [groups, setGroups] = useState<Group[]>([])
+  const [subgroups, setSubgroups] = useState<Subgroup[]>([])
+  const [resources, setResources] = useState<Resource[]>([])
+  const [resourcesBySubgroup, setResourcesBySubgroup] = useState<Record<string, Resource[]>>({})
+  const [error, setError] = useState<string | null>(null)
+  const [statuses, setStatuses] = useState<Status[]>([])
 
   useEffect(() => {
     const fetchGroups = async () => {
       try {
         const supabase = createClientComponentClient()
 
-        // Fetch all group translations
-        const { data: translations, error: translationsError } = await supabase
-          .from("group_translations")
-          .select("*")
-          .order("display_name")
+        // Получаем все группы
+        const { data, error } = await supabase.from("groups").select("*").order("display_name")
 
-        if (translationsError) {
-          console.error("Error fetching group translations:", translationsError)
-          // If translations fail, try to get original group names
-          const { data: groups, error } = await supabase.from("resources").select("group_name").order("group_name")
+        if (error) {
+          throw error
+        }
 
-          if (error) {
-            throw error
-          }
-
-          if (groups && groups.length > 0) {
-            // Get unique group names
-            const uniqueGroups = [...new Set(groups.map((item) => item.group_name))]
-            setGroups(
-              uniqueGroups.map((name) => ({
-                original_name: name,
-                display_name: name,
-                slug: encodeURIComponent(name),
-              })),
-            )
-          }
-        } else if (translations && translations.length > 0) {
-          setGroups(translations)
+        if (data && data.length > 0) {
+          setGroups(data)
         }
       } catch (err) {
         console.error("Error fetching groups:", err)
@@ -58,15 +43,56 @@ function ClientGroupPage({ initialGroupName, initialDisplayName }) {
       }
     }
 
+    const fetchSubgroups = async () => {
+      try {
+        const supabase = createClientComponentClient()
+
+        // Получаем все подгруппы
+        const { data, error } = await supabase.from("subgroups").select("*").order("display_name")
+
+        if (error) {
+          throw error
+        }
+
+        if (data && data.length > 0) {
+          setSubgroups(data)
+        }
+      } catch (err) {
+        console.error("Error fetching subgroups:", err)
+        setError("Не удалось загрузить список подгрупп")
+      }
+    }
+
+    const fetchStatuses = async () => {
+      try {
+        const supabase = createClientComponentClient()
+
+        // Получаем все статусы
+        const { data, error } = await supabase.from("statuses").select("*")
+
+        if (error) {
+          throw error
+        }
+
+        if (data && data.length > 0) {
+          setStatuses(data)
+        }
+      } catch (err) {
+        console.error("Error fetching statuses:", err)
+        setError("Не удалось загрузить список статусов")
+      }
+    }
+
     const fetchResources = async () => {
       try {
         const supabase = createClientComponentClient()
 
+        // Базовый запрос с фильтрацией только опубликованных ресурсов
         const { data, error } = await supabase
           .from("resources")
           .select("*")
-          .eq("group_name", initialGroupName)
-          .order("subgroup_name", { ascending: true })
+          .eq("group_slug", group.slug)
+          .eq("status_slug", STATUSES.PUBLISHED) // Только опубликованные ресурсы
           .order("title", { ascending: true })
 
         if (error) {
@@ -78,15 +104,27 @@ function ClientGroupPage({ initialGroupName, initialDisplayName }) {
 
           // Group resources by subgroup
           const bySubgroup = data.reduce((acc, resource) => {
-            const subgroup = resource.subgroup_name || "Без подгруппы"
-            if (!acc[subgroup]) {
-              acc[subgroup] = []
+            // Получаем имя подгруппы из subgroup_slug
+            let subgroupName = "Без подгруппы"
+
+            if (resource.subgroup_slug) {
+              const subgroup = subgroups.find((sg) => sg.slug === resource.subgroup_slug)
+              if (subgroup) {
+                subgroupName = subgroup.display_name || subgroup.slug
+              }
             }
-            acc[subgroup].push(resource)
+
+            if (!acc[subgroupName]) {
+              acc[subgroupName] = []
+            }
+            acc[subgroupName].push(resource)
             return acc
           }, {})
 
           setResourcesBySubgroup(bySubgroup)
+        } else {
+          setResources([])
+          setResourcesBySubgroup({})
         }
       } catch (err) {
         console.error("Error fetching resources:", err)
@@ -97,8 +135,10 @@ function ClientGroupPage({ initialGroupName, initialDisplayName }) {
     }
 
     fetchGroups()
+    fetchSubgroups()
+    fetchStatuses()
     fetchResources()
-  }, [initialGroupName])
+  }, [group.slug, subgroups])
 
   return (
     <main className="container mx-auto py-10 px-4">
@@ -107,7 +147,7 @@ function ClientGroupPage({ initialGroupName, initialDisplayName }) {
         Назад на главную
       </Link>
 
-      <h1 className="text-4xl font-bold mb-10">{initialDisplayName}</h1>
+      <h1 className="text-4xl font-bold mb-10">{group.display_name || group.slug}</h1>
 
       {/* Group links */}
       {error ? (
@@ -120,13 +160,10 @@ function ClientGroupPage({ initialGroupName, initialDisplayName }) {
         <div className="mb-8">
           <h2 className="text-lg font-medium mb-3">Другие группы:</h2>
           <div className="flex flex-wrap gap-2">
-            {groups.map((group) => (
-              <Link
-                href={`/${group.slug || encodeURIComponent(group.original_name)}`}
-                key={group.id || group.original_name}
-              >
+            {groups.map((g) => (
+              <Link href={`/${g.slug}`} key={g.slug}>
                 <Badge variant="outline" className="cursor-pointer hover:bg-accent">
-                  {group.display_name}
+                  {g.display_name || g.slug}
                 </Badge>
               </Link>
             ))}
@@ -185,4 +222,3 @@ function ClientGroupPage({ initialGroupName, initialDisplayName }) {
 }
 
 export default ClientGroupPage
-export { ClientGroupPage }

@@ -1,151 +1,113 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ChevronLeft } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { formatDate, createSafeId } from "@/lib/utils"
-import { createClientComponentClient } from "@/utils/supabase/client"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { AlertCircle } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { STATUSES } from "@/utils/supabase/types"
 
-export function ClientResourcePage({ resourceId, groupSlug }) {
-  const router = useRouter()
-  const [resource, setResource] = useState(null)
-  const [groupInfo, setGroupInfo] = useState({ displayName: "", slug: "" })
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [urls, setUrls] = useState([])
-  const [screenshotUrl, setScreenshotUrl] = useState("")
+// Добавим импорт иконок
+import { ChevronLeft, Archive, AlertTriangle, Clock } from "lucide-react"
 
-  useEffect(() => {
-    const fetchResource = async () => {
-      try {
-        const supabase = createClientComponentClient()
+// Обновим функцию ClientResourcePage, добавив отображение статуса
+export function ClientResourcePage({ resource, group, subsubgroup, status }) {
+  const [imageError, setImageError] = useState(false)
 
-        const { data, error } = await supabase.from("resources").select("*").eq("short_id", resourceId).single()
+  // Обновляем компонент для использования slug вместо id и row_number
 
-        if (error) {
-          throw error
-        }
+  // Формируем URL скриншота на основе slug, если он есть
+  const screenshotUrl = resource.slug
+    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/screenshots/${resource.slug}.webp`
+    : "/placeholder.svg?height=630&width=1200"
 
-        if (data) {
-          setResource(data)
-
-          // Get group translation
-          const { data: translation } = await supabase
-            .from("group_translations")
-            .select("display_name, slug")
-            .eq("original_name", data.group_name)
-            .single()
-
-          setGroupInfo({
-            displayName: translation?.display_name || data.group_name,
-            slug: groupSlug,
-          })
-
-          // Create URLs array
-          const resourceUrls = []
-          for (let i = 1; i <= 5; i++) {
-            if (data[`url_${i}`] && data[`url_title_${i}`]) {
-              resourceUrls.push({
-                title: data[`url_title_${i}`],
-                url: data[`url_${i}`],
-              })
-            }
-          }
-          setUrls(resourceUrls)
-
-          // Set screenshot URL
-          setScreenshotUrl(
-            data.row_number
-              ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/screenshots/${data.row_number}.webp`
-              : data.screenshot_url || "/placeholder.svg?height=630&width=1200",
-          )
-        }
-      } catch (err) {
-        console.error("Error fetching resource:", err)
-        setError("Не удалось загрузить ресурс")
-      } finally {
-        setIsLoading(false)
-      }
+  // Создаем массив URL из полей ресурса
+  const urls = []
+  for (let i = 1; i <= 5; i++) {
+    if (resource[`url_${i}`] && resource[`url_title_${i}`]) {
+      urls.push({
+        title: resource[`url_title_${i}`],
+        url: resource[`url_${i}`],
+      })
     }
-
-    fetchResource()
-  }, [resourceId, groupSlug])
-
-  if (isLoading) {
-    return (
-      <main className="container mx-auto py-10 px-4 max-w-4xl">
-        <div className="animate-pulse">
-          <div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded mb-6"></div>
-          <div className="h-10 w-3/4 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
-          <div className="h-6 w-1/2 bg-gray-200 dark:bg-gray-700 rounded mb-8"></div>
-          <div className="h-96 w-full bg-gray-200 dark:bg-gray-700 rounded mb-8"></div>
-        </div>
-      </main>
-    )
   }
 
-  if (error) {
-    return (
-      <main className="container mx-auto py-10 px-4 max-w-4xl">
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Ошибка</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      </main>
-    )
-  }
+  // Используем AI-поля, если они доступны
+  const displayTitle = resource.title_ai || resource.title
+  const displayDescription = resource.description_ai || resource.description
+  const displayAuthor = resource.author_ai || resource.author
 
-  if (!resource) {
-    return (
-      <main className="container mx-auto py-10 px-4 max-w-4xl">
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Ресурс не найден</AlertTitle>
-          <AlertDescription>Запрашиваемый ресурс не существует или был удален.</AlertDescription>
-        </Alert>
-      </main>
-    )
-  }
+  // Определяем статус ресурса
+  const isArchived = resource.status_slug === STATUSES.ARCHIVED
+  const isTrash = resource.status_slug === STATUSES.TRASH
+  const isComingSoon = resource.status_slug === STATUSES.COMING_SOON
+  const isAvailable = resource.status_slug === STATUSES.AVAILABLE
 
   return (
     <main className="container mx-auto py-10 px-4 max-w-4xl">
-      <Link href={`/${groupInfo.slug}`} className="flex items-center text-muted-foreground hover:text-foreground mb-6">
+      <Link href={`/${group.slug}`} className="flex items-center text-muted-foreground hover:text-foreground mb-6">
         <ChevronLeft className="h-4 w-4 mr-1" />
         Вернуться назад
       </Link>
 
       <div className="space-y-8">
         <div>
-          <h1 className="text-4xl font-bold mb-2">{resource.title}</h1>
-          {resource.description && <p className="text-xl text-muted-foreground">{resource.description}</p>}
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-4xl font-bold">{displayTitle}</h1>
+            {isArchived && (
+              <Badge variant="secondary" className="flex items-center gap-1">
+                <Archive className="h-3 w-3" />
+                Архив
+              </Badge>
+            )}
+            {isTrash && (
+              <Badge variant="destructive" className="flex items-center gap-1">
+                <AlertTriangle className="h-3 w-3" />
+                Корзина
+              </Badge>
+            )}
+            {isComingSoon && (
+              <Badge variant="outline" className="flex items-center gap-1 bg-orange-100">
+                <Clock className="h-3 w-3" />
+                Скоро на портале
+              </Badge>
+            )}
+            {isAvailable && (
+              <Badge variant="outline" className="flex items-center gap-1 bg-blue-100">
+                Свободное место
+              </Badge>
+            )}
+          </div>
+          {displayDescription && <p className="text-xl text-muted-foreground">{displayDescription}</p>}
         </div>
 
         <div className="rounded-lg overflow-hidden border">
-          <Image
-            src={screenshotUrl || "/placeholder.svg"}
-            alt={resource.title}
-            width={1200}
-            height={630}
-            className="w-full h-auto"
-            unoptimized
-          />
+          {!imageError ? (
+            <Image
+              src={screenshotUrl || "/placeholder.svg"}
+              alt={displayTitle}
+              width={1200}
+              height={630}
+              className={`w-full h-auto ${isArchived || isTrash ? "grayscale" : ""}`}
+              onError={() => setImageError(true)}
+              unoptimized
+            />
+          ) : (
+            <div className="bg-muted aspect-video flex items-center justify-center">
+              <span className="text-muted-foreground">Нет изображения</span>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {resource.author && (
+          {displayAuthor && (
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Автор</CardTitle>
               </CardHeader>
               <CardContent>
-                <p>{resource.author}</p>
+                <p>{displayAuthor}</p>
               </CardContent>
             </Card>
           )}
@@ -162,6 +124,17 @@ export function ClientResourcePage({ resourceId, groupSlug }) {
             </Card>
           )}
         </div>
+
+        {resource.summary_ai && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Краткое содержание</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>{resource.summary_ai}</p>
+            </CardContent>
+          </Card>
+        )}
 
         {urls.length > 0 && (
           <Card>
@@ -186,19 +159,31 @@ export function ClientResourcePage({ resourceId, groupSlug }) {
           </Card>
         )}
 
+        {resource.comment && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Комментарий</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>{resource.comment}</p>
+            </CardContent>
+          </Card>
+        )}
+
         <div className="flex flex-wrap gap-2">
-          <Link href={`/${groupInfo.slug}`}>
+          <Link href={`/${group.slug}`}>
             <Badge variant="outline" className="cursor-pointer hover:bg-accent">
-              {groupInfo.displayName}
+              {group.display_name || group.slug}
             </Badge>
           </Link>
-          {resource.subgroup_name && (
-            <Link href={`/${groupInfo.slug}#${createSafeId(resource.subgroup_name)}`}>
+          {resource.subgroup_slug && (
+            <Link href={`/${group.slug}#${createSafeId(resource.subgroup_slug)}`}>
               <Badge variant="outline" className="cursor-pointer hover:bg-accent">
-                {resource.subgroup_name}
+                {resource.subgroup_slug}
               </Badge>
             </Link>
           )}
+          {subsubgroup && <Badge variant="outline">{subsubgroup.display_name}</Badge>}
         </div>
       </div>
     </main>

@@ -5,15 +5,15 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatDate(dateString: string): string {
-  if (!dateString) return ""
+export function formatDate(date: Date | string | null): string {
+  if (!date) return "Не указано"
 
-  const date = new Date(dateString)
-  return new Intl.DateTimeFormat("ru-RU", {
+  const d = typeof date === "string" ? new Date(date) : date
+  return d.toLocaleDateString("ru-RU", {
     day: "numeric",
     month: "long",
     year: "numeric",
-  }).format(date)
+  })
 }
 
 // Функция для создания безопасных ID из строк
@@ -73,22 +73,24 @@ export function createSafeId(text: string): string {
     .replace(/-+/g, "-") // Заменяем множественные дефисы на один
 }
 
+// Обновляем функции для работы с числовыми slug вместо строковых id
+
 // Функция для создания SEO-дружественного URL
-export function createSeoUrl(title: string, shortId: string): string {
-  if (!title) return shortId
+export function createSeoUrl(title: string, slug: string): string {
+  if (!title || !slug) return slug || ""
 
   // Создаем безопасный slug из заголовка
-  const slug = createSafeId(title)
+  const safeSlug = createSafeId(title)
 
   // Ограничиваем длину slug до 50 символов для предотвращения слишком длинных URL
-  const truncatedSlug = slug.length > 50 ? slug.substring(0, 50).replace(/-+$/, "") : slug
+  const truncatedSlug = safeSlug.length > 50 ? safeSlug.substring(0, 50).replace(/-+$/, "") : safeSlug
 
-  // Возвращаем slug с добавленным shortId
-  return `${truncatedSlug}-${shortId}`
+  // Возвращаем slug с добавленным числовым идентификатором
+  return `${truncatedSlug}-${slug}`
 }
 
-// Функция для извлечения shortId из SEO-дружественного URL
-export function extractShortId(seoUrl: string): string {
+// Функция для извлечения числового slug из SEO-дружественного URL
+export function extractId(seoUrl: string): string {
   if (!seoUrl) return ""
 
   // Извлекаем последнюю часть URL после последнего дефиса

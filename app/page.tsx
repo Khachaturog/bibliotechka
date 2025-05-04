@@ -7,22 +7,24 @@ import { GroupSkeleton } from "@/components/skeletons"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { STATUSES } from "@/utils/supabase/types"
 
 export const revalidate = 3600 // Revalidate every hour
+
+async function LatestUpdates() {
+  // Компонент временно не отображает обновления
+  return null
+}
 
 async function GroupsList() {
   try {
     const supabase = createClient()
 
-    // Получаем все уникальные группы из основной таблицы
-    // Изменяем запрос, чтобы не использовать колонку id
-    const { data: resourceGroups, error: resourceError } = await supabase
-      .from("resources")
-      .select("group_name")
-      .order("group_name")
+    // Получаем все группы
+    const { data: groups, error } = await supabase.from("groups").select("*").order("display_name")
 
-    if (resourceError) {
-      console.error("Error fetching resource groups:", resourceError)
+    if (error) {
+      console.error("Error fetching groups:", error)
       return (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
@@ -32,8 +34,8 @@ async function GroupsList() {
       )
     }
 
-    // Проверяем, что resourceGroups существует и не пустой
-    if (!resourceGroups || resourceGroups.length === 0) {
+    // Проверяем, что groups существует и не пустой
+    if (!groups || groups.length === 0) {
       return (
         <div className="text-center py-12">
           <p className="text-muted-foreground">Пока нет доступных групп.</p>
@@ -41,53 +43,40 @@ async function GroupsList() {
       )
     }
 
-    // Подсчитываем количество ресурсов в каждой группе
-    const groupCounts = resourceGroups.reduce((acc, { group_name }) => {
-      acc[group_name] = (acc[group_name] || 0) + 1
-      return acc
-    }, {})
+    // Создаем словарь для хранения количества ресурсов для каждой группы
+    const countsMap = {}
 
-    // Получаем уникальные имена групп
-    const uniqueGroupNames = [...new Set(resourceGroups.map((item) => item.group_name))]
+    // Для каждой группы выполняем отдельный запрос для подсчета ресурсов
+    for (const group of groups) {
+      const { count, error: countError } = await supabase
+        .from("resources")
+        .select("*", { count: "exact", head: true })
+        .eq("group_slug", group.slug)
+        .eq("status_slug", STATUSES.PUBLISHED) // Считаем только опубликованные ресурсы
 
-    // Получаем переводы для групп
-    const { data: translations, error: translationsError } = await supabase
-      .from("group_translations")
-      .select("*")
-      .in("original_name", uniqueGroupNames)
-
-    if (translationsError) {
-      console.error("Error fetching group translations:", translationsError)
+      if (countError) {
+        console.error(`Error counting resources for group ${group.slug}:`, countError)
+        countsMap[group.slug] = 0
+      } else {
+        countsMap[group.slug] = count || 0
+      }
     }
-
-    // Создаем словарь переводов
-    const translationsMap = (translations || []).reduce((acc, translation) => {
-      acc[translation.original_name] = translation
-      return acc
-    }, {})
 
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {uniqueGroupNames.map((groupName) => {
-          const translation = translationsMap[groupName] || {
-            display_name: groupName,
-            slug: encodeURIComponent(groupName),
-            cover_url: null,
-          }
-
+        {groups.map((group) => {
+          const count = countsMap[group.slug] || 0
           const coverUrl =
-            translation.cover_url ||
-            "/placeholder.svg?height=200&width=400&text=" + encodeURIComponent(translation.display_name)
-          const slug = translation.slug || encodeURIComponent(groupName)
-          const count = groupCounts[groupName] || 0
+            group.cover_url ||
+            "/placeholder.svg?height=200&width=400&text=" + encodeURIComponent(group.display_name || group.slug)
 
           return (
-            <Link href={`/${slug}`} key={groupName}>
+            <Link href={`/${group.slug}`} key={group.slug}>
               <Card className="h-full hover:shadow-md transition-shadow overflow-hidden">
                 <div className="relative aspect-video overflow-hidden">
                   <Image
                     src={coverUrl || "/placeholder.svg"}
-                    alt={translation.display_name}
+                    alt={group.display_name || group.slug}
                     fill
                     className="object-cover"
                     unoptimized
@@ -95,15 +84,13 @@ async function GroupsList() {
                 </div>
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <CardTitle className="line-clamp-2">{translation.display_name}</CardTitle>
+                    <CardTitle className="line-clamp-2">{group.display_name || group.slug}</CardTitle>
                     <Badge variant="secondary" className="ml-2">
                       {count}
                     </Badge>
                   </div>
-                  {translation.description && (
-                    <span className="block mt-1 text-sm text-muted-foreground line-clamp-2">
-                      {translation.description}
-                    </span>
+                  {group.description && (
+                    <span className="block mt-1 text-sm text-muted-foreground line-clamp-2">{group.description}</span>
                   )}
                 </CardHeader>
               </Card>
@@ -130,6 +117,7 @@ export default function HomePage() {
       <h1 className="text-4xl font-bold mb-2">Библиотечка</h1>
       <p className="text-muted-foreground mb-10">Коллекция полезных ресурсов и материалов</p>
 
+      <h2 className="text-2xl font-semibold mb-6">Все категории</h2>
       <Suspense fallback={<GroupSkeleton />}>
         <GroupsList />
       </Suspense>
