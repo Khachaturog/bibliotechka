@@ -1,49 +1,65 @@
 // Вызов меню
 function toggleDrawer() {
-  const drawer = document.getElementById('drawer');
-  const btn = document.getElementById('menu-toggle');
-  drawer.classList.toggle('open');
-  btn.classList.toggle('drawer-open');
+    const drawer = document.getElementById('drawer');
+    const btn = document.getElementById('menu-toggle');
+    const body = document.body;
+    const isOpen = drawer.classList.toggle('open');
+    btn.classList.toggle('drawer-open');
+    if (isOpen) {
+        body.classList.add('drawer-open');
+    } else {
+        body.classList.remove('drawer-open');
+    }
 }
 
 // Переключение темы
 function toggleTheme() {
     const body = document.body;
-    const themeToggleButton = document.getElementById('theme-toggle');
-    const isDarkTheme = body.classList.toggle('dark-theme'); // Переключаем класс темы
-
-    // Сохраняем текущую тему в localStorage
-    const newTheme = isDarkTheme ? 'dark' : 'light';
-    localStorage.setItem('theme', newTheme);
-
-    // Обновляем иконки на кнопке
-    const iconDay = themeToggleButton.querySelector('.icon-day');
-    const iconNight = themeToggleButton.querySelector('.icon-night');
-    if (isDarkTheme) {
-        iconDay.style.display = 'none';
-        iconNight.style.display = 'inline';
+    const switchers = document.querySelectorAll('.switcher-theme');
+    // Определяем текущую тему
+    const isNight = body.classList.contains('night') || body.classList.contains('dark-theme');
+    if (isNight) {
+        // Переключаем на день
+        body.classList.remove('night', 'dark-theme');
+        body.classList.add('day');
+        switchers.forEach(switcher => {
+            switcher.classList.add('theme-day-active');
+            switcher.classList.remove('theme-night-active');
+        });
+        localStorage.setItem('theme', 'light');
     } else {
-        iconDay.style.display = 'inline';
-        iconNight.style.display = 'none';
+        // Переключаем на ночь
+        body.classList.remove('day');
+        body.classList.add('night', 'dark-theme');
+        switchers.forEach(switcher => {
+            switcher.classList.add('theme-night-active');
+            switcher.classList.remove('theme-day-active');
+        });
+        localStorage.setItem('theme', 'dark');
     }
 }
+   
 
 // Устанавливаем тему при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('theme') || 'light';
     const body = document.body;
-    const themeToggleButton = document.getElementById('theme-toggle');
-    const iconDay = themeToggleButton.querySelector('.icon-day');
-    const iconNight = themeToggleButton.querySelector('.icon-night');
-
+    const switchers = document.querySelectorAll('.switcher-theme');
     if (savedTheme === 'dark') {
         body.classList.add('dark-theme');
-        iconDay.style.display = 'none';
-        iconNight.style.display = 'inline';
+        body.classList.remove('day', 'night');
+        body.classList.add('night');
+        switchers.forEach(switcher => {
+            switcher.classList.add('theme-night-active');
+            switcher.classList.remove('theme-day-active');
+        });
     } else {
-        body.classList.remove('dark-theme');
-        iconDay.style.display = 'inline';
-        iconNight.style.display = 'none';
+        body.classList.remove('dark-theme', 'night');
+        body.classList.add('day');
+        switchers.forEach(switcher => {
+            switcher.classList.add('theme-day-active');
+            switcher.classList.remove('theme-night-active');
+        });
     }
 }
 )

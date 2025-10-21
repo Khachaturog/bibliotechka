@@ -5,7 +5,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+
     <title>Библиотечка</title>
+    <meta name="description" content="Лучший сборник дизайн материалов, очень полезна для B2B/B2C/B2E дизайнеров, а также графам.">
+    <meta name="keywords" content="книги, библиотека, образование, чтение, ...">
+
+    <meta property="og:title" content="Библиотечка">
+    <meta property="og:description" content="Лучший сборник дизайн материалов">
+    <meta property="og:image" content="/images/preview.webp">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://bibliotechka.online">
+
+    <meta name="twitter:site" content="@bibliotechka">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Библиотечка">
+    <meta name="twitter:description" content="Лучший сборник дизайн материалов">
+    <meta name="twitter:image" content="/images/preview.webp">
+
+    <link rel="canonical" href="https://bibliotechka.online">
+
+
     <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/fonts.css">
@@ -15,12 +34,16 @@
     <link rel="stylesheet" href="css/cards.css">
     <link rel="stylesheet" href="css/groups.css">
     <link rel="stylesheet" href="css/detail.css">
+    <link rel="stylesheet" href="css/footer.css">
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display');
         @import url('https://fonts.googleapis.com/css2?family=Inter');
     </style>
+
     <meta name="theme-color" content="#7C58F3">
 
+    <meta name="robots" content="index, follow">
     <!-- SEO -->
     <meta name="yandex-verification" content="9e48f4959071c524" />
     <!-- Yandex.Metrika counter -->
@@ -46,14 +69,11 @@
         <div class="groups-container">
             <template class="group-template">
                     <a class="group" href="">
-
-                    <img class="group-cover" src="" alt="">
-
-                    <div class="group-content">
-                        <p class="lg-medium group-title"></p>
-                        <p class="sm-regular group-description"></p>
-                    </div>
-                    
+                        <img class="group-cover" src="" alt="">
+                        <div class="group-content">
+                            <p class="lg-medium group-title"></p>
+                            <p class="sm-regular group-description"></p>
+                        </div>
                     </a>
             </template>
         </div>
@@ -74,20 +94,15 @@
 
     <div class="cards-loader"></div>
 
-    <div id="drawer" class="drawer">
-        <ul class="menu-list">
-            <li class="menu-item"><a>О проекте</a></li>
-            <li class="menu-item"><a>История версий</a></li>
-            <li class="menu-item"><a>Дорожная карта</a></li>
-        </ul>
-    </div>
-
+    <drawer-component></drawer-component>
     <footer-component></footer-component>
 
-    <script src="js/header.js"></script>
-    <script src="js/footer.js"></script>
-    <script src="js/drawer.js"></script>
+    <script src="js/component/header.js"></script>
+    <script src="js/component/drawer.js"></script>
+    <script src="js/component/footer.js"></script>
+
     <script src="js/index.js"></script>
+    <script src="js/drawer.js"></script>
 </body>
 
 </html>

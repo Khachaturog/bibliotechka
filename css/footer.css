@@ -1,0 +1,39 @@
+/* Футер */
+.footer {
+  border-radius: 12px 12px 0 0;
+  display: grid;
+  flex-direction: column;
+  width: 100%;
+  padding: 24px 16px 24px 16px;
+  align-items: center;
+  background: var(--01-layer-1);
+  gap: 24px;
+  align-self: stretch;
+}
+
+
+.footer-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.footer-text {
+  display: grid;
+  gap: 12px;
+  text-align: center;
+}
+
+.wishes {
+  color: var(--02-content-primary);
+}
+
+.copyright {
+  color: var(--02-content-secondary);
+}
+
+@media (max-width: 767px) {
+  .footer {
+    padding: 24px 16px 112px 16px;
+  }
+}

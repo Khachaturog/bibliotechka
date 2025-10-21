@@ -1,38 +1,38 @@
 /* Тестовые стили Playfair Display */
 
 /* .headings-hero     {font-family: var(--font-primary); font-size: 48px; font-weight: 900; letter-spacing: 0px; line-height: 72px; text-transform: none; font-style: normal;} */
-.h1                {font-family: var(--font-primary); font-size: 24px; font-weight: 700; letter-spacing: 0px; line-height: 32px; text-transform: none; font-style: normal;}
-.h2                {font-family: var(--font-primary); font-size: 16px; font-weight: 700; letter-spacing: 0px; line-height: 20px; text-transform: none; font-style: normal;}
-.h3                {font-family: var(--font-primary); font-size: 16px; font-weight: 500; letter-spacing: 0px; line-height: 24px; text-transform: none; font-style: italic;}
-.h4                {font-family: var(--font-primary); font-size: 16px; font-weight: 400; letter-spacing: 0px; line-height: 24px; text-transform: none; font-style: italic;}
+.h1                {font-family: 'Playfair Display'; font-size: 24px; font-weight: 700; letter-spacing: 0px; line-height: 32px; text-transform: none; font-style: normal;}
+.h2                {font-family: 'Playfair Display'; font-size: 16px; font-weight: 700; letter-spacing: 0px; line-height: 20px; text-transform: none; font-style: normal;}
+.h3                {font-family: 'Playfair Display'; font-size: 16px; font-weight: 500; letter-spacing: 0px; line-height: 24px; text-transform: none; font-style: italic;}
+.h4                {font-family: 'Playfair Display'; font-size: 16px; font-weight: 400; letter-spacing: 0px; line-height: 24px; text-transform: none; font-style: italic;}
 /* .headings-h4       {font-family: var(--font-primary); font-size: 20px; font-weight: 700; letter-spacing: 0px; line-height: 32px; text-transform: none; font-style: normal;} */
 /* .headings-h5       {font-family: var(--font-primary); font-size: 18px; font-weight: 600; letter-spacing: 0px; line-height: 28px; text-transform: none; font-style: normal;} */
 /* .headings-h6       {font-family: var(--font-primary); font-size: 16px; font-weight: 600; letter-spacing: 0px; line-height: 24px; text-transform: none; font-style: normal;} */
 
 
 /* Тестовые стили Inter */
-.lg-italic         {font-family: var(--font-secondary); font-size: 15px; font-weight: 400; letter-spacing: 0px; line-height: 24px; text-transform: none; font-style: italic;}
-.lg-regular        {font-family: var(--font-secondary); font-size: 15px; font-weight: 400; letter-spacing: 0px; line-height: 24px; text-transform: none; font-style: normal;}
-.lg-medium         {font-family: var(--font-secondary); font-size: 15px; font-weight: 500; letter-spacing: 0px; line-height: 24px; text-transform: none; font-style: normal;}
-.lg-semi-bold      {font-family: var(--font-secondary); font-size: 15px; font-weight: 600; letter-spacing: 0px; line-height: 24px; text-transform: none; font-style: normal;}
-.lg-bold           {font-family: var(--font-secondary); font-size: 15px; font-weight: 700; letter-spacing: 0px; line-height: 24px; text-transform: none; font-style: normal;}
+.lg-italic         {font-family: 'Inter'; font-size: 15px; font-weight: 400; letter-spacing: 0px; line-height: 24px; text-transform: none; font-style: italic;}
+.lg-regular        {font-family: 'Inter'; font-size: 15px; font-weight: 400; letter-spacing: 0px; line-height: 24px; text-transform: none; font-style: normal;}
+.lg-medium         {font-family: 'Inter'; font-size: 15px; font-weight: 500; letter-spacing: 0px; line-height: 24px; text-transform: none; font-style: normal;}
+.lg-semi-bold      {font-family: 'Inter'; font-size: 15px; font-weight: 600; letter-spacing: 0px; line-height: 24px; text-transform: none; font-style: normal;}
+.lg-bold           {font-family: 'Inter'; font-size: 15px; font-weight: 700; letter-spacing: 0px; line-height: 24px; text-transform: none; font-style: normal;}
 
-.md-italic         {font-family: var(--font-secondary); font-size: 14px; font-weight: 400; letter-spacing: 0px; line-height: 20px; text-transform: none; font-style: italic;}
-.md-regular        {font-family: var(--font-secondary); font-size: 14px; font-weight: 400; letter-spacing: 0px; line-height: 20px; text-transform: none; font-style: normal;}
-.md-medium         {font-family: var(--font-secondary); font-size: 14px; font-weight: 500; letter-spacing: 0px; line-height: 20px; text-transform: none; font-style: normal;}
-.md-semi-bold      {font-family: var(--font-secondary); font-size: 14px; font-weight: 600; letter-spacing: 0px; line-height: 20px; text-transform: none; font-style: normal;}
-.md-bold           {font-family: var(--font-secondary); font-size: 14px; font-weight: 700; letter-spacing: 0px; line-height: 20px; text-transform: none; font-style: normal;}
+.md-italic         {font-family: 'Inter'; font-size: 14px; font-weight: 400; letter-spacing: 0px; line-height: 20px; text-transform: none; font-style: italic;}
+.md-regular        {font-family: 'Inter'; font-size: 14px; font-weight: 400; letter-spacing: 0px; line-height: 20px; text-transform: none; font-style: normal;}
+.md-medium         {font-family: 'Inter'; font-size: 14px; font-weight: 500; letter-spacing: 0px; line-height: 20px; text-transform: none; font-style: normal;}
+.md-semi-bold      {font-family: 'Inter'; font-size: 14px; font-weight: 600; letter-spacing: 0px; line-height: 20px; text-transform: none; font-style: normal;}
+.md-bold           {font-family: 'Inter'; font-size: 14px; font-weight: 700; letter-spacing: 0px; line-height: 20px; text-transform: none; font-style: normal;}
 
-.sm-italic         {font-family: var(--font-secondary); font-size: 12px; font-weight: 400; letter-spacing: 0px; line-height: 16px; text-transform: none; font-style: italic;}
-.sm-regular        {font-family: var(--font-secondary); font-size: 12px; font-weight: 400; letter-spacing: 0px; line-height: 16px; text-transform: none; font-style: normal;}
-.sm-medium         {font-family: var(--font-secondary); font-size: 12px; font-weight: 500; letter-spacing: 0px; line-height: 16px; text-transform: none; font-style: normal;}
-.sm-semi-bold      {font-family: var(--font-secondary); font-size: 12px; font-weight: 600; letter-spacing: 0px; line-height: 16px; text-transform: none; font-style: normal;}
-.sm-bold           {font-family: var(--font-secondary); font-size: 12px; font-weight: 700; letter-spacing: 0px; line-height: 16px; text-transform: none; font-style: normal;}
+.sm-italic         {font-family: 'Inter'; font-size: 12px; font-weight: 400; letter-spacing: 0px; line-height: 16px; text-transform: none; font-style: italic;}
+.sm-regular        {font-family: 'Inter'; font-size: 12px; font-weight: 400; letter-spacing: 0px; line-height: 16px; text-transform: none; font-style: normal;}
+.sm-medium         {font-family: 'Inter'; font-size: 12px; font-weight: 500; letter-spacing: 0px; line-height: 16px; text-transform: none; font-style: normal;}
+.sm-semi-bold      {font-family: 'Inter'; font-size: 12px; font-weight: 600; letter-spacing: 0px; line-height: 16px; text-transform: none; font-style: normal;}
+.sm-bold           {font-family: 'Inter'; font-size: 12px; font-weight: 700; letter-spacing: 0px; line-height: 16px; text-transform: none; font-style: normal;}
 
 
-.tn-italic         {font-family: var(--font-secondary); font-size: 10px; font-weight: 400; letter-spacing: 0px; line-height: 14px; text-transform: none; font-style: italic;}
-.tn-regular        {font-family: var(--font-secondary); font-size: 10px; font-weight: 400; letter-spacing: 0px; line-height: 14px; text-transform: none; font-style: normal;}
-.tn-medium         {font-family: var(--font-secondary); font-size: 10px; font-weight: 500; letter-spacing: 0px; line-height: 14px; text-transform: none; font-style: normal;}
-.tn-semi-bold      {font-family: var(--font-secondary); font-size: 10px; font-weight: 600; letter-spacing: 0px; line-height: 14px; text-transform: none; font-style: normal;}
-.tn-bold           {font-family: var(--font-secondary); font-size: 10px; font-weight: 700; letter-spacing: 0px; line-height: 14px; text-transform: none; font-style: normal;}
-  
+.tn-italic         {font-family: 'Inter'; font-size: 10px; font-weight: 400; letter-spacing: 0px; line-height: 14px; text-transform: none; font-style: italic;}
+.tn-regular        {font-family: 'Inter'; font-size: 10px; font-weight: 400; letter-spacing: 0px; line-height: 14px; text-transform: none; font-style: normal;}
+.tn-medium         {font-family: 'Inter'; font-size: 10px; font-weight: 500; letter-spacing: 0px; line-height: 14px; text-transform: none; font-style: normal;}
+.tn-semi-bold      {font-family: 'Inter'; font-size: 10px; font-weight: 600; letter-spacing: 0px; line-height: 14px; text-transform: none; font-style: normal;}
+.tn-bold           {font-family: 'Inter'; font-size: 10px; font-weight: 700; letter-spacing: 0px; line-height: 14px; text-transform: none; font-style: normal;}
+

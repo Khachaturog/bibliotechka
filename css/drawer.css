@@ -1,32 +1,118 @@
 /* Drawer */
 
+/* Медиазапросы */
+@media (max-width: 900px) {
+
+/* Десктопный хедер */
+.list-desktop .item{
+  display: none;
+}
+
+.header-0 .switcher-theme {
+  display: none;
+}
+
+
+/* Блокируем */
+body.drawer-open {
+  overflow: hidden;
+}
+
+/* Мобильный хедер */
+.drawer header-component {
+  width: 100%;
+}
+
+#menu-toggle {
+  display: inline-flex;
+}
+
 .drawer {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
   position: fixed;
-  top: 64px; /* высота хедера */
   left: 0;
   right: 0;
-  background: var(--01-layer-background);
-  /* backdrop-filter: blur(24px); */
-  border-radius: 0 0 24px 24px;
-  border-bottom: 1px solid var(--04-border-on-layer-2);
-  /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
-  transition: top 0.3s ease; /* Анимация опускания */
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: calc(50vh - 64px); /* Высота 50% экрана минус хедер */
-  font-size: 1.5rem;
-  font-weight: bold;
-  text-align: center;
-  color: #4300fd;
-  z-index: 10; /* Ниже хедера */
-  top: -100%; /* drawer скрыт по умолчанию */
+  z-index: 100;
+  top: -100%;
 }
 
 .drawer.open {
-  top: 64px; /* Положение, когда шторка открыта */
+  top: 0px; /* Положение, когда шторка открыта */
 }
 
-.header-button-close {
+.icon-close {
   display: none;
+}
+
+.drawer.open .icon-burger {
+  display: none;
+}
+
+.drawer.open .icon-close {
+  display: inline;
+}
+
+.header-wrap-1 {
+  display: flex;
+  width: 100%;
+  padding: 0px 16px 16px 16px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  align-self: stretch;
+  border-radius: 0 0 16px 16px;
+  background: var(--01-layer-1);
+  z-index: 100;
+}
+
+.list-mobile {
+  /* padding: 64px 0 0 0; */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  align-self: stretch;
+}
+
+.header-wrap-2 {
+  display: flex;
+  width: 100%;
+  padding: 16px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  border-radius: 16px;
+  background: var(--01-layer-1);
+  z-index: 100;
+}
+
+.switcher-theme {
+  width: 100%;
+  height: 72px;
+}
+
+
+.drawer.open .button-return {
+  position: fixed;
+  left: 50%;
+  bottom: 36px;
+  transform: translateX(-50%);
+  z-index: 100;
+}
+
+.drawer.open .drawer-overlay {
+  content: "";
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.664);
+  z-index: 99;
+}
+
 }

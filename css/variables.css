@@ -675,9 +675,7 @@
         --yellow-night-700: #7b3801;
         --yellow-night-800: #894200;
         --yellow-night-900: #964b00;
-}
 
-:root{
     
     /* Module */
     --module: 0.25rem;
@@ -722,29 +720,21 @@
     --space-600: var(--module-600);
 
     /* Effects */
-}
 
-:root {
-    /* 00 */
-    --font-primary: 'Playfair Display';
-    --font-secondary: 'Inter';
-    --fw-regular: 400;
-    --fw-medium: 500;
-    --fw-semibold: 600;
-    --fw-bold: 700;
+
 
     /* 01 Layer */
     --01-layer-background: var(--neutral-day-200);
     --01-layer-1: var(--neutral-day-0);
-    /* --01-layer-neutral-soft: var(--neutral-day-300a); */
     --01-layer-2: var(--neutral-day-0);
     --01-layer-inverted: var(--neutral-night-300);
-    
+    --01-layer-neutral-soft: var(--neutral-day-300a);
+
     --01-layer-blur: #f3f4f950;
     
     /* 02 Content */
     --02-content-primary: var(--neutral-day-2000);
-    --02-content-secondary: #0a0b0fa6;
+    --02-content-secondary: rgba(10, 11, 15, 0.65);
     --02-content-tertiary: #0a0b0f91;
     --02-content-on-solid: var(--neutral-day-0);
     
@@ -759,7 +749,7 @@
     --05-layer-2-pressed: var(--neutral-day-200);
     --05-layer-neutral-soft-hover: var(--neutral-day-400a);
     --05-layer-neutral-soft-pressed: var(--neutral-day-500a);
-
+    
     /* 06 Themes */
     --06-theme-neutral-layer-soft: var(--neutral-day-300a);
     --06-theme-neutral-content-on-soft: var(--neutral-day-1400);
@@ -768,7 +758,7 @@
     --06-theme-violet-layer-soft-hover: var(--violet-day-400a);
     --06-theme-violet-layer-soft-pressed: var(--violet-day-500a);
     --06-theme-violet-content: var(--violet-day-1200);
-
+    --06-theme-violet-content-pressed: var(--violet-day-1400);
     --06-theme-violet-icon-solid: var(--violet-day-1000);
 }
 
@@ -778,12 +768,13 @@
     --01-layer-1: var(--neutral-night-300);
     --01-layer-2: var(--neutral-night-400);
     --01-layer-inverted: var(--neutral-day-0);
+    --01-layer-neutral-soft: var(--neutral-night-300a);
 
     --01-layer-blur: rgba(0, 0, 0, 0.75);
 
     /* 02 Content */
     --02-content-primary: var(--neutral-night-2000);
-    --02-content-secondary: #fdfeff8f;
+    --02-content-secondary: rgba(253, 254, 255, 0.56);
     --02-content-tertiary: #fdfeff80;
     --02-content-on-solid: var(--neutral-day-0);
 
@@ -807,6 +798,6 @@
     --06-theme-violet-layer-soft-hover: var(--violet-day-400a);
     --06-theme-violet-layer-soft-pressed: var(--violet-night-300a);
     --06-theme-violet-content: var(--violet-night-1300);
-
+    --06-theme-violet-content-pressed: var(--violet-night-1100);
     --06-theme-violet-icon-solid: var(--violet-night-1300);
 }

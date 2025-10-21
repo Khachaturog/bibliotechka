@@ -1,23 +1,97 @@
 // Скрипт для страницы групп
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const [dataResponse, groupsResponse, subgroupsResponse] = await Promise.all([
-        fetch('data/data.json'),
-        fetch('data/group.json'),
-        fetch('data/subgroup.json')
-    ]);
-    const data = await dataResponse.json();
-    const groups = await groupsResponse.json();
-    const subgroups = await subgroupsResponse.json();
-    const params = new URLSearchParams(window.location.search);
-    const groupSlug = params.get('slug');
-    const group = groups.find(g => g.slug === groupSlug);
-    if (group) {
-        document.querySelector('.container-title').textContent = group.title;
-        document.querySelector('.container-description').textContent = group.description || '';
-        const filteredData = data.filter(item => item.group_slug === groupSlug);
-        displaySubgroupsAndCards(filteredData, subgroups);
-    }
+        const [dataResponse, groupsResponse, subgroupsResponse] = await Promise.all([
+                fetch('data/data.json'),
+                fetch('data/group.json'),
+                fetch('data/subgroup.json')
+        ]);
+        const data = await dataResponse.json();
+        const groups = await groupsResponse.json();
+        const subgroups = await subgroupsResponse.json();
+        const params = new URLSearchParams(window.location.search);
+        const groupSlug = params.get('slug');
+        const group = groups.find(g => g.slug === groupSlug);
+        if (group) {
+                document.querySelector('.container-title').textContent = group.title;
+                document.querySelector('.container-description').textContent = group.description || '';
+
+                // --- SEO META TAGS DYNAMIC UPDATE ---
+                // Title
+                if (group.title_seo) {
+                    document.title = group.title_seo;
+                }
+                // Description
+                if (group.description_seo) {
+                    let metaDesc = document.querySelector('meta[name="description"]');
+                    if (!metaDesc) {
+                        metaDesc = document.createElement('meta');
+                        metaDesc.name = 'description';
+                        document.head.appendChild(metaDesc);
+                    }
+                    metaDesc.content = group.description_seo;
+                }
+                // Keywords
+                if (group.keywords_seo) {
+                    let metaKeywords = document.querySelector('meta[name="keywords"]');
+                    if (!metaKeywords) {
+                        metaKeywords = document.createElement('meta');
+                        metaKeywords.name = 'keywords';
+                        document.head.appendChild(metaKeywords);
+                    }
+                    metaKeywords.content = group.keywords_seo;
+                }
+                // Open Graph
+                if (group.og_title) {
+                    let ogTitle = document.querySelector('meta[property="og:title"]');
+                    if (!ogTitle) {
+                        ogTitle = document.createElement('meta');
+                        ogTitle.setAttribute('property', 'og:title');
+                        document.head.appendChild(ogTitle);
+                    }
+                    ogTitle.content = group.og_title;
+                }
+                if (group.og_description) {
+                    let ogDesc = document.querySelector('meta[property="og:description"]');
+                    if (!ogDesc) {
+                        ogDesc = document.createElement('meta');
+                        ogDesc.setAttribute('property', 'og:description');
+                        document.head.appendChild(ogDesc);
+                    }
+                    ogDesc.content = group.og_description;
+                }
+                if (group.og_image) {
+                    let ogImg = document.querySelector('meta[property="og:image"]');
+                    if (!ogImg) {
+                        ogImg = document.createElement('meta');
+                        ogImg.setAttribute('property', 'og:image');
+                        document.head.appendChild(ogImg);
+                    }
+                    ogImg.content = group.og_image;
+                }
+                // --- END SEO META TAGS ---
+
+                const filteredData = data.filter(item => item.group_slug === groupSlug);
+                displaySubgroupsAndCards(filteredData, subgroups);
+                        // Скроллим к якорю после отрисовки с задержкой 50мс
+                        if (window.location.hash) {
+                            setTimeout(() => {
+                                const targetContainer = document.getElementById(window.location.hash.substring(1));
+                                if (targetContainer) {
+                                    // Ищем заголовок подгруппы
+                                    const title = targetContainer.querySelector('.container-title');
+                                    const scrollTarget = title || targetContainer;
+                                    const offset = 70;
+                                    const elementPosition = scrollTarget.getBoundingClientRect().top;
+                                    const offsetPosition = elementPosition + window.scrollY - offset;
+                                    window.scrollTo({
+                                        top: offsetPosition,
+                                        behavior: 'smooth'
+                                    });
+                                }
+                            }, 100);
+                        }
+        }
 });
 
 // displaySubgroupsAndCards
@@ -175,4 +249,5 @@ function createCard(item) {
     }
     return clone;
 }
+
 
