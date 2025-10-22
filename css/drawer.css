@@ -7,6 +7,10 @@ drawer-component {
 /* Медиазапросы */
 @media (max-width: 900px) {
 
+drawer-component {
+    display: block !important;
+  }
+
 /* Десктопный хедер */
 .list-desktop .item{
   display: none;

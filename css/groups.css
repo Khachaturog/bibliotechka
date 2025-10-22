@@ -89,7 +89,7 @@ html {
   color: var(--02-content-on-solid);
 }
 
-@media (max-width: 497px) {
+@media (max-width: 500px) {
 /* .group-content p {
   font-family: var(--font-primary);
   font-size: 16px;
