@@ -1,5 +1,9 @@
 /* Drawer */
 
+drawer-component {
+    display: none !important;
+  }
+
 /* Медиазапросы */
 @media (max-width: 900px) {
 
