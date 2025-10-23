@@ -1,0 +1,13 @@
+RewriteEngine On
+
+# Перенаправление красивых URL на group.html с передачей slug
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([^/]+)/?$ /group.html?slug=$1 [QSA,L]
+
+# Перенаправление красивых URL карточек на detail.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^card/([a-z0-9-]+)/?$ /detail.html?slug_seo_yandex=$1 [QSA,L]
+
+# Старые ссылки /group.html?slug=... продолжают работать
