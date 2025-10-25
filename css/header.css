@@ -51,6 +51,9 @@
 }
 
 .item {
+  pointer-events: none;
+  opacity: 0.5;
+
   color: var(--02-content-primary);
   display: flex;
   justify-content: center;
@@ -59,20 +62,20 @@
   align-self: stretch;
 }
 
-.item:hover {
+/* .item:hover {
   text-align: center;
   cursor: pointer;
   text-decoration-line: underline;
   text-decoration-style: solid;
   text-decoration-skip-ink: none;
-  text-decoration-thickness: 10%; /* 1.6px */
+  text-decoration-thickness: 10%;
   text-underline-offset: auto;
   text-underline-position: from-font;
 }
 
 .item:active {
   color: var(--06-theme-violet-content-pressed);
-}
+} */
 
 /* Блокировка вызова меню */
 #menu-toggle {
