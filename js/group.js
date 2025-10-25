@@ -1,14 +1,3 @@
-
-// Редирект со старого URL на красивый
-(function() {
-    var params = new URLSearchParams(window.location.search);
-    var slug = params.get('slug');
-    if (slug && window.location.pathname.endsWith('group.html')) {
-        var hash = window.location.hash || '';
-        window.location.replace('/' + slug + hash);
-    }
-})();
-
 // Скрипт для страницы групп
 
 document.addEventListener('DOMContentLoaded', async () => {

@@ -18,26 +18,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // Функция для отображения деталей
 function displayDetail(data) {
-
     const params = new URLSearchParams(window.location.search);
     const slug = params.get('slug');
-    const slugSeoYandex = params.get('slug_seo_yandex');
-
-    let item = null;
-    if (slugSeoYandex) {
-        item = data.find(item => item.slug_seo_yandex === slugSeoYandex);
-    } else if (slug) {
-        item = data.find(item => {
-            const itemSlugNum = parseInt(item.slug);
-            const searchSlugNum = parseInt(slug);
-            return item.slug === slug || itemSlugNum === searchSlugNum;
-        });
-    }
-
-    if (!item) {
-        document.body.innerHTML = '<h1>Материал не найден</h1>';
+    if (!slug) {
+        document.body.innerHTML = '<h1>Материал не найден (slug не указан)</h1>';
         return;
     }
+
+    const item = data.find(item => {
+        const itemSlugNum = parseInt(item.slug);
+        const searchSlugNum = parseInt(slug);
+        return item.slug === slug || itemSlugNum === searchSlugNum;
+    });
 
     if (!item) {
         document.body.innerHTML = '<h1>Материал не найден</h1>';
