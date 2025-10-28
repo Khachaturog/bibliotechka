@@ -12,8 +12,13 @@ jobs:
       - name: 🚚 Get latest code
         uses: actions/checkout@v4
 
+      - name: � Debugf secrets
+        run: |
+          echo "FTP_HOST is set: ${{ secrets.FTP_HOST != '' }}"
+          echo "FTP_USERNAME is set: ${{ secrets.FTP_USERNAME != '' }}"
+
       - name: 📂 Sync files
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        uses: SamKirkland/FTP-Deploy-Action@4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
