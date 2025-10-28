@@ -12,11 +12,6 @@ jobs:
       - name: 🚚 Get latest code
         uses: actions/checkout@v4
 
-      - name: � Debugf secrets
-        run: |
-          echo "FTP_HOST is set: ${{ secrets.FTP_HOST != '' }}"
-          echo "FTP_USERNAME is set: ${{ secrets.FTP_USERNAME != '' }}"
-
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
@@ -28,4 +23,6 @@ jobs:
           local-dir: ./
           server-dir: ${{ secrets.FTP_REMOTE_PATH }}
           timeout: 60000
-          log-level: verbose
+          exclude: |
+            **/*.webp
+            **/images/covers/**
