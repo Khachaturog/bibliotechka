@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+
+# Разрешаем индексацию всех страниц
+Disallow: /admin/
+Disallow: /private/
+Disallow: /*.log$
+Disallow: /temp/
+
+# Указываем местоположение карты сайта
+Sitemap: https://bibliotechka.online/sitemap.xml
+
+# Настройки для основных поисковых систем
+User-agent: Yandex
+Allow: /
+
+User-agent: Googlebot
+Allow: /
