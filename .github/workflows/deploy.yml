@@ -1,4 +1,4 @@
-ссname: FTP Deploy to PROD
+name: FTP Deploy to PROD
 
 on:
   push:
