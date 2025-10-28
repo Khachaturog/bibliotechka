@@ -22,7 +22,7 @@ jobs:
           protocol: ftp
           local-dir: ./
           server-dir: ${{ secrets.FTP_REMOTE_PATH }}
-          timeout: 60000
+          timeout: 600000
           exclude: |
             **/*.webp
             **/images/covers/**
