@@ -2,20 +2,21 @@ class DrawerComponent extends HTMLElement {
   connectedCallback() {
   this.innerHTML = `
     <div id="drawer" class="drawer">
-        <div class="header-wrap-1">
 
+        <div class="header-wrap-start">
             <header-component></header-component>
-            
+        </div>
+
+        <div class="header-wrap-center">
             <div class="list-mobile">
                 <a class="h3 item">Главная</a>
                 <a class="h3 item">О проекте</a>
                 <a class="h3 item">Дорожная карта</a>
                 <a class="h3 item">Связаться с Хачатуром</a>
             </div>
-            
         </div>
         
-        <div class="header-wrap-2">
+        <div class="header-wrap-center">
             <div class="switcher-theme" onclick="toggleTheme()">
                 <div class="theme-day">
                 <span class="icon-day">
@@ -33,16 +34,13 @@ class DrawerComponent extends HTMLElement {
                 </div>
                 <div class="switcher-background"></div>
             </div>
-            
         </div>
 
-        <button class="secondary-48 button-return" onclick="toggleDrawer()">
-            <span class="icon-close">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M11.3746 10.0004L15.5482 5.82678C15.9283 5.44665 15.9283 4.83223 15.5482 4.45209C15.168 4.07196 14.5536 4.07196 14.1735 4.45209L9.99996 8.62574L5.82639 4.45209C5.44626 4.07196 4.83184 4.07196 4.45172 4.45209C4.07159 4.83223 4.07159 5.44665 4.45172 5.82678L8.62529 10.0004L4.45172 14.1741C4.07159 14.5542 4.07159 15.1687 4.45172 15.5488C4.64129 15.7384 4.89018 15.8337 5.13905 15.8337C5.38793 15.8337 5.63681 15.7384 5.82639 15.5488L9.99996 11.3752L14.1735 15.5488C14.3631 15.7384 14.612 15.8337 14.8609 15.8337C15.1097 15.8337 15.3586 15.7384 15.5482 15.5488C15.9283 15.1687 15.9283 14.5542 15.5482 14.1741L11.3746 10.0004Z"/>
-                </svg>
+        <!-- <div class="button-return" style="color: var(--02-content-on-solid);">
+            <span class="md-regular">
+                Нажмите, чтобы закрыть
             </span>
-        </button>
+        </div> -->
 
         <div class="drawer-overlay" onclick="toggleDrawer()"></div>
 

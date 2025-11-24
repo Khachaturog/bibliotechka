@@ -86,20 +86,3 @@ function displayCards(data) {
     });
 }
 
-// Получаем loader элемент из HTML
-// const loader = document.querySelector('.cards-loader');
-
-// Настраиваем IntersectionObserver для бесконечного скролла
-// const observer = new IntersectionObserver((entries) => {
-//     if (entries[0].isIntersecting && currentIndex < data.length) {
-//         loadMoreCards();
-//     }
-// }, {
-//     rootMargin: '1px'
-// });
-
-// observer.observe(loader);
-
-// Загружаем первую порцию карточек
-// loadMoreCards();
-

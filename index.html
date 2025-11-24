@@ -5,6 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+    
+    <meta name="theme-color" content="#FFFFFF">
+    
+    <!-- Cache Control -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
 
     <title>Библиотечка</title>
     <meta name="description" content="Лучший сборник дизайн материалов, очень полезна для B2B/B2C/B2E дизайнеров, а также графам.">
@@ -24,24 +31,13 @@
 
     <link rel="canonical" href="https://bibliotechka.online">
 
-
-    <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/fonts.css">
-    <link rel="stylesheet" href="css/button.css">
-    <link rel="stylesheet" href="css/header.css">
-    <link rel="stylesheet" href="css/drawer.css">
-    <link rel="stylesheet" href="css/cards.css">
-    <link rel="stylesheet" href="css/groups.css">
-    <link rel="stylesheet" href="css/detail.css">
-    <link rel="stylesheet" href="css/footer.css">
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display');
-        @import url('https://fonts.googleapis.com/css2?family=Inter');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
     </style>
 
-    <meta name="theme-color" content="#7C58F3">
 
     <meta name="robots" content="index, follow">
     <!-- SEO -->
@@ -62,16 +58,20 @@
 </head>
 
 <body>
-    <header-component></header-component>
+    <section class="wrap-start">
+        <header-component></header-component>
+    </section>
 
-    <section id="wrap1">
-        <h2 class="h1 container-title">Разделы <span class="sm-italic">8</span></h2>
+    <section class="wrap-center">
         <div class="groups-container">
             <template class="group-template">
                     <a class="group" href="">
-                        <img class="group-cover" src="" alt="">
+                        <div class="group-cover-wrap">
+                            <img class="group-cover" src="" alt="">
+                        </div>
+                        
                         <div class="group-content">
-                            <p class="lg-medium group-title"></p>
+                            <p class="h4 group-title"></p>
                             <p class="sm-regular group-description"></p>
                         </div>
                     </a>
@@ -79,30 +79,33 @@
         </div>
     </section>
 
-    <section id="wrap2">
-        <h2 class="h1 container-title">Все карточки <span class="sm-italic">528</span></h2>
-        <div class="cards-container">
-            <template class="card-template">
-                <a class="card" href="">
-                    <img class="card-cover" width="200" height="125" src="" alt="" loading="lazy">
-                    <p class="lg-medium card-title"></p>
-                    <p class="md-regular card-description"></p>
-                </a>
-            </template>
+    <section class="wrap-center">
+        <div class="cards-container-0">
+            <h2 class="h1 container-title">Карточки <span class="sm-italic">528</span></h2>
+            <div class="cards-container">
+                <template class="card-template">
+                    <a class="card" href="">
+                        <img class="card-cover" width="200" height="125" src="" alt="" loading="lazy">
+                        <p class="lg-medium card-title"></p>
+                        <p class="md-regular card-description"></p>
+                    </a>
+                </template>
+            </div>
         </div>
     </section>
 
-    <div class="cards-loader"></div>
-
-    <drawer-component></drawer-component>
-    <footer-component></footer-component>
-
-    <script src="js/component/header.js"></script>
-    <script src="js/component/drawer.js"></script>
-    <script src="js/component/footer.js"></script>
-
-    <script src="js/index.js"></script>
-    <script src="js/drawer.js"></script>
 </body>
+
+<footer-component></footer-component>
+<drawer-component></drawer-component>
+<search-component></search-component>
+
+<script src="js/component/header.js"></script>
+<script src="js/component/drawer.js"></script>
+<script src="js/component/footer.js"></script>
+<script src="js/component/search.js"></script>
+
+<script src="js/index.js"></script>
+<script src="js/drawer.js"></script>
 
 </html>

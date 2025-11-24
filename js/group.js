@@ -96,10 +96,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // displaySubgroupsAndCards
 function displaySubgroupsAndCards(data, subgroups) {
-    const container = document.getElementById('wrap2');
+    const container = document.querySelector('.subgroups-wrap');
     container.innerHTML = ''; // Clear existing content
 
-    const subgroupsContainer = document.getElementById('subgroups-container');
+    const subgroupsContainer = document.querySelector('.badge-wrap');
     subgroupsContainer.innerHTML = ''; // Clear existing badges
 
     subgroups.forEach(subgroup => {
@@ -178,6 +178,8 @@ window.addEventListener('scroll', () => {
     }, 10); // Задержка 10мс после завершения прокрутки
 });
 
+
+
 // Подгруппы
 const subgroupTemplate = document.getElementById('subgroup-template');
 
@@ -251,3 +253,32 @@ function createCard(item) {
 }
 
 
+
+// === Кнопка "Наверх" ===
+document.addEventListener('DOMContentLoaded', () => {
+    const scrollToTopButton = document.querySelector('.button-up');
+    
+    if (scrollToTopButton) {
+        // Показать/скрыть кнопку при скролле
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                if (window.scrollY > 500) {
+                    scrollToTopButton.classList.add('visible');
+                } else {
+                    scrollToTopButton.classList.remove('visible');
+                }
+            }, 10);
+        });
+
+        // Обработчик клика - плавный скролл наверх
+        scrollToTopButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
+});

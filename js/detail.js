@@ -5,15 +5,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     const data = await dataResponse.json();
     displayDetail(data);
     
-    // Генерация случайной карточки
-    const nextBtn = document.querySelector('.detail-footer-container-2 button:last-child');
-    if (nextBtn) {
-        nextBtn.onclick = () => {
-            const randomIndex = Math.floor(Math.random() * data.length);
-            const randomSlug = data[randomIndex].slug;
-            window.location.href = `detail.html?slug=${randomSlug}`;
+    // Функция для перехода к случайной карточке
+    window.getRandomCardRedirect = function() {
+        const randomIndex = Math.floor(Math.random() * data.length);
+        const randomSlug = data[randomIndex].slug;
+        window.location.href = `detail.html?slug=${randomSlug}`;
+    };
+    
+        // Функция поделиться
+        window.shareCard = function() {
+            const url = window.location.href;
+            const title = document.title;
+            if (navigator.share) {
+                navigator.share({
+                    title,
+                    url
+                }).catch(() => {});
+            } else {
+                // Веб: копируем ссылку
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(url);
+                    alert('Ссылка  скопирована!');
+                } else {
+                    // Фоллбек для старых браузеров
+                    const temp = document.createElement('input');
+                    temp.value = url;
+                    document.body.appendChild(temp);
+                    temp.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(temp);
+                    alert('Ссылкана страницу скопирована!');
+                }
+            }
         };
-    }
 });
 
 // Функция для отображения деталей
@@ -35,6 +59,24 @@ function displayDetail(data) {
         document.body.innerHTML = '<h1>Материал не найден</h1>';
         return;
     }
+
+    // --- SEO META TAGS DYNAMIC UPDATE ---
+    // Title
+    if (item.title) {
+        document.title = item.title;
+    }
+    
+    // Description
+    if (item.description) {
+        let metaDesc = document.querySelector('meta[name="description"]');
+        if (!metaDesc) {
+            metaDesc = document.createElement('meta');
+            metaDesc.name = 'description';
+            document.head.appendChild(metaDesc);
+        }
+        metaDesc.content = item.description;
+    }
+    // --- END SEO META TAGS ---
 
     const container = document.getElementById('detail-container-0');
     const template = document.getElementById('detail-template');
@@ -70,8 +112,19 @@ function displayDetail(data) {
             linkElement.href = link.url;
             linkElement.target = '_blank';
             linkElement.innerHTML = `
-                <div class="lg-regular detail-block2-list-link">${link.title || link.url}</div>
-                <div class="md-medium detail-block2-list-icon">↗</div>
+                <div class="detail-block2-text">
+                    <div class="lg-regular detail-block2-list-title">
+                        ${link.title || 'Ссылка'}
+                    </div>
+                    <div class="sm-regular detail-block2-list-subtitle">
+                        ${link.url}
+                    </div>
+                </div>
+                <span class="icon-diagonal-arrow">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M14.9944 5.87417C14.9944 5.41667 14.6244 5.04417 14.1661 5.04167L7.50521 5H7.50021C7.04187 5 6.67021 5.37 6.66687 5.82833C6.66354 6.28833 7.03438 6.66417 7.49521 6.66667L12.1269 6.69583L5.24438 13.5775C4.91854 13.9034 4.91854 14.4309 5.24438 14.7559C5.40688 14.9192 5.62021 15 5.83354 15C6.04687 15 6.26021 14.9192 6.42271 14.7559L13.3294 7.84917L13.3336 12.5009C13.3336 12.9609 13.7069 13.3334 14.1669 13.3334C14.6269 13.3334 15.0002 12.9592 15.0002 12.4992L14.9944 5.87417Z"/>
+                    </svg>
+                </span>
             `;
             linksContainer.appendChild(linkElement);
         }
@@ -99,7 +152,7 @@ function displayDetail(data) {
         }
 
     // Заполняем данные в блоке "Разное"
-    const miscContainer = clone.querySelector('.detail-block4-list');
+    const miscContainer = clone.querySelector('.detail-meta');
     if (miscContainer) {
         miscContainer.querySelector('.start-date').textContent = item.start_date || '-';
         miscContainer.querySelector('.end-date').textContent = item.end_date || '-';
@@ -115,9 +168,9 @@ function displayDetail(data) {
     }
 
     // Добавляем данные в блок "От ИИ"
-    const aiSummaryBlock = clone.querySelector('.detail-block5');
+    const aiSummaryBlock = clone.querySelector('.detail-ai');
     if (aiSummaryBlock) {
-        aiSummaryBlock.querySelector('.detail-block5-summary').textContent = item.summary_ai || 'Однажды напишет саммари';
+        aiSummaryBlock.querySelector('.detail-ai-summary').textContent = item.summary_ai || 'Однажды напишет саммари';
     }
 
     container.appendChild(clone);
