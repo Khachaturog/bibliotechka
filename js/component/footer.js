@@ -9,7 +9,6 @@ class FooterComponent extends HTMLElement {
         <div class="footer-text">
           <p class="h2 wishes">С любовью от Хачатура 🤍</p>
           <p class="md-italic copyright">
-            Материалы обновлены 20.09.2025<br>
             Все права защищены на совесть · 2024-2025<br>
             Библиотечка. Твой компас в мире дизайна. Версия 5.0
           </p>
