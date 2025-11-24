@@ -20,7 +20,7 @@ class HeaderComponent extends HTMLElement {
         </div>
         
         <div class="list-desktop">
-          <a class="h3 item">Главная</a>
+          <!-- <a class="h3 item">Главная</a> -->
           <a class="h3 item">О проекте</a>
           <a class="h3 item">Планы</a>
           <a class="h3 item">Связаться с Хачатуром</a>

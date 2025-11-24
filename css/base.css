@@ -1073,6 +1073,7 @@
 
 html {
   scroll-behavior: smooth; /* Плавный скролл для всей страницы */
+  overflow-y: scroll;
 }
 
 body {
@@ -1593,12 +1594,12 @@ body {
 .detail-block1-subtitle {
   color: var(--02-content-secondary);
   display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
+  /* -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1; */
   align-self: stretch;
   overflow: hidden;
   text-overflow: ellipsis;
-  word-break: break-all;
+  /* word-break: break-all; */
 
 }
 
