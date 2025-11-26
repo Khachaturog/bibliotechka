@@ -1158,19 +1158,18 @@ body {
   gap: 20px;
 }
 
-.item {
-  pointer-events: none;
-  opacity: 0.5;
-  
+.item {  
   color: var(--02-content-primary);
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 4px;
   align-self: stretch;
+
+  text-decoration: none;
 }
 
-/* .item:hover {
+.item:hover {
   text-align: center;
   cursor: pointer;
   text-decoration-line: underline;
@@ -1182,8 +1181,8 @@ body {
 }
 
 .item:active {
-  color: var(--06-theme-violet-content-pressed);
-} */
+  color: var(--02-content-secondary);
+}
 
 
 /* ///////////////////////////////////////////////////////// */
