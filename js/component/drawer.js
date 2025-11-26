@@ -9,10 +9,10 @@ class DrawerComponent extends HTMLElement {
 
         <div class="header-wrap-center">
             <div class="list-mobile">
-                <a class="h3 item">Главная</a>
-                <a class="h3 item">О проекте</a>
-                <a class="h3 item">Дорожная карта</a>
-                <a class="h3 item">Связаться с Хачатуром</a>
+                <!-- <a class="h3 item">Главная</a> -->
+                <!-- <a class="h3 item">О проекте</a> -->
+                <!-- <a class="h3 item">Дорожная карта</a> -->
+                <a class="h3 item" href="https://t.me/khachatur1" target="_blank" rel="noopener">Связаться с Хачатуром</a>
             </div>
         </div>
         
