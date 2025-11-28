@@ -94,8 +94,11 @@ function displayDetail(data) {
     clone.querySelector('.detail-block1-title').textContent = item.title;
     clone.querySelector('.detail-block1-subtitle').textContent = item.description || '';
 
-    // Заполняем ссылки
+    // Заполняем ссылки через шаблон
     const linksContainer = clone.querySelector('.detail-block2-list');
+    linksContainer.innerHTML = '';
+    // Шаблон ищем в основном документе
+    const linkTemplate = document.getElementById('detail-link-template');
     const links = [
         { url: item.url_1, title: item.url_title_1 },
         { url: item.url_2, title: item.url_title_2 },
@@ -104,31 +107,22 @@ function displayDetail(data) {
         { url: item.url_5, title: item.url_title_5 },
         { url: item.url_6, title: item.url_title_6 }
     ];
-
     links.forEach(link => {
-        if (link.url) {
-            const linkElement = document.createElement('a');
-            linkElement.className = 'detail-block2-list-item';
-            linkElement.href = link.url;
-            linkElement.target = '_blank';
-            linkElement.innerHTML = `
-                <div class="detail-block2-text">
-                    <div class="lg-regular detail-block2-list-title">
-                        ${link.title || 'Ссылка'}
-                    </div>
-                    <div class="sm-regular detail-block2-list-subtitle">
-                        ${link.url}
-                    </div>
-                </div>
-                <span class="icon-diagonal-arrow">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M14.9944 5.87417C14.9944 5.41667 14.6244 5.04417 14.1661 5.04167L7.50521 5H7.50021C7.04187 5 6.67021 5.37 6.66687 5.82833C6.66354 6.28833 7.03438 6.66417 7.49521 6.66667L12.1269 6.69583L5.24438 13.5775C4.91854 13.9034 4.91854 14.4309 5.24438 14.7559C5.40688 14.9192 5.62021 15 5.83354 15C6.04687 15 6.26021 14.9192 6.42271 14.7559L13.3294 7.84917L13.3336 12.5009C13.3336 12.9609 13.7069 13.3334 14.1669 13.3334C14.6269 13.3334 15.0002 12.9592 15.0002 12.4992L14.9944 5.87417Z"/>
-                    </svg>
-                </span>
-            `;
-            linksContainer.appendChild(linkElement);
+        if (link.url && linkTemplate) {
+            const linkClone = linkTemplate.content.cloneNode(true);
+            const linkElement = linkClone.querySelector('a.detail-block2-list-item');
+            if (linkElement) {
+                linkElement.href = link.url;
+                linkElement.target = '_blank';
+                const titleElem = linkElement.querySelector('.detail-block2-list-title');
+                const urlElem = linkElement.querySelector('.detail-block2-list-subtitle');
+                if (titleElem) titleElem.textContent = link.title || 'Ссылка';
+                if (urlElem) urlElem.textContent = link.url;
+                linksContainer.appendChild(linkElement);
+            }
         }
     });
+    // Шаблон не удаляем!
 
     // Заполняем авторов с проверкой наличия элементов
     const authorsContainer = clone.querySelector('.detail-block3-list');

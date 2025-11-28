@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                     // Ищем заголовок подгруппы
                                     const title = targetContainer.querySelector('.container-title');
                                     const scrollTarget = title || targetContainer;
-                                    const offset = 70;
+                                    const offset = 83;
                                     const elementPosition = scrollTarget.getBoundingClientRect().top;
                                     const offsetPosition = elementPosition + window.scrollY - offset;
                                     window.scrollTo({
