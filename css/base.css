@@ -1284,6 +1284,46 @@ body {
 /* //////////////////////////////////////////////////////////////////////////////// */
 
 
+/* Скелетоны */
+.skeleton {
+    background: linear-gradient(90deg, var(--02-content-tertiary) 25%, var(--01-layer-2) 50%, var(--01-layer-1) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 8px;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeletons-container {
+    display: contents;
+}
+
+.skeleton-group-title {
+  width: 150px;
+  height: 40px;
+}
+
+.skeleton-card-title {
+    height: 20px;
+    width: 80%;
+    margin: 0 8px 4px 8px;
+}
+
+.skeleton-card-description {
+    height: 16px;
+    width: 60%;
+    margin: 0 8px 8px 8px;
+}
+
+
+
+
+/* //////////////////////////////////////////////////////////////////////////////// */
+
+
 /* === Стили для категорий === */
 
 /* Главная страница */
@@ -1298,7 +1338,8 @@ body {
   justify-content: center;
 }
 
-.group {
+.group,
+.skeleton-group {
   display: flex;
   padding: 8px 12px 8px 8px;
   align-items: center;
@@ -1321,7 +1362,8 @@ body {
   gap: 0px;
 }
 
-.group-cover-wrap {
+.group-cover-wrap,
+.skeleton-group-cover {
   width: 40px;
   height: 40px;
   border-radius: 12px;
@@ -1446,7 +1488,8 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 }
 
-.card {
+.card,
+.skeleton-card {
   display: flex;
   flex-direction: column; /* Располагаем элементы вертикально */
   justify-content: flex-start;
@@ -1461,6 +1504,10 @@ body {
   position: relative;
   cursor: pointer;
   text-decoration: none;
+  
+  /* Оптимизация рендеринга: не рендерить невидимые карточки */
+  content-visibility: auto;
+  contain-intrinsic-size: 200px 184px;
 }
 
 .card:hover {
@@ -1468,9 +1515,10 @@ body {
   border: 1px solid var(--01-layer-1);
 }
 
-.card img {
+.card img,
+.skeleton-card-cover {
   border-radius: 4px;
-  width: auto;
+  width: 100%;
   height: 125px;
   object-fit: cover;
   margin-bottom: 12px;
@@ -1563,19 +1611,31 @@ body {
 }
 
 .detail-container-image {
+  position: relative;
   width: 100%;
   height: 400px;
+  border-radius: 20px;
+  background: var(--01-layer-1);
   overflow: hidden;
   display: flex;
   justify-content: center;
 }
 
 .image {
-  border-radius: var(--radius-300);
+  position: relative;
+  z-index: 2;
   width: 100%;
-  object-fit: cover;
-  object-position: center;
-  transform: scale(1.01);
+  height: 100%;
+  border-radius: 18px;
+  object-fit: contain;
+  /* object-position: center; */
+}
+
+.image-blur {
+  filter: blur(24px);
+  transform: scale(2);
+  position: absolute;
+  z-index: 1;
 }
 
 .detail-block1 {
@@ -2007,12 +2067,14 @@ drawer-component {
     }
   }
 
-  .group-cover-wrap {
+  
+  .group-cover-wrap,
+  .skeleton-group-cover {
     width: 36px;
     height: 36px;
     border-radius: 16px 16px 16px 0;
     overflow: hidden;
-
+    
     display: flex;
     justify-content: center;
     align-items: center;
@@ -2022,7 +2084,7 @@ drawer-component {
     scale: 1.3;
     /* aspect-ratio: 1/1; */
   }
-
+  
   .group-content {
     display: flex;
     padding: 0 12px;
@@ -2034,7 +2096,12 @@ drawer-component {
     border-radius: 8px;
     background: var(--01-layer-neutral-subtle);
   }
-
+  
+  .skeleton-group-title {
+    width: 34px;
+    height: 20px;
+  }
+  
   .group-description {
     display: none;
   }

@@ -89,8 +89,20 @@ function displayDetail(data) {
     const clone = template.content.cloneNode(true);
 
     // Заполняем данные в шаблоне
-    clone.querySelector('.detail-container-image img').src = item.cover;
-    clone.querySelector('.detail-container-image img').alt = item.title;
+    const imageContainer = clone.querySelector('.detail-container-image');
+    if (imageContainer) {
+        const blurImage = imageContainer.querySelector('.image-blur');
+        const mainImage = imageContainer.querySelector('.image:not(.image-blur)');
+        
+        if (blurImage) {
+            blurImage.src = item.cover;
+            blurImage.alt = '';
+        }
+        if (mainImage) {
+            mainImage.src = item.cover;
+            mainImage.alt = item.title;
+        }
+    }
     clone.querySelector('.detail-block1-title').textContent = item.title;
     clone.querySelector('.detail-block1-subtitle').textContent = item.description || '';
 
