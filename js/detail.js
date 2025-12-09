@@ -1,9 +1,15 @@
 // Скрипт для страницы деталей
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const dataResponse = await fetch('data/data.json');
+    const [dataResponse, groupsResponse, subgroupsResponse] = await Promise.all([
+        fetch('data/data.json'),
+        fetch('data/group.json'),
+        fetch('data/subgroup.json')
+    ]);
     const data = await dataResponse.json();
-    displayDetail(data);
+    const groups = await groupsResponse.json();
+    const subgroups = await subgroupsResponse.json();
+    displayDetail(data, groups, subgroups);
     
     // Функция для перехода к случайной карточке
     window.getRandomCardRedirect = function() {
@@ -40,8 +46,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
 });
 
+// Функция для перехода в группу из breadcrumbs
+function navigateToGroupFromBreadcrumb(groupSlug) {
+    const url = `${window.location.origin}/group.html?slug=${groupSlug}`;
+    window.location.href = url;
+}
+
+// Функция для перехода в подгруппу из breadcrumbs
+function navigateToSubgroupFromBreadcrumb(groupSlug, subgroupSlug) {
+    // Если параметры не переданы, получаем из DOM
+    if (!groupSlug || !subgroupSlug) {
+        const groupSlugElement = document.querySelector('.group-slug');
+        const subgroupSlugElement = document.querySelector('.subgroup-slug');
+        groupSlug = groupSlug || (groupSlugElement ? groupSlugElement.textContent : null);
+        subgroupSlug = subgroupSlug || (subgroupSlugElement ? subgroupSlugElement.textContent : null);
+    }
+    if (groupSlug && subgroupSlug) {
+        const url = `${window.location.origin}/group.html?slug=${groupSlug}#${subgroupSlug}`;
+        window.location.href = url;
+    }
+}
+
 // Функция для отображения деталей
-function displayDetail(data) {
+function displayDetail(data, groups, subgroups) {
     const params = new URLSearchParams(window.location.search);
     const slug = params.get('slug');
     if (!slug) {
@@ -179,18 +206,19 @@ function displayDetail(data) {
         aiSummaryBlock.querySelector('.detail-ai-summary').textContent = item.summary_ai || 'Однажды напишет саммари';
     }
 
+    // Заполняем badge-title в breadcrumbs русскими названиями и добавляем обработчики клика
+    const badgeTitles = clone.querySelectorAll('.badge-title');
+    
+    // Первая кнопка - group
+    const group = groups.find(g => g.slug === item.group_slug);
+    badgeTitles[0].textContent = group ? group.title : item.group_slug || '';
+    badgeTitles[0].closest('button').onclick = () => navigateToGroupFromBreadcrumb(item.group_slug);
+    
+    // Вторая кнопка - subgroup
+    const subgroup = subgroups.find(s => s.slug === item.subgroup_slug);
+    badgeTitles[1].textContent = subgroup ? subgroup.title : item.subgroup_slug || '';
+    badgeTitles[1].closest('button').onclick = () => navigateToSubgroupFromBreadcrumb(item.group_slug, item.subgroup_slug);
+
     container.appendChild(clone);
 }
 
-// Импорт функции для возврата к группе
-function goBackToGroup() {
-    // Получаем свойства текущей карточки
-    const groupSlug = document.querySelector('.group-slug').textContent;
-    const subgroupSlug = document.querySelector('.subgroup-slug').textContent;
-
-    // Формируем ссылку с использованием текущего домена
-    const url = `${window.location.origin}/group.html?slug=${groupSlug}#${subgroupSlug}`;
-
-    // Переход по ссылке
-    window.location.href = url;
-}

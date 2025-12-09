@@ -45,7 +45,7 @@
     </section>
 
     <div class="wrap-center detail-container-actions">
-        <button class="secondary-sm" onclick="goBackToGroup()" aria-label="Вернуться назад">
+        <button class="secondary-sm" onclick="navigateToSubgroupFromBreadcrumb()" aria-label="Вернуться назад">
             <span class="icon-schevron-left">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                     <path d="M6.25 10.0094C6.25 9.77618 6.34628 9.56234 6.50032 9.38743L12.2577 3.5954C12.6043 3.24554 13.1434 3.24554 13.4901 3.5954C13.8367 3.94525 13.8367 4.48947 13.4901 4.83933L8.32959 10.0094L13.4708 15.16C13.8174 15.5098 13.8174 16.0541 13.4708 16.4039C13.1242 16.7538 12.5851 16.7538 12.2384 16.4039L6.48107 10.6313C6.32702 10.4758 6.25 10.2426 6.25 10.0094Z"/>
@@ -75,6 +75,38 @@
                 <div class="detail-container-image">
                     <img class="image" src="" alt="">
                     <img class="image image-blur" src="" alt="">
+                </div>
+                
+                <div class="wrap-center">
+                    <div style="display: flex; align-items: center; gap: 4px; align-self: stretch;">
+                        <button onclick="window.location.href='index.html'" class="badge chip-neutral-label-small">
+                            <span class="icon-home-outline">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M15.8252 16.6666H13.3335V10.8332C13.3335 10.3724 12.9602 9.99992 12.5002 9.99992H7.50024C7.03941 9.99992 6.66691 10.3724 6.66691 10.8332V16.6666H4.16691L4.17191 9.65242L9.99854 3.69322L15.8335 9.68658L15.8252 16.6666ZM8.33354 16.6666H11.6669V11.6666H8.33354V16.6666ZM17.0202 8.48742L10.596 1.91738C10.2819 1.59655 9.71854 1.59655 9.40438 1.91738L2.97941 8.48825C2.67524 8.80075 2.50024 9.23742 2.50024 9.68658V16.6666C2.50024 17.5857 3.20608 18.3332 4.07358 18.3332H7.50024H12.5002H15.926C16.7935 18.3332 17.5002 17.5857 17.5002 16.6666V9.68658C17.5002 9.23742 17.3252 8.80075 17.0202 8.48742Z"/>
+                                </svg>
+                            </span>
+                        </button>
+                        
+                        <span class="icon-schevron-right">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M6.82135 4.68218L9.66675 8.00032L6.82135 11.3184C6.58536 11.5809 6.62402 11.9715 6.90668 12.1901C7.03135 12.2866 7.18268 12.3337 7.33335 12.3337C7.52402 12.3337 7.71335 12.2575 7.84535 12.1108L11.1787 8.39646C11.2047 8.36739 11.2181 8.33332 11.2374 8.30112C11.2534 8.27512 11.2727 8.25286 11.2847 8.22439C11.3147 8.15319 11.3327 8.07832 11.3327 8.00279L11.3334 8.00032L11.3327 7.99779C11.3327 7.92232 11.3147 7.84739 11.2847 7.77619C11.2727 7.74772 11.2534 7.72546 11.2374 7.69946C11.2181 7.66726 11.2047 7.63319 11.1787 7.60412L7.84535 3.88979C7.61002 3.62732 7.19002 3.59141 6.90668 3.81056C6.62402 4.02908 6.58536 4.4197 6.82135 4.68218Z"/>
+                            </svg>
+                        </span>
+                            
+                        <button onclick="navigateToGroupFromBreadcrumb()" href="" class="badge chip-neutral-label-small">
+                            <span class="md-medium badge-title"></span>
+                        </button>
+                        
+                        <span class="icon-schevron-right">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M6.82135 4.68218L9.66675 8.00032L6.82135 11.3184C6.58536 11.5809 6.62402 11.9715 6.90668 12.1901C7.03135 12.2866 7.18268 12.3337 7.33335 12.3337C7.52402 12.3337 7.71335 12.2575 7.84535 12.1108L11.1787 8.39646C11.2047 8.36739 11.2181 8.33332 11.2374 8.30112C11.2534 8.27512 11.2727 8.25286 11.2847 8.22439C11.3147 8.15319 11.3327 8.07832 11.3327 8.00279L11.3334 8.00032L11.3327 7.99779C11.3327 7.92232 11.3147 7.84739 11.2847 7.77619C11.2727 7.74772 11.2534 7.72546 11.2374 7.69946C11.2181 7.66726 11.2047 7.63319 11.1787 7.60412L7.84535 3.88979C7.61002 3.62732 7.19002 3.59141 6.90668 3.81056C6.62402 4.02908 6.58536 4.4197 6.82135 4.68218Z"/>
+                            </svg>
+                        </span>
+                        
+                        <button onclick="navigateToSubgroupFromBreadcrumb()" href="" class="badge chip-neutral-label-small">
+                            <span class="md-medium badge-title"></span>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="wrap-center detail-block1">

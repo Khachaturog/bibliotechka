@@ -920,7 +920,9 @@
 
 .secondary-lg svg,
 .secondary-lg-full svg,
-.secondary-sm svg {
+.secondary-sm svg,
+.icon-home-outline svg,
+.icon-schevron-right svg {
     fill: var(--02-content-secondary);
     width: 20px;
     height: 20px;

@@ -1,452 +1,470 @@
 [
   {
     "slug": "3d",
+    "title": "3D",
     "description": "О 3D-дизайне и моделировании",
-    "status": "",
-    "title": "3D"
-  },
-  {
-    "slug": "ai",
-    "description": "Об искусственном интеллекте в дизайне",
-    "status": "",
-    "title": "ИИ"
+    "status": ""
   },
   {
     "slug": "accessibility",
+    "title": "Доступность",
     "description": "О доступности и инклюзивном дизайне",
-    "status": "",
-    "title": "Доступность"
+    "status": ""
+  },
+  {
+    "slug": "ai",
+    "title": "ИИ",
+    "description": "Об искусственном интеллекте в дизайне",
+    "status": ""
   },
   {
     "slug": "animation",
+    "title": "Анимация",
     "description": "Ресурсы об анимации и моушн-дизайне",
-    "status": "",
-    "title": "Анимация"
+    "status": ""
   },
   {
     "slug": "app",
+    "title": "Приложения",
     "description": "Примеры и шаблоны мобильных приложений",
-    "status": "",
-    "title": "Приложения"
+    "status": ""
   },
   {
     "slug": "apple",
+    "title": "Apple",
     "description": "Ресурсы, связанные с дизайном продуктов Apple",
-    "status": "",
-    "title": "Apple"
+    "status": ""
   },
   {
     "slug": "article",
+    "title": "Статьи",
     "description": "Полезные статьи о дизайне и разработке",
-    "status": "archive",
-    "title": "Статьи"
+    "status": "archive"
   },
   {
     "slug": "attention",
+    "title": "Внимание",
     "description": "Ресурсы о привлечении внимания в дизайне",
-    "status": "",
-    "title": "Внимание"
+    "status": ""
   },
   {
     "slug": "blog",
+    "title": "Блог",
     "description": "Интересные блоги о дизайне и разработке",
-    "status": "",
-    "title": "Блог"
+    "status": ""
   },
   {
     "slug": "branding",
+    "title": "Брендинг",
     "description": "Ресурсы о брендинге и айдентике",
-    "status": "",
-    "title": "Брендинг"
-  },
-  {
-    "slug": "collection",
-    "description": "Подборки полезных ресурсов",
-    "status": "",
-    "title": "Коллекции"
+    "status": ""
   },
   {
     "slug": "brief",
+    "title": "Бриф",
     "description": "Примеры и шаблоны брифов",
-    "status": "",
-    "title": "Бриф"
+    "status": ""
+  },
+  {
+    "slug": "collection",
+    "title": "Коллекции",
+    "description": "Подборки полезных ресурсов",
+    "status": ""
   },
   {
     "slug": "color",
+    "title": "Цвет",
     "description": "О цвете и цветовых палитрах",
-    "status": "",
-    "title": "Цвет"
+    "status": ""
   },
   {
     "slug": "contest",
+    "title": "Конкурсы",
     "description": "Дизайн-конкурсы и соревнования",
-    "status": "",
-    "title": "Конкурсы"
+    "status": ""
   },
   {
     "slug": "course",
+    "title": "Курсы",
     "description": "Образовательные курсы по дизайну и разработке",
-    "status": "",
-    "title": "Курсы"
-  },
-  {
-    "slug": "design-process",
-    "description": "Ресурсы о процессе дизайна",
-    "status": "",
-    "title": "Дизайн-процесс"
+    "status": ""
   },
   {
     "slug": "demo",
+    "title": "Демо",
     "description": "Демонстрационные материалы и примеры",
-    "status": "",
-    "title": "Демо"
+    "status": ""
   },
   {
-    "slug": "ds",
-    "description": "Ресурсы о создании и использовании дизайн-систем",
-    "status": "",
-    "title": "Дизайн-системы"
+    "slug": "design-process",
+    "title": "Дизайн-процесс",
+    "description": "Ресурсы о процессе дизайна",
+    "status": ""
   },
   {
     "slug": "dribble-arena-pinterest",
+    "title": "Dribbble/Arena/Pinterest",
     "description": "Ресурсы с платформ Dribbble, Arena и Pinterest",
-    "status": "",
-    "title": "Dribbble/Arena/Pinterest"
+    "status": ""
+  },
+  {
+    "slug": "ds",
+    "title": "Дизайн-системы",
+    "description": "Ресурсы о создании и использовании дизайн-систем",
+    "status": ""
   },
   {
     "slug": "event",
+    "title": "Мероприятия",
     "description": "Дизайн-события, конференции и митапы",
-    "status": "",
-    "title": "Мероприятия"
-  },
-  {
-    "slug": "fonts",
-    "description": "Коллекции шрифтов и типографика",
-    "status": "",
-    "title": "Шрифты"
+    "status": ""
   },
   {
     "slug": "figma-code",
+    "title": "Figma и код",
     "description": "Ресурсы о взаимодействии Figma и кода",
-    "status": "",
-    "title": "Figma и код"
+    "status": ""
+  },
+  {
+    "slug": "fonts",
+    "title": "Шрифты",
+    "description": "Коллекции шрифтов и типографика",
+    "status": ""
   },
   {
     "slug": "foundation",
+    "title": "Основы дизайна",
     "description": "Базовые принципы и основы дизайна",
-    "status": "",
-    "title": "Основы дизайна"
+    "status": ""
   },
   {
     "slug": "graphic",
+    "title": "Графика",
     "description": "Ресурсы о графическом дизайне",
-    "status": "",
-    "title": "Графика"
+    "status": ""
   },
   {
     "slug": "illustration",
+    "title": "Иллюстрации",
     "description": "Ресурсы об иллюстрациях и графике",
-    "status": "",
-    "title": "Иллюстрации"
+    "status": ""
   },
   {
     "slug": "knowledge",
+    "title": "Знания",
     "description": "Базы знаний и образовательные ресурсы",
-    "status": "",
-    "title": "Знания"
+    "status": ""
   },
   {
     "slug": "newsletter",
+    "title": "Рассылка",
     "description": "О дизайне email-рассылок",
-    "status": "",
-    "title": "Рассылка"
+    "status": ""
   },
   {
     "slug": "material",
+    "title": "Material Design",
     "description": "Ресурсы о Material design",
-    "status": "",
-    "title": "Material Design"
-  },
-  {
-    "slug": null,
-    "description": "В скором времени мы подберем материалам свою группу",
-    "status": "archive",
-    "title": "Без категории"
+    "status": ""
   },
   {
     "slug": "mobbin",
+    "title": "Mobbin",
     "description": "Ресурсы с платформы Mobbin",
-    "status": "",
-    "title": "Mobbin"
+    "status": ""
+  },
+  {
+    "slug": null,
+    "title": "Без категории",
+    "description": "В скором времени мы подберем материалам свою группу",
+    "status": "archive"
   },
   {
     "slug": "other",
+    "title": "Разное",
     "description": "Различные ресурсы, не попадающие в другие подкатегории",
-    "status": "",
-    "title": "Разное"
+    "status": ""
   },
   {
     "slug": "paywall",
+    "title": "Пейволлы",
     "description": "О дизайне платного доступа",
-    "status": "",
-    "title": "Пейволлы"
+    "status": ""
   },
   {
     "slug": "photo",
+    "title": "Фотографии",
     "description": "О фотографии и фотостоках",
-    "status": "",
-    "title": "Фотографии"
-  },
-  {
-    "slug": "plugin",
-    "description": "Полезные плагины для дизайн-инструментов",
-    "status": "",
-    "title": "Плагины"
+    "status": ""
   },
   {
     "slug": "playground",
+    "title": "Песочницы",
     "description": "Интерактивные площадки для экспериментов",
-    "status": "",
-    "title": "Песочницы"
+    "status": ""
+  },
+  {
+    "slug": "plugin",
+    "title": "Плагины",
+    "description": "Полезные плагины для дизайн-инструментов",
+    "status": ""
   },
   {
     "slug": "portfolio",
+    "title": "Портфолио",
     "description": "Примеры и шаблоны портфолио",
-    "status": "",
-    "title": "Портфолио"
+    "status": ""
   },
   {
     "slug": "recommendation",
+    "title": "Рекомендации",
     "description": "Рекомендации по дизайну и разработке",
-    "status": "archive",
-    "title": "Рекомендации"
+    "status": "archive"
   },
   {
     "slug": "saas",
+    "title": "SaaS",
     "description": "Ресурсы о дизайне SaaS-продуктов",
-    "status": "",
-    "title": "SaaS"
+    "status": ""
   },
   {
     "slug": "sdui",
+    "title": "SDUI",
     "description": "О Server-Driven UI",
-    "status": "",
-    "title": "SDUI"
-  },
-  {
-    "slug": "survey",
-    "description": "О проведении опросов и исследований",
-    "status": "",
-    "title": "Опросы"
+    "status": ""
   },
   {
     "slug": "skill-hiring",
+    "title": "Трудоустройство",
     "description": "О развитии навыков и найме дизайнеров",
-    "status": "archive",
-    "title": "Трудоустройство"
+    "status": "archive"
+  },
+  {
+    "slug": "survey",
+    "title": "Опросы",
+    "description": "О проведении опросов и исследований",
+    "status": ""
   },
   {
     "slug": "teambuilding",
+    "title": "Тимбилдинг",
     "description": "О построении дизайн-команд",
-    "status": "",
-    "title": "Тимбилдинг"
+    "status": ""
   },
   {
     "slug": "telegram",
+    "title": "Телеграм",
     "description": "Полезные Telegram-каналы и боты",
-    "status": "archive",
-    "title": "Телеграм"
+    "status": "archive"
   },
   {
     "slug": "text",
+    "title": "Тексты",
     "description": "О копирайтинге и текстах в дизайне",
-    "status": "",
-    "title": "Тексты"
+    "status": ""
   },
   {
     "slug": "think",
+    "title": "Мышление",
     "description": "О дизайн-мышлении и методологиях",
-    "status": "archive",
-    "title": "Мышление"
-  },
-  {
-    "slug": "ui-kit",
-    "description": "Наборы компонентов пользовательского интерфейса",
-    "status": "archive",
-    "title": "UI-киты"
+    "status": "archive"
   },
   {
     "slug": "tool",
+    "title": "Инструменты",
     "description": "Полезные инструменты для дизайнеров и разработчиков",
-    "status": "",
-    "title": "Инструменты"
+    "status": ""
   },
   {
-    "slug": "ux",
-    "description": "О пользовательском опыте",
-    "status": "",
-    "title": "UX"
+    "slug": "ui-kit",
+    "title": "UI-киты",
+    "description": "Наборы компонентов пользовательского интерфейса",
+    "status": "archive"
   },
   {
     "slug": "uichallenge",
+    "title": "UI-челленджи",
     "description": "Задания и вызовы для дизайнеров интерфейсов",
-    "status": "archive",
-    "title": "UI-челленджи"
+    "status": "archive"
+  },
+  {
+    "slug": "ux",
+    "title": "UX",
+    "description": "О пользовательском опыте",
+    "status": ""
   },
   {
     "slug": "web",
+    "title": "Веб",
     "description": "О веб-дизайне и веб-разработке",
-    "status": "",
-    "title": "Веб"
+    "status": ""
   },
   {
     "slug": "skillset",
+    "title": "Скиллсет",
     "description": "Карта компетенций",
-    "status": "",
-    "title": "Скиллсет"
+    "status": ""
   },
   {
     "slug": "basic",
+    "title": "Основы",
     "description": "Базовые принципы и ключевые понятия дизайна",
-    "status": "new",
-    "title": "Основы"
+    "status": "new"
   },
   {
     "slug": "blueprint",
+    "title": "Чертежи",
     "description": "Планы, схемы и архитектура интерфейсов",
-    "status": "new",
-    "title": "Чертежи"
+    "status": "new"
   },
   {
     "slug": "brainstorm",
+    "title": "Брейнштормы",
     "description": "Методики и инструменты для генерации идей",
-    "status": "new",
-    "title": "Брейнштормы"
+    "status": "new"
   },
   {
     "slug": "catalog",
+    "title": "Каталог",
     "description": "Сборники и библиотеки",
-    "status": "new",
-    "title": "Каталог"
+    "status": "new"
   },
   {
     "slug": "darkpattern",
+    "title": "Дарк-паттерны",
     "description": "Примеры манипулятивных UX-приемов",
-    "status": "new",
-    "title": "Дарк-паттерны"
+    "status": "new"
   },
   {
     "slug": "dataviz",
+    "title": "Визуализация данных",
     "description": "Ресурсы о графиках, инфографике и дашбордах",
-    "status": "new",
-    "title": "Визуализация данных"
+    "status": "new"
   },
   {
     "slug": "documentary",
+    "title": "Документальные фильмы",
     "description": "О жизни людей",
-    "status": "new",
-    "title": "Документальные фильмы"
+    "status": "new"
   },
   {
     "slug": "editor",
+    "title": "Редактура",
     "description": "О редактуре и работе с текстом",
-    "status": "new",
-    "title": "Редактура"
+    "status": "new"
   },
   {
     "slug": "food",
+    "title": "Еда",
     "description": "",
-    "status": "new",
-    "title": "Еда"
+    "status": "new"
   },
   {
     "slug": "future",
+    "title": "Будущее",
     "description": "Тренды, прогнозы и футуристические концепции дизайна",
-    "status": "new",
-    "title": "Будущее"
+    "status": "new"
   },
   {
     "slug": "game",
+    "title": "Игры",
     "description": "",
-    "status": "new",
-    "title": "Игры"
+    "status": "new"
   },
   {
     "slug": "guidelines",
+    "title": "Гайдлайны",
     "description": "Стандарты и правила дизайна от компаний и сообществ",
-    "status": "new",
-    "title": "Гайдлайны"
+    "status": "new"
   },
   {
     "slug": "hiring",
+    "title": "Карьера",
     "description": "Советы по трудоустройству и развитию в профессии",
-    "status": "new",
-    "title": "Карьера"
+    "status": "new"
   },
   {
     "slug": "history",
+    "title": "История",
     "description": "Эволюция дизайна",
-    "status": "new",
-    "title": "История"
+    "status": "new"
   },
   {
     "slug": "industrial",
+    "title": "Промышленный дизайн",
     "description": "О дизайне физических продуктов и объектов",
-    "status": "new",
-    "title": "Промышленный дизайн"
+    "status": "new"
   },
   {
     "slug": "interface",
+    "title": "Интерфейсы",
     "description": "Об интерфейсных паттернах и UI-практиках",
-    "status": "new",
-    "title": "Интерфейсы"
+    "status": "new"
   },
   {
     "slug": "kit",
+    "title": "Киты",
     "description": "Наборы шаблонов и ресурсов для проектирования интерфейсов",
-    "status": "new",
-    "title": "Киты"
+    "status": "new"
   },
   {
     "slug": "layout",
+    "title": "Макеты",
     "description": "Примеры и принципы построения сеток и лэйаутов",
-    "status": "new",
-    "title": "Макеты"
+    "status": "new"
   },
   {
     "slug": "metric",
+    "title": "Метрики",
     "description": "Измерения, аналитика и показатели эффективности дизайна",
-    "status": "new",
-    "title": "Метрики"
+    "status": "new"
   },
   {
     "slug": "mobile",
+    "title": "Мобайл",
     "description": "Примеры и гайды по мобильному дизайну",
-    "status": "new",
-    "title": "Мобайл"
+    "status": "new"
   },
   {
     "slug": "test",
+    "title": "Тестовые задания",
     "description": "Задания от работодателей",
-    "status": "new",
-    "title": "Тестовые задания"
+    "status": "new"
   },
   {
     "slug": "ui",
+    "title": "UI",
     "description": "О визуальном оформлении пользовательских интерфейсов",
-    "status": "new",
-    "title": "UI"
+    "status": "new"
   },
   {
     "slug": "whiteboard",
+    "title": "Вайтборды",
     "description": "Инструменты и подходы для совместной работы и визуализации идей",
-    "status": "new",
-    "title": "Вайтборды"
+    "status": "new"
   },
   {
     "slug": "windows",
+    "title": "Windows",
     "description": "Примеры и принципы дизайна под Windows-среду",
-    "status": "new",
-    "title": "Windows"
+    "status": "new"
+  },
+  {
+    "slug": "project",
+    "title": "Управление",
+    "description": "Советы по менеджменту",
+    "status": "new"
+  },
+  {
+    "slug": "health",
+    "title": "Здоровье",
+    "description": "Советы для поддержания здоровья",
+    "status": "new"
+  },
+  {
+    "slug": "icon",
+    "title": "Иконки",
+    "description": "Бесплатные паки пиктограмм",
+    "status": "new"
   }
 ]

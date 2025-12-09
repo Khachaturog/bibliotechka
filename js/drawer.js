@@ -135,6 +135,18 @@ async function fillSearchGroupsAndSubgroups() {
         const badge = badgeTemplate.content.firstElementChild.cloneNode(true);
         badge.href = `group.html?slug=${group.group_slug}#${subgroup.slug}`;
         badge.textContent = subgroup.title;
+        // Закрываем поиск перед переходом
+        badge.addEventListener('click', (e) => {
+          const search = document.getElementById('search');
+          if (search && search.classList.contains('open')) {
+            e.preventDefault();
+            toggleSearch();
+            // Выполняем переход после закрытия поиска
+            setTimeout(() => {
+              window.location.href = `group.html?slug=${group.group_slug}#${subgroup.slug}`;
+            }, 100);
+          }
+        });
         badgesDiv.appendChild(badge);
       });
       badgeWrap.appendChild(groupBlock);
