@@ -1,0 +1,34 @@
+# Apache конфигурация для API и красивых URL
+# Перенаправляет все запросы к /api/* на api/index.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Исключаем существующие файлы и директории
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    
+    # Перенаправляем запросы к API (должно быть первым, чтобы не конфликтовать с красивыми URL)
+    RewriteCond %{REQUEST_URI} ^/api/
+    RewriteRule ^api/(.*)$ /api/index.php?path=$1 [QSA,L]
+    
+    # Перенаправление красивых URL карточек на detail.html через PHP скрипт
+    # Формат: /card/gajd-po-tekstam-v-interfejse-001
+    RewriteCond %{REQUEST_URI} ^/card/([a-z0-9-]+)/?$
+    RewriteRule ^card/([a-z0-9-]+)/?$ /detail-seo.php?url_seo_yandex=$1 [QSA,L]
+    
+    # Перенаправление красивых URL групп на group.html
+    # Формат: /designsystem
+    # Исключаем известные файлы и директории
+    RewriteCond %{REQUEST_URI} !^/(index\.html|group\.html|detail\.html|api|images|css|js|scripts|other|database|data|detail-seo\.php)
+    RewriteRule ^([^/]+)/?$ /group.html?slug=$1 [QSA,L]
+</IfModule>
+
+# Разрешаем CORS (если нужно)
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type"
+</IfModule>
+

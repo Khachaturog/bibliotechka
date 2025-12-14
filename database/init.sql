@@ -1,8 +1,21 @@
 -- Инициализация базы данных Библиотечка
--- Этот файл автоматически выполняется при первом запуске Docker контейнера
+-- 
+-- ВАЖНО: Этот файл выполняется ТОЛЬКО при первом создании базы данных
+-- (когда volume пустой). При перезапуске контейнера данные сохраняются.
+-- 
+-- ⚠️ ПРЕДУПРЕЖДЕНИЕ: 
+-- - Если удалить volume (docker volume rm), все данные будут потеряны
+-- - Перед удалением volume сделайте бекап: docker exec bibliotechka-mysql mysqldump ...
+-- - Все таблицы создаются с IF NOT EXISTS - безопасно для повторного выполнения
+--
 -- Создаёт все необходимые таблицы с правильной структурой
+-- Использует IF NOT EXISTS для защиты существующих данных
 
 USE bibliotechka;
+
+-- Отключаем проверку внешних ключей на время создания таблиц
+-- (на случай, если таблицы создаются в неправильном порядке)
+SET FOREIGN_KEY_CHECKS = 0;
 
 -- Таблица groups (Группы)
 CREATE TABLE IF NOT EXISTS `groups` (
@@ -23,8 +36,6 @@ CREATE TABLE IF NOT EXISTS `groups` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`slug`),
-  UNIQUE KEY `slug` (`slug`),
-  KEY `idx_slug` (`slug`),
   KEY `idx_sort` (`sort`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -37,11 +48,37 @@ CREATE TABLE IF NOT EXISTS `subgroups` (
   `status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`slug`),
-  KEY `idx_slug` (`slug`)
+  PRIMARY KEY (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Таблица versions (Версии/релизы)
+-- Создается ПЕРЕД data, так как data имеет внешний ключ на versions
+CREATE TABLE IF NOT EXISTS `versions` (
+  `slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `version` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `release_date` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `url` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at_db` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at_db` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Таблица authors (Авторы)
+-- Создается ПЕРЕД card_authors, так как card_authors имеет внешний ключ на authors
+CREATE TABLE IF NOT EXISTS `authors` (
+  `slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title_ru` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title_en` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `avatar` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at_db` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at_db` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`slug`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Таблица data (Элементы/карточки)
+-- Создается ПОСЛЕ groups, subgroups и versions (имеет внешние ключи на них)
 CREATE TABLE IF NOT EXISTS `data` (
   `slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -78,42 +115,18 @@ CREATE TABLE IF NOT EXISTS `data` (
   `created_at_db` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at_db` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`slug`),
-  KEY `idx_slug` (`slug`),
   KEY `idx_group_slug` (`group_slug`),
   KEY `idx_subgroup_slug` (`subgroup_slug`),
   KEY `idx_status_slug` (`status_slug`),
   KEY `idx_group_subgroup` (`group_slug`,`subgroup_slug`),
-  KEY `fk_data_version` (`version_slug`),
+  KEY `idx_version_slug` (`version_slug`),
   CONSTRAINT `data_ibfk_1` FOREIGN KEY (`group_slug`) REFERENCES `groups` (`slug`) ON DELETE CASCADE,
   CONSTRAINT `data_ibfk_2` FOREIGN KEY (`subgroup_slug`) REFERENCES `subgroups` (`slug`) ON DELETE CASCADE,
   CONSTRAINT `fk_data_version` FOREIGN KEY (`version_slug`) REFERENCES `versions` (`slug`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Таблица versions (Версии/релизы)
-CREATE TABLE IF NOT EXISTS `versions` (
-  `slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `version` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
-  `release_date` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `url` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `created_at_db` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at_db` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`slug`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Таблица authors (Авторы)
-CREATE TABLE IF NOT EXISTS `authors` (
-  `slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `title_ru` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `title_en` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `avatar` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `created_at_db` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at_db` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`slug`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 -- Таблица card_authors (Связь карточек и авторов)
+-- Создается ПОСЛЕ data и authors (имеет внешние ключи на них)
 CREATE TABLE IF NOT EXISTS `card_authors` (
   `card_slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `author_slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -124,4 +137,16 @@ CREATE TABLE IF NOT EXISTS `card_authors` (
   CONSTRAINT `fk_card_authors_author` FOREIGN KEY (`author_slug`) REFERENCES `authors` (`slug`) ON DELETE CASCADE,
   CONSTRAINT `fk_card_authors_card` FOREIGN KEY (`card_slug`) REFERENCES `data` (`slug`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Включаем проверку внешних ключей обратно
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- Проверка: выводим информацию о созданных таблицах
+-- (только для отладки, можно закомментировать в продакшене)
+-- SELECT 
+--   TABLE_NAME as 'Таблица',
+--   TABLE_ROWS as 'Записей'
+-- FROM information_schema.TABLES 
+-- WHERE TABLE_SCHEMA = 'bibliotechka' 
+-- ORDER BY TABLE_NAME;
 

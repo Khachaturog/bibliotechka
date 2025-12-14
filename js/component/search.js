@@ -7,24 +7,11 @@ class SearchComponent extends HTMLElement {
             <header-component></header-component>
         </div>
 
-        <!-- <div class="header-wrap-center" style="padding: 16px;">
-            <div class="search-input-wrap-wrap">
-                <div class="search-input-wrap">
-                    <span class="icon-input-search">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M4.16667 9.16667C4.16667 6.40917 6.40917 4.16667 9.16667 4.16667C11.9242 4.16667 14.1667 6.40917 14.1667 9.16667C14.1667 11.9242 11.9242 14.1667 9.16667 14.1667C6.40917 14.1667 4.16667 11.9242 4.16667 9.16667ZM17.2558 16.0775L14.4267 13.2475C15.3042 12.1192 15.8333 10.705 15.8333 9.16667C15.8333 5.49083 12.8425 2.5 9.16667 2.5C5.49083 2.5 2.5 5.49083 2.5 9.16667C2.5 12.8425 5.49083 15.8333 9.16667 15.8333C10.705 15.8333 12.1192 15.3042 13.2475 14.4267L16.0775 17.2558C16.24 17.4183 16.4533 17.5 16.6667 17.5C16.88 17.5 17.0933 17.4183 17.2558 17.2558C17.5817 16.93 17.5817 16.4033 17.2558 16.0775Z"/>
-                        </svg>
-                    </span>
-                    <input type="text" class="search-input" placeholder="Введите название материала..." />
-                </div>
-            </div>
-        </div> -->
-
         <div class="header-wrap-footer">
             <section class="search-badge-wrap">
                 <template class="search-group-block">
                     <div class="search-group-block">
-                        <h2 class="h3 group-title"></h2>
+                        <h2 class="h3 group-title" style="margin-left: 4px;"></h2>
                         <div class="subgroup-badges"></div>
                     </div>
                 </template>
@@ -33,12 +20,6 @@ class SearchComponent extends HTMLElement {
                 </template>
             </section>
         </div>
-
-        <!-- <div class="button-return" style="color: var(--02-content-on-solid);">
-            <span class="md-regular">
-                Нажмите, чтобы закрыть
-            </span>
-        </div> -->
 
         <div class="drawer-overlay" onclick="toggleSearch()"></div>
 

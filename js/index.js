@@ -4,6 +4,9 @@
 const SKELETON_DELAY = 300;
 const SKELETON_MIN_DISPLAY = 500;
 
+// Конфигурация API
+const API_BASE = window.CONFIG?.API_BASE || '/api/v1';
+
 document.addEventListener('DOMContentLoaded', async () => {
     const groupsSkeletons = document.getElementById('groups-skeletons');
     const cardsSkeletons = document.getElementById('cards-skeletons');
@@ -23,31 +26,51 @@ document.addEventListener('DOMContentLoaded', async () => {
         skeletonsShownAt = Date.now();
     }, SKELETON_DELAY);
     
-    // Загружаем данные
-    const [dataResponse, groupsResponse] = await Promise.all([
-        fetch('data/data.json'),
-        fetch('data/group.json')
-    ]);
+    try {
+        // Используем легковесные эндпоинты для главной страницы
+        // 1. Легковесный groups (только основные поля)
+        // 2. Легковесный cards (только для превью)
+        const [dataResponse, groupsResponse] = await Promise.all([
+            fetch(window.CONFIG?.getApiUrl('data/list', { status_slug: 'published' }) || `${API_BASE}/data/list?status_slug=published`),
+            fetch(window.CONFIG?.getApiUrl('groups/list') || `${API_BASE}/groups/list`)
+        ]);
 
-    const data = await dataResponse.json();
-    const groups = await groupsResponse.json();
-    
-    // Отменяем таймер, если данные пришли быстро
-    clearTimeout(skeletonTimer);
-    
-    // Если скелетоны были показаны, ждём минимум 500ms
-    if (skeletonsShown) {
-        const elapsed = Date.now() - skeletonsShownAt;
-        if (elapsed < SKELETON_MIN_DISPLAY) {
-            await new Promise(resolve => setTimeout(resolve, SKELETON_MIN_DISPLAY - elapsed));
+        if (!dataResponse.ok) {
+            throw new Error(`HTTP error! status: ${dataResponse.status}`);
+        }
+        if (!groupsResponse.ok) {
+            throw new Error(`HTTP error! status: ${groupsResponse.status}`);
+        }
+
+        const data = await dataResponse.json();
+        const groups = await groupsResponse.json();
+        
+        // Отменяем таймер, если данные пришли быстро
+        clearTimeout(skeletonTimer);
+        
+        // Сортировка групп по свойству sort
+        const sortedGroups = groups.slice().sort((a, b) => a.sort - b.sort);
+
+        // Показываем контент сразу без задержки
+        // Если скелетоны были показаны, они будут скрыты в displayGroups/displayCards
+        displayGroups(sortedGroups);
+        displayCards(data);
+    } catch (error) {
+        // Отменяем таймер при ошибке
+        clearTimeout(skeletonTimer);
+        
+        console.error('Ошибка загрузки данных:', error);
+        
+        // Скрываем скелетоны при ошибке
+        if (groupsSkeletons) groupsSkeletons.style.display = 'none';
+        if (cardsSkeletons) cardsSkeletons.style.display = 'none';
+        
+        // Можно показать сообщение пользователю
+        const container = document.querySelector('.cards-container');
+        if (container) {
+            container.innerHTML = '<p style="text-align: center; padding: 2rem; color: #666;">Не удалось загрузить данные. Пожалуйста, обновите страницу.</p>';
         }
     }
-
-    // Сортировка групп по свойству sort
-    const sortedGroups = groups.slice().sort((a, b) => a.sort - b.sort);
-
-    displayGroups(sortedGroups);
-    displayCards(data);
 });
 
 // Функция для перемешивания массива (Fisher-Yates)
@@ -80,13 +103,14 @@ function displayGroups(groups) {
         const title = clone.querySelector('.group-title');
         const description = clone.querySelector('.group-description');
 
-        card.href = `group.html?slug=${group.slug}`;
+        card.href = window.CONFIG?.getGroupUrl(group.slug) || `/${group.slug}`;
         img.src = group.cover;
-        img.alt = group.title;
-        title.textContent = group.title;
+        img.alt = group.title_ru || group.title;
+        title.textContent = group.title_ru || group.title;
 
-        if (group.description) {
-            description.textContent = group.description;
+        const descriptionText = group.description_ru || group.description;
+        if (descriptionText) {
+            description.textContent = descriptionText;
             description.hidden = false;
         }
 
@@ -108,8 +132,15 @@ function displayCards(data) {
     // Скрываем скелетоны
     if (skeletons) skeletons.remove();
 
-    // Фильтруем только опубликованные карточки
+    // API уже возвращает только опубликованные карточки (status_slug=published)
+    // Но оставляем фильтрацию как fallback на случай ошибок API
     const publishedCards = data.filter(item => item.status_slug === 'published');
+
+    // Обновляем количество карточек
+    const cardsCountElement = document.getElementById('cards-count');
+    if (cardsCountElement) {
+        cardsCountElement.textContent = publishedCards.length;
+    }
 
     // Перемешиваем карточки
     shuffleArray(publishedCards);
@@ -122,7 +153,7 @@ function displayCards(data) {
         const title = clone.querySelector('.card-title');
         const description = clone.querySelector('.card-description');
 
-        card.href = `detail.html?slug=${item.slug}`;
+        card.href = window.CONFIG?.getCardUrl(item.slug, item.url_seo_yandex) || `/detail.html?slug=${item.slug}`;
         img.src = item.cover;
         img.alt = item.title;
         title.textContent = item.title;

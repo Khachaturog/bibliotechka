@@ -22,16 +22,84 @@ Database: bibliotechka
 
 ## Структура базы данных
 
-- **groups** - Группы (из group.json)
-- **subgroups** - Подгруппы (из subgroup.json)
-- **data** - Элементы (из data.json, ранее называлась `items`)
-- **versions** - Версии/релизы проекта
-- **authors** - Авторы материалов
-- **card_authors** - Связь карточек и авторов (many-to-many)
+База данных содержит **6 таблиц**:
+
+### Основные таблицы
+
+1. **`groups`** - Группы (категории материалов)
+   - Соответствует данным из `group.json`
+   - Первичный ключ: `slug`
+   - Содержит SEO поля, Open Graph метаданные
+   - Документация: [`database/tables/groups/README.md`](tables/groups/README.md)
+
+2. **`subgroups`** - Подгруппы (подкатегории материалов)
+   - Соответствует данным из `subgroup.json`
+   - Первичный ключ: `slug`
+   - Документация: [`database/tables/subgroups/README.md`](tables/subgroups/README.md)
+
+3. **`data`** - Элементы/карточки (основной контент)
+   - Соответствует данным из `data.json`
+   - Первичный ключ: `slug`
+   - Внешние ключи: `group_slug`, `subgroup_slug`, `version_slug`
+   - Документация: [`database/tables/data/README.md`](tables/data/README.md)
+
+### Вспомогательные таблицы
+
+4. **`versions`** - Версии/релизы проекта
+   - Хранит информацию о версиях проекта
+   - Первичный ключ: `slug`
+   - Документация: [`database/tables/versions/README.md`](tables/versions/README.md)
+
+5. **`authors`** - Авторы материалов
+   - Хранит информацию об авторах
+   - Первичный ключ: `slug`
+   - Документация: [`database/tables/authors/README.md`](tables/authors/README.md)
+
+6. **`card_authors`** - Связь карточек и авторов (many-to-many)
+   - Связующая таблица между `data` и `authors`
+   - Составной первичный ключ: (`card_slug`, `author_slug`)
+   - Позволяет одной карточке иметь несколько авторов
+   - Документация: [`database/tables/card_authors/README.md`](tables/card_authors/README.md)
+
+### Схема связей
+
+```
+groups (1) ──< (N) data (N) >── (1) subgroups
+                          │
+                          │ (N)
+                          │
+                          v
+                    card_authors
+                          │ (N)
+                          │
+                          v
+                    authors (1)
+
+data (N) >── (1) versions
+```
+
+Подробная документация по каждой таблице находится в папке [`database/tables/`](tables/).
+
+## Миграция кода с JSON на MySQL
+
+📖 **[Правила миграции кода](CODE_MIGRATION_RULES.md)** - подробное руководство по изменению JavaScript кода для работы с MySQL через API вместо JSON файлов.
 
 ## Инициализация базы данных
 
-При первом запуске Docker контейнера база данных автоматически инициализируется из файла `database/init.sql`, который создаёт все необходимые таблицы.
+При первом запуске Docker контейнера база данных автоматически инициализируется из файла `database/init.sql`, который создаёт все **6 таблиц** в правильном порядке:
+
+1. `groups` (независимая)
+2. `subgroups` (независимая)
+3. `versions` (независимая, нужна для `data`)
+4. `authors` (независимая, нужна для `card_authors`)
+5. `data` (зависит от `groups`, `subgroups`, `versions`)
+6. `card_authors` (зависит от `data` и `authors`)
+
+**Важно:** Файл `init.sql` выполняется **только** при первом создании базы данных (когда volume пустой). При перезапуске контейнера данные сохраняются. 
+
+📖 **Дополнительная документация:**
+- [`backup_restore.md`](backup_restore.md) - создание бэкапов и восстановление данных
+- [`connection_troubleshooting.md`](connection_troubleshooting.md) - решение проблем с подключением
 
 ## Миграции
 
@@ -78,6 +146,10 @@ User: bibliotechka_user
 Password: user_password_change_me
 Database: bibliotechka
 ```
+
+### Решение проблем с подключением
+
+Если возникают проблемы с подключением, см. [`connection_troubleshooting.md`](connection_troubleshooting.md).
 
 ## Полезные команды Docker
 

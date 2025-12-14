@@ -22,8 +22,8 @@
 | `og_title` | VARCHAR(255) | YES | | Open Graph заголовок |
 | `sort` | INT | YES | MUL | Порядок сортировки |
 | `title_seo` | VARCHAR(255) | YES | | SEO заголовок |
-| `created_at` | TIMESTAMP | YES | | Дата создания |
-| `updated_at` | TIMESTAMP | YES | | Дата обновления |
+| `created_at` | TIMESTAMP | YES | | Дата создания (автоматически) |
+| `updated_at` | TIMESTAMP | YES | | Дата обновления (автоматически) |
 
 ## Индексы
 

@@ -83,8 +83,8 @@ function toggleSearch() {
 function getSearchGroups(data) {
   const groupMap = new Map();
   data.forEach(item => {
-    if (!groupMap.has(item.group_slug)) {
-      groupMap.set(item.group_slug, { group: item.group, group_slug: item.group_slug });
+    if (!groupMap.has(item.group_slug) && item.group_slug) {
+      groupMap.set(item.group_slug, { group_slug: item.group_slug });
     }
   });
   return Array.from(groupMap.values());
@@ -97,7 +97,7 @@ function getSearchSubgroups(data, subgroupsList, group_slug) {
   // Для каждого slug ищем объект с title
   return subgroupSlugs.map(slug => {
     const found = subgroupsList.find(sg => sg.slug === slug);
-    return found ? found : { slug, title: slug };
+    return found ? found : { slug, title_ru: slug, title: slug };
   });
 }
 
@@ -108,12 +108,29 @@ async function fillSearchGroupsAndSubgroups() {
   const badgeTemplate = document.querySelector('template.search-badge-template');
   if (!badgeWrap || !groupTemplate || !badgeTemplate) return;
   badgeWrap.innerHTML = '';
+  
+  // Конфигурация API
+  const API_BASE = window.CONFIG?.API_BASE || '/api/v1';
+  
   try {
+    // Для поиска нужны только slug, group_slug, subgroup_slug
+    // Используем легковесный запрос для карточек
     const [dataResponse, subgroupsResponse, groupsResponse] = await Promise.all([
-      fetch('data/data.json'),
-      fetch('data/subgroup.json'),
-      fetch('data/group.json')
+      fetch(window.CONFIG?.getApiUrl('data/list', { status_slug: 'published' }) || `${API_BASE}/data/list?status_slug=published`),
+      fetch(window.CONFIG?.getApiUrl('subgroups') || `${API_BASE}/subgroups`),
+      fetch(window.CONFIG?.getApiUrl('groups/list') || `${API_BASE}/groups/list`)
     ]);
+
+    if (!dataResponse.ok) {
+      throw new Error(`HTTP error! status: ${dataResponse.status}`);
+    }
+    if (!subgroupsResponse.ok) {
+      throw new Error(`HTTP error! status: ${subgroupsResponse.status}`);
+    }
+    if (!groupsResponse.ok) {
+      throw new Error(`HTTP error! status: ${groupsResponse.status}`);
+    }
+
     const data = await dataResponse.json();
     const subgroupsList = await subgroupsResponse.json();
     const groupList = await groupsResponse.json();
@@ -125,16 +142,15 @@ async function fillSearchGroupsAndSubgroups() {
       const groupTitle = groupBlock.querySelector('.group-title');
       const groupInfo = groupList.find(g => g.slug === group.group_slug);
       if (groupTitle) {
-        groupTitle.textContent = groupInfo ? groupInfo.title : group.group;
-        groupTitle.style.display = 'block';
+        groupTitle.textContent = groupInfo ? (groupInfo.title_ru || groupInfo.title) : group.group_slug;
       }
       // Бейджи
       const badgesDiv = groupBlock.querySelector('.subgroup-badges');
       badgesDiv.innerHTML = '';
       subgroups.forEach(subgroup => {
         const badge = badgeTemplate.content.firstElementChild.cloneNode(true);
-        badge.href = `group.html?slug=${group.group_slug}#${subgroup.slug}`;
-        badge.textContent = subgroup.title;
+        badge.href = window.CONFIG?.getGroupUrl(group.group_slug, subgroup.slug) || `/${group.group_slug}#${subgroup.slug}`;
+        badge.textContent = subgroup.title_ru || subgroup.title;
         // Закрываем поиск перед переходом
         badge.addEventListener('click', (e) => {
           const search = document.getElementById('search');
@@ -143,7 +159,7 @@ async function fillSearchGroupsAndSubgroups() {
             toggleSearch();
             // Выполняем переход после закрытия поиска
             setTimeout(() => {
-              window.location.href = `group.html?slug=${group.group_slug}#${subgroup.slug}`;
+              window.location.href = window.CONFIG?.getGroupUrl(group.group_slug, subgroup.slug) || `/${group.group_slug}#${subgroup.slug}`;
             }, 100);
           }
         });

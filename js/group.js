@@ -1,20 +1,74 @@
 // Скрипт для страницы групп
 
+// Конфигурация API
+const API_BASE = window.CONFIG?.API_BASE || '/api/v1';
+
 document.addEventListener('DOMContentLoaded', async () => {
-        const [dataResponse, groupsResponse, subgroupsResponse] = await Promise.all([
-                fetch('data/data.json'),
-                fetch('data/group.json'),
-                fetch('data/subgroup.json')
-        ]);
-        const data = await dataResponse.json();
-        const groups = await groupsResponse.json();
-        const subgroups = await subgroupsResponse.json();
+        // Получаем slug из query параметров или из пути URL (для красивых URL)
         const params = new URLSearchParams(window.location.search);
-        const groupSlug = params.get('slug');
-        const group = groups.find(g => g.slug === groupSlug);
-        if (group) {
-                document.querySelector('.container-title').textContent = group.title;
-                document.querySelector('.container-description').textContent = group.description || '';
+        let groupSlug = params.get('slug');
+        
+        // Если slug нет в query параметрах, пытаемся получить из пути URL
+        // Это нужно для красивых URL типа /designsystem
+        if (!groupSlug) {
+                const path = window.location.pathname;
+                // Убираем начальный и конечный слэш, фильтруем пустые части
+                const pathParts = path.split('/').filter(part => part && part !== 'group.html' && part !== 'index.html');
+                // Берем последнюю часть пути как slug
+                // Например: /designsystem -> ['designsystem']
+                // Или: /group.html -> [] (не подходит)
+                if (pathParts.length > 0) {
+                        groupSlug = pathParts[pathParts.length - 1];
+                }
+        }
+        
+        if (!groupSlug) {
+                console.error('Group slug not found in URL');
+                return;
+        }
+        
+        try {
+                // Для страницы группы нужны:
+                // 1. Полный group (со всеми SEO полями)
+                // 2. Полный subgroups (все подгруппы)
+                // 3. Легковесный cards (только для списка)
+                const [groupResponse, subgroupsResponse, dataResponse] = await Promise.all([
+                        fetch(window.CONFIG?.getApiUrl('groups', { slug: groupSlug }) || `${API_BASE}/groups?slug=${groupSlug}`),
+                        fetch(window.CONFIG?.getApiUrl('subgroups') || `${API_BASE}/subgroups`),
+                        fetch(window.CONFIG?.getApiUrl('data/list', { group_slug: groupSlug }) || `${API_BASE}/data/list?group_slug=${groupSlug}`)
+                ]);
+
+                if (!groupResponse.ok) {
+                        throw new Error(`HTTP error! status: ${groupResponse.status}`);
+                }
+                if (!subgroupsResponse.ok) {
+                        throw new Error(`HTTP error! status: ${subgroupsResponse.status}`);
+                }
+                if (!dataResponse.ok) {
+                        throw new Error(`HTTP error! status: ${dataResponse.status}`);
+                }
+
+                const groups = await groupResponse.json();
+                const subgroups = await subgroupsResponse.json();
+                const data = await dataResponse.json();
+                
+                // API возвращает массив, берем первый элемент
+                const group = groups[0];
+                
+                if (!group) {
+                        throw new Error('Group not found');
+                }
+                
+                // Обновляем заголовок и описание группы
+                const titleElement = document.querySelector('.container-title');
+                const descriptionElement = document.querySelector('.container-description');
+                
+                if (titleElement) {
+                        titleElement.textContent = group.title_ru || group.title;
+                }
+                if (descriptionElement) {
+                        descriptionElement.textContent = group.description_ru || group.description || '';
+                }
 
                 // --- SEO META TAGS DYNAMIC UPDATE ---
                 // Title
@@ -71,6 +125,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 // --- END SEO META TAGS ---
 
+                // API уже возвращает отфильтрованные данные по group_slug
+                // Но оставляем фильтрацию как fallback
                 const filteredData = data.filter(item => item.group_slug === groupSlug);
                 displaySubgroupsAndCards(filteredData, subgroups);
                         // Скроллим к якорю после отрисовки с задержкой 50мс
@@ -91,6 +147,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 }
                             }, 100);
                         }
+        } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+                
+                // Показываем сообщение пользователю
+                const container = document.querySelector('.subgroups-wrap');
+                if (container) {
+                        container.innerHTML = '<p style="text-align: center; padding: 2rem; color: #666;">Не удалось загрузить данные. Пожалуйста, обновите страницу.</p>';
+                }
         }
 });
 
@@ -121,7 +185,7 @@ function createBadge(subgroup) {
     const clone = badgeTemplate.content.cloneNode(true);
     const badge = clone.querySelector('.badge');
     badge.href = `#${subgroup.slug}`;
-    badge.querySelector('.badge-title').textContent = subgroup.title;
+    badge.querySelector('.badge-title').textContent = subgroup.title_ru || subgroup.title;
 
     // Добавляем обработчик клика для перехода к якорной ссылке
     badge.addEventListener('click', (e) => {
@@ -189,7 +253,7 @@ function createSubgroup(subgroup, subgroupData) {
     subgroupElement.id = subgroup.slug;
 
     const title = clone.querySelector('.container-title');
-    title.textContent = subgroup.title;
+    title.textContent = subgroup.title_ru || subgroup.title;
 
 // Кнопка для копирования ссылки
 const button = clone.querySelector('.subtle-violet-24');
@@ -214,9 +278,10 @@ const copiedIcon = button.querySelector('.icon-copied');
     });
 
 // Описание подгруппы
-    if (subgroup.description) {
+    const descriptionText = subgroup.description_ru || subgroup.description;
+    if (descriptionText) {
         const description = clone.querySelector('.container-description');
-        description.textContent = subgroup.description;
+        description.textContent = descriptionText;
         description.hidden = false;
     }
 
@@ -238,7 +303,7 @@ function createCard(item) {
     }
     const clone = cardTemplate.content.cloneNode(true);
     const card = clone.querySelector('.card');
-    card.href = `detail.html?slug=${item.slug}`;
+    card.href = window.CONFIG?.getCardUrl(item.slug, item.url_seo_yandex) || `/detail.html?slug=${item.slug}`;
     const img = clone.querySelector('img');
     img.src = item.cover;
     img.alt = item.title || 'Image';

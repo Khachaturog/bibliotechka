@@ -1,22 +1,13 @@
 {
   "database.connections": [
     {
-      "name": "Bibliotechka Local",
+      "name": "Bibliotechka Server",
       "type": "mysql",
-      "host": "localhost",
+      "host": "mysql.35401aca832c.hosting.myjino.ru",
       "port": 3306,
-      "user": "root",
-      "password": "",
-      "database": "bibliotechka"
-    },
-    {
-      "name": "Bibliotechka Remote",
-      "type": "mysql",
-      "host": "your-server-ip-or-domain.com",
-      "port": 3306,
-      "user": "your_username",
-      "password": "your_password",
-      "database": "bibliotechka"
+      "user": "j35045845_biblio",
+      "password": "tuhrih-zoqmYp",
+      "database": "j35045845_biblio"
     }
   ]
 }

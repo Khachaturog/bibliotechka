@@ -13,8 +13,8 @@
 | `title_en` | VARCHAR(255) | YES | | Английское название подгруппы (равно slug) |
 | `description_ru` | TEXT | YES | | Русское описание подгруппы |
 | `status` | VARCHAR(255) | YES | | Статус подгруппы |
-| `created_at` | TIMESTAMP | YES | | Дата создания |
-| `updated_at` | TIMESTAMP | YES | | Дата обновления |
+| `created_at` | TIMESTAMP | YES | | Дата создания (автоматически) |
+| `updated_at` | TIMESTAMP | YES | | Дата обновления (автоматически) |
 
 ## Индексы
 

@@ -857,12 +857,13 @@
 
 /* Стили кнопок */
 
+.header-1,
 .secondary-lg-full,
 .secondary-lg,
 .secondary-sm,
+.secondary-custom,
 .secondary-text-lg,
-.subtle-violet-sm,
-.header-1 {
+.subtle-violet-sm {
    /* Отключение long press и ореола на мобильных */
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -891,9 +892,11 @@
   height: 40px;
 }
 
+
 .secondary-lg,
 .secondary-lg-full,
-.secondary-sm {
+.secondary-sm,
+.secondary-custom {
   cursor: pointer;
   display: flex;
   justify-content: center; /* Центрирование по горизонтали */
@@ -905,15 +908,24 @@
   box-shadow: shadow-bottom-XS-1-x var(--08-Shadow-Bottom-XS-1-y, 1px) var(--08-Shadow-Bottom-XS-1-blur, 2px) var(--08-Shadow-Bottom-XS-1-spread, 0) var(--08-Shadow-Bottom-XS-1-color, rgba(22, 33, 88, 0.09));
 }
 
+/* .secondary-custom {
+  width: 56px;
+  height: 100%;
+  border: none;
+  border-radius: 20px 8px 8px 20px;
+} */
+
 .secondary-lg:hover,
 .secondary-lg-full:hover,
-.secondary-sm:hover {
+.secondary-sm:hover,
+.secondary-custom:hover {
   background: var(--05-layer-2-hover);
 }
 
 .secondary-lg:active,
 .secondary-lg-full:active,
-.secondary-sm:active {
+.secondary-sm:active,
+.secondary-custom:active {
     background: var(--05-layer-2-pressed);
     box-shadow: var(--08-Shadow-Inner-XS-1-x, 0) var(--08-Shadow-Inner-XS-1-y, 1px) var(--08-Shadow-Inner-XS-1-blur, 2px) var(--08-Shadow-Inner-XS-1-spread, 0) var(--08-Shadow-Inner-XS-1-color, rgba(22, 33, 88, 0.09)) inset;
 }
@@ -922,7 +934,8 @@
 .secondary-lg-full svg,
 .secondary-sm svg,
 .icon-home-outline svg,
-.icon-schevron-right svg {
+.icon-schevron-right svg,
+.secondary-custom svg {
     fill: var(--02-content-secondary);
     width: 20px;
     height: 20px;
@@ -930,7 +943,6 @@
     align-items: center;
     justify-content: center;
 }
-
 
 
 /* Secondary · Text · 48px */
@@ -1288,7 +1300,7 @@ body {
 
 /* Скелетоны */
 .skeleton {
-    background: linear-gradient(90deg, var(--02-content-tertiary) 25%, var(--01-layer-2) 50%, var(--01-layer-1) 75%);
+    background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e8e8e8 75%);
     background-size: 200% 100%;
     animation: skeleton-loading 1.5s infinite;
     border-radius: 8px;
@@ -1442,7 +1454,6 @@ body {
 
 #cards-container-title {
   display: flex;
-  padding: 8px 0;
   align-items: center;
   gap: 12px;
   align-self: stretch;
@@ -1616,7 +1627,9 @@ body {
   position: relative;
   width: 100%;
   height: 400px;
-  border-radius: 20px;
+  /* min-height: 400px; */
+  /* aspect-ratio: 16 / 9; */
+  border-radius: 12px;
   background: var(--01-layer-1);
   overflow: hidden;
   display: flex;
@@ -1628,8 +1641,9 @@ body {
   z-index: 2;
   width: 100%;
   height: 100%;
-  border-radius: 18px;
+  /* min-height: 400px; */
   object-fit: contain;
+  display: block;
   /* object-position: center; */
 }
 
@@ -1662,6 +1676,10 @@ body {
   text-overflow: ellipsis;
   /* word-break: break-all; */
 
+}
+
+.detail-block1-subtitle:empty {
+  display: none;
 }
 
 .detail-block2-list {
@@ -1833,7 +1851,7 @@ body {
   max-height: 80vh; 
   overflow-y: auto; 
   overscroll-behavior: contain; 
-  scrollbar-width: thin;
+  scrollbar-width: none;
 }
 
 .search-group-container {
@@ -2029,7 +2047,8 @@ drawer-component {
   }
 
   .detail-container-image {
-    height: 250px; 
+    height: 250px;
+    min-height: 250px;
   }
 
   .cards-container {
