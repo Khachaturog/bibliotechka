@@ -3,13 +3,22 @@
 ## Структура документации
 
 ### Основная документация
+- **[README.md](../README.md)** - главная документация проекта
 - **[Правила разработки](../Rules.md)** - основные принципы и методология разработки
 - **[История изменений](../сhangelog.md)** - changelog проекта
+
+### Гайды и инструкции
+- **[Локальная разработка](LOCAL_DEV.md)** - настройка локального окружения
+
+### Решение проблем
+- **[Диагностика проблем](DIAGNOSTICS.md)** - диагностика и решение типичных проблем
+- **[Исправление API 404](FIX_API_404.md)** - решение проблем с API эндпоинтами
+- **[Проверка файлов на сервере](CHECK_FILES_ON_SERVER.md)** - проверка структуры файлов
 
 ### База данных
 - **[database/README.md](../database/README.md)** - основная документация по БД
 - **[database/backup_restore.md](../database/backup_restore.md)** - инструкции по бекапу и восстановлению
-- **[database/connection_troubleshooting.md](../database/connection_troubleshooting.md)** - решение проблем с подключением
+- **[database/migrate_to_server.md](../database/migrate_to_server.md)** - миграция БД на сервер
 
 ### API
 - **[api/README.md](../api/README.md)** - документация PHP API

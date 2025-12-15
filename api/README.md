@@ -59,25 +59,32 @@ curl https://your-domain.com/api/v1/data/001/authors
 ### 3. Использование на хостинге
 
 1. Загрузите папку `api/` на сервер
-2. Убедитесь, что Apache поддерживает `.htaccess` и `mod_rewrite`
-3. Настройки подключения к БД уже настроены в `api/config.php`
-4. API будет доступен на: `https://ваш-домен.com/api/v1/`
+2. Убедитесь, что Apache поддерживает `.htaccess`, `mod_rewrite` и `mod_headers`
+3. Проверьте, что корневой `.htaccess` содержит правила для роутинга API
+4. Настройки подключения к БД уже настроены в `api/config.php`
+5. API будет доступен на: `https://ваш-домен.com/api/v1/`
+
+**Примечание:** Убедитесь, что в папке `api/` нет собственного `.htaccess` файла, так как это может конфликтовать с корневым `.htaccess`.
 
 ## Структура файлов
 
 ```
 api/
-├── index.php      # Главный файл API с роутингом
-├── config.php     # Конфигурация подключения к БД
-├── router.php     # Роутер для обработки запросов
-├── .htaccess      # Настройки Apache для роутинга
-├── v1/            # Версия API v1
-│   ├── groups.php
-│   ├── subgroups.php
-│   ├── data.php
-│   └── authors.php
-└── README.md      # Документация API
+├── config.php              # Конфигурация подключения к БД и вспомогательные функции
+├── index.php               # Fallback роутер (для совместимости)
+└── v1/                     # Версия API v1
+    ├── groups/
+    │   ├── list.php        # GET /api/v1/groups/list
+    │   └── index.php       # GET /api/v1/groups?slug=...
+    ├── data/
+    │   ├── list.php        # GET /api/v1/data/list
+    │   ├── index.php       # GET /api/v1/data?slug=...
+    │   └── authors.php     # GET /api/v1/data/{slug}/authors
+    └── subgroups/
+        └── index.php       # GET /api/v1/subgroups
 ```
+
+**Важно:** Роутинг выполняется через `.htaccess` в корне проекта, который напрямую направляет запросы к соответствующим PHP файлам.
 
 ## Конфигурация
 
@@ -91,19 +98,36 @@ api/
 1. Проверьте настройки подключения в `api/config.php`
 2. Убедитесь, что MySQL сервер доступен с вашего хостинга
 3. Проверьте правильность учетных данных БД
+4. Убедитесь, что доступ к БД открыт для IP вашего веб-сервера (в панели управления хостингом)
 
 ### API возвращает 404
 
 1. Убедитесь, что `mod_rewrite` включен в Apache
-2. Проверьте, что `.htaccess` файл существует и правильно настроен
-3. Проверьте логи веб-сервера на хостинге
+2. Проверьте, что корневой `.htaccess` файл существует и правильно настроен
+3. Убедитесь, что в папке `api/` нет собственного `.htaccess` (может конфликтовать)
+4. Проверьте, что файлы находятся в правильных папках (`api/v1/groups/list.php`, а не `api/groups/list.php`)
+5. Проверьте логи веб-сервера на хостинге
+
+### Mixed Content ошибки (HTTP/HTTPS)
+
+Если страница загружается по HTTPS, но API запросы идут по HTTP:
+
+1. Убедитесь, что `getApiUrl()` в `js/config.js` возвращает относительные пути (без `http://`)
+2. Добавьте в HTML файлы мета-тег:
+   ```html
+   <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+   ```
 
 ### CORS ошибки
 
-Если API на другом домене, добавьте в `.htaccess`:
+CORS заголовки уже настроены в корневом `.htaccess`:
 ```apache
 Header set Access-Control-Allow-Origin "*"
+Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+Header set Access-Control-Allow-Headers "Content-Type"
 ```
+
+Если ошибки продолжаются, убедитесь, что `mod_headers` включен в Apache.
 
 ## Дополнительная информация
 

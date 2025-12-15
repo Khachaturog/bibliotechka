@@ -10,23 +10,21 @@
 
 ```
 api/
-├── config.php
-├── index.php
-├── v1/
-│   ├── groups/
-│   │   ├── list.php          ← ДОЛЖЕН БЫТЬ
-│   │   └── index.php         ← ДОЛЖЕН БЫТЬ
-│   ├── data/
-│   │   ├── list.php          ← ДОЛЖЕН БЫТЬ
-│   │   ├── index.php         ← ДОЛЖЕН БЫТЬ
-│   │   └── authors.php       ← ДОЛЖЕН БЫТЬ
-│   ├── subgroups/
-│   │   └── index.php         ← ДОЛЖЕН БЫТЬ
-│   ├── subgroups.php         ← ДОЛЖЕН БЫТЬ (альтернатива)
-│   ├── groups.php
-│   └── data.php
-└── .htaccess                 ← ДОЛЖЕН БЫТЬ
+├── config.php                ← ДОЛЖЕН БЫТЬ (конфигурация БД)
+├── index.php                  ← ДОЛЖЕН БЫТЬ (fallback роутер)
+└── v1/
+    ├── groups/
+    │   ├── list.php          ← ДОЛЖЕН БЫТЬ (GET /api/v1/groups/list)
+    │   └── index.php         ← ДОЛЖЕН БЫТЬ (GET /api/v1/groups?slug=...)
+    ├── data/
+    │   ├── list.php          ← ДОЛЖЕН БЫТЬ (GET /api/v1/data/list)
+    │   ├── index.php         ← ДОЛЖЕН БЫТЬ (GET /api/v1/data?slug=...)
+    │   └── authors.php       ← ДОЛЖЕН БЫТЬ (GET /api/v1/data/{slug}/authors)
+    └── subgroups/
+        └── index.php         ← ДОЛЖЕН БЫТЬ (GET /api/v1/subgroups)
 ```
+
+**Важно:** В папке `api/` НЕ должно быть `.htaccess` файла - это может конфликтовать с корневым `.htaccess`.
 
 ## 2. Проверьте права доступа к файлам
 
@@ -55,7 +53,19 @@ api/
 
 3. **Подгруппы**: `https://bibliotechka.online/api/v1/subgroups`
    - Должен вернуть JSON с подгруппами
-   - Если 404 → файл `api/v1/subgroups.php` или `api/v1/subgroups/index.php` не найден
+   - Если 404 → файл `api/v1/subgroups/index.php` не найден
+
+4. **Группа по slug**: `https://bibliotechka.online/api/v1/groups?slug=skill`
+   - Должен вернуть JSON с одной группой
+   - Если 404 → файл `api/v1/groups/index.php` не найден
+
+5. **Карточка по slug**: `https://bibliotechka.online/api/v1/data?slug=001`
+   - Должен вернуть JSON с одной карточкой
+   - Если 404 → файл `api/v1/data/index.php` не найден
+
+6. **Авторы карточки**: `https://bibliotechka.online/api/v1/data/001/authors`
+   - Должен вернуть JSON с авторами
+   - Если 404 → файл `api/v1/data/authors.php` не найден
 
 ## 5. Если файлы есть, но все равно 404
 
@@ -65,36 +75,27 @@ api/
 - Обратитесь в поддержку хостинга "Джино"
 - Спросите, включен ли mod_rewrite для вашего аккаунта
 
-### Вариант B: Используйте прямые пути к файлам
+### Вариант B: Проверьте корневой .htaccess
 
-Если `.htaccess` не работает, можно использовать прямые пути:
+Убедитесь, что корневой `.htaccess` содержит правила для роутинга API:
 
-1. Откройте `js/config.js`
-2. Измените `API_BASE` на прямые пути к файлам:
-
-```javascript
-API_BASE: '/api/v1',
-getApiUrl: function(endpoint, params = {}) {
-    // Для subgroups используем прямой путь
-    if (endpoint === 'subgroups') {
-        const queryString = new URLSearchParams(params).toString();
-        return `/api/v1/subgroups.php${queryString ? '?' + queryString : ''}`;
-    }
-    // Для остальных используем стандартный путь
-    const queryString = new URLSearchParams(params).toString();
-    return `${this.API_BASE}/${endpoint}${queryString ? '?' + queryString : ''}`;
-},
-```
-
-Но это не рекомендуется - лучше исправить проблему с файлами или .htaccess.
+1. Проверьте наличие файла `.htaccess` в корне проекта
+2. Убедитесь, что в папке `api/` НЕТ `.htaccess` (может конфликтовать)
+3. Проверьте, что правила роутинга включают:
+   - `/api/v1/{resource}/list` → `api/v1/{resource}/list.php`
+   - `/api/v1/{resource}/{slug}/authors` → `api/v1/{resource}/authors.php`
+   - `/api/v1/{resource}` → `api/v1/{resource}/index.php` или `api/v1/{resource}.php`
 
 ## 6. Проверка через test-connection.php
 
-1. Загрузите `api/test-connection.php` на сервер
-2. Откройте: `https://bibliotechka.online/api/test-connection.php`
-3. Проверьте результаты:
-   - Если видите данные → БД работает, проблема в файлах API
+1. **Создайте временный файл** `api/test-connection.php` (см. пример в [DIAGNOSTICS.md](DIAGNOSTICS.md))
+2. **Загрузите на сервер**
+3. **Откройте**: `https://bibliotechka.online/api/test-connection.php`
+4. **Проверьте результаты**:
+   - Если видите данные → БД работает, проблема в файлах API или роутинге
    - Если ошибка БД → см. инструкцию по настройке доступа к БД
+
+**⚠️ ВАЖНО:** После проверки удалите `api/test-connection.php` из соображений безопасности!
 
 ## 7. Решение проблемы Mixed Content
 

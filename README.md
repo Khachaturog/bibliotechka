@@ -5,31 +5,54 @@
 ## 🚀 Быстрый старт
 
 ### Требования
-- PHP 7.4+
+- PHP 8.0+ (рекомендуется 8.4+)
 - MySQL 8.0+ (используется серверная база данных)
-- Apache с mod_rewrite или Nginx
+- Apache с mod_rewrite и mod_headers
+- Node.js 14+ (для разработки и скриптов)
 
 ### Установка
 
 1. Клонируйте репозиторий
-2. Настройте подключение к БД в `api/config.php`
-3. Загрузите файлы на сервер
-4. Убедитесь, что Apache поддерживает `.htaccess` и `mod_rewrite`
+2. Установите зависимости: `npm install`
+3. Настройте подключение к БД в `api/config.php`
+4. Импортируйте базу данных (см. `database/README.md`)
+5. Загрузите файлы на сервер
+6. Убедитесь, что Apache поддерживает `.htaccess` и `mod_rewrite`
+7. Настройте доступ к MySQL для IP вашего веб-сервера
 
 Приложение будет доступно на вашем домене.
 
 ## 📁 Структура проекта
 
 ```
-bibliotechka-5/
-├── api/              # PHP API сервер
-├── database/         # База данных MySQL (структура, миграции)
-├── js/               # JavaScript клиентский код
-├── css/              # Стили
-├── images/           # Изображения (обложки, группы)
-├── data/             # JSON файлы с данными (legacy)
-├── docs/             # Документация
-└── scripts/          # Вспомогательные скрипты
+bibliotechka-4/
+├── api/                      # PHP API сервер
+│   ├── config.php           # Конфигурация БД
+│   ├── index.php            # Fallback роутер
+│   └── v1/                  # API версия 1
+│       ├── groups/
+│       │   ├── list.php     # GET /api/v1/groups/list
+│       │   └── index.php    # GET /api/v1/groups?slug=...
+│       ├── data/
+│       │   ├── list.php     # GET /api/v1/data/list
+│       │   ├── index.php    # GET /api/v1/data?slug=...
+│       │   └── authors.php  # GET /api/v1/data/{slug}/authors
+│       └── subgroups/
+│           └── index.php    # GET /api/v1/subgroups
+├── database/                 # База данных MySQL
+│   ├── init.sql             # Инициализация БД
+│   ├── migrations/          # Миграции
+│   └── tables/             # Документация таблиц
+├── js/                      # JavaScript клиентский код
+│   ├── config.js           # Конфигурация API
+│   ├── index.js            # Главная страница
+│   ├── group.js            # Страница группы
+│   ├── detail.js           # Страница карточки
+│   └── component/          # Компоненты
+├── css/                     # Стили
+├── images/                  # Изображения (обложки, группы)
+├── docs/                    # Документация
+└── scripts/                 # Вспомогательные скрипты
 ```
 
 ## 🏗️ Архитектура
@@ -64,14 +87,22 @@ bibliotechka-5/
 
 ## 🔗 API эндпоинты
 
-- `GET /api/v1/groups/list` - список групп
-- `GET /api/v1/groups?slug=...` - полная группа
-- `GET /api/v1/subgroups` - все подгруппы
-- `GET /api/v1/data/list` - список карточек
-- `GET /api/v1/data?slug=...` - полная карточка
-- `GET /api/v1/data/{slug}/authors` - авторы карточки
+### Группы
+- `GET /api/v1/groups/list` - легковесный список групп (для главной страницы)
+- `GET /api/v1/groups?slug={slug}` - полная группа по slug (для страницы группы)
 
-Подробнее: [api/README.md](api/README.md)
+### Подгруппы
+- `GET /api/v1/subgroups` - все подгруппы
+- `GET /api/v1/subgroups?group_slug={slug}` - подгруппы конкретной группы
+
+### Карточки (Data)
+- `GET /api/v1/data/list` - легковесный список всех карточек
+- `GET /api/v1/data/list?status_slug=published` - только опубликованные карточки
+- `GET /api/v1/data/list?group_slug={slug}` - карточки конкретной группы
+- `GET /api/v1/data?slug={slug}` - полная карточка по slug
+- `GET /api/v1/data/{slug}/authors` - авторы конкретной карточки
+
+Все эндпоинты возвращают JSON. Подробнее: [api/README.md](api/README.md)
 
 ## 🗄️ База данных
 
@@ -87,7 +118,43 @@ bibliotechka-5/
 
 ## 🛠️ Разработка
 
+### Локальная разработка
+
+Для запуска локального сервера используйте:
+
+```bash
+./start-api.sh
+```
+
+Или вручную:
+```bash
+php -S 0.0.0.0:8000 -t . router.php
+```
+
+Сервер будет доступен на `http://localhost:8000`
+
+Подробнее: [docs/LOCAL_DEV.md](docs/LOCAL_DEV.md)
+
+### Правила разработки
+
 См. [Rules.md](Rules.md) для правил разработки проекта.
+
+### Деплой
+
+1. Загрузите все файлы на сервер (кроме `node_modules/`)
+2. Убедитесь, что `.htaccess` загружен в корень
+3. Проверьте права доступа: файлы `644`, папки `755`
+4. Настройте доступ к MySQL для IP веб-сервера
+5. Проверьте работу API через браузер
+
+## 📖 Дополнительная документация
+
+- **[Локальная разработка](docs/LOCAL_DEV.md)** - настройка локального окружения
+- **[Диагностика проблем](docs/DIAGNOSTICS.md)** - решение типичных проблем
+- **[Исправление API 404](docs/FIX_API_404.md)** - решение проблем с API
+- **[Проверка файлов на сервере](docs/CHECK_FILES_ON_SERVER.md)** - проверка структуры файлов
+
+Полный индекс документации: [docs/README.md](docs/README.md)
 
 ## 📄 Лицензия
 
