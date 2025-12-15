@@ -7,9 +7,23 @@ const CONFIG = {
     
     // Функция для построения URL API
     getApiUrl: function(endpoint, params = {}) {
+        // Убираем лишние слэши в начале и конце endpoint
+        endpoint = endpoint.replace(/^\/+|\/+$/g, '');
+        
         // Используем стандартный путь для всех окружений
         const queryString = new URLSearchParams(params).toString();
-        return `${this.API_BASE}/${endpoint}${queryString ? '?' + queryString : ''}`;
+        let url = `${this.API_BASE}/${endpoint}${queryString ? '?' + queryString : ''}`;
+        
+        // Убираем двойные слэши (кроме протокола)
+        url = url.replace(/([^:]\/)\/+/g, '$1');
+        
+        // Гарантируем, что URL начинается с / (относительный путь)
+        // Это предотвращает формирование абсолютных URL с протоколом
+        if (!url.startsWith('/')) {
+            url = '/' + url;
+        }
+        
+        return url;
     },
     
     // Функция для генерации красивых URL групп

@@ -1,15 +1,35 @@
 # Apache конфигурация для API и красивых URL
-# Перенаправляет все запросы к /api/* на api/index.php
+# Поддерживает как прямые файлы, так и роутинг через api/index.php
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
-    # Исключаем существующие файлы и директории
+    # Исключаем существующие файлы и директории (они обрабатываются напрямую)
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^ - [L]
     
-    # Перенаправляем запросы к API (должно быть первым, чтобы не конфликтовать с красивыми URL)
+    # Обработка API запросов к /api/v1/*
+    # Если запрос к /api/v1/{resource}/list, перенаправляем на list.php
+    RewriteCond %{REQUEST_URI} ^/api/v1/([^/]+)/list/?(\?.*)?$
+    RewriteCond %{DOCUMENT_ROOT}/api/v1/%1/list.php -f
+    RewriteRule ^api/v1/([^/]+)/list/?$ /api/v1/$1/list.php [L,QSA]
+    
+    # Если запрос к /api/v1/{resource}/{slug}/authors, перенаправляем на authors.php
+    RewriteCond %{REQUEST_URI} ^/api/v1/([^/]+)/([^/]+)/authors/?(\?.*)?$
+    RewriteCond %{DOCUMENT_ROOT}/api/v1/%1/authors.php -f
+    RewriteRule ^api/v1/([^/]+)/([^/]+)/authors/?$ /api/v1/$1/authors.php [L,QSA]
+    
+    # Если запрос к /api/v1/{resource}, проверяем index.php или .php файл
+    RewriteCond %{REQUEST_URI} ^/api/v1/([^/]+)/?(\?.*)?$
+    RewriteCond %{DOCUMENT_ROOT}/api/v1/%1/index.php -f
+    RewriteRule ^api/v1/([^/]+)/?$ /api/v1/$1/index.php [L,QSA]
+    
+    RewriteCond %{REQUEST_URI} ^/api/v1/([^/]+)/?(\?.*)?$
+    RewriteCond %{DOCUMENT_ROOT}/api/v1/%1.php -f
+    RewriteRule ^api/v1/([^/]+)/?$ /api/v1/$1.php [L,QSA]
+    
+    # Fallback: перенаправляем остальные запросы к API на api/index.php
     RewriteCond %{REQUEST_URI} ^/api/
     RewriteRule ^api/(.*)$ /api/index.php?path=$1 [QSA,L]
     
