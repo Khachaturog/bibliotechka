@@ -30,11 +30,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
                 // Для страницы группы нужны:
                 // 1. Полный group (со всеми SEO полями)
-                // 2. Полный subgroups (все подгруппы)
+                // 2. Подгруппы ТОЛЬКО для этой группы (оптимизация!)
                 // 3. Легковесный cards (только для списка)
                 const [groupResponse, subgroupsResponse, dataResponse] = await Promise.all([
                         fetch(window.CONFIG?.getApiUrl('groups', { slug: groupSlug }) || `${API_BASE}/groups?slug=${groupSlug}`),
-                        fetch(window.CONFIG?.getApiUrl('subgroups') || `${API_BASE}/subgroups`),
+                        fetch(window.CONFIG?.getApiUrl('subgroups', { group_slug: groupSlug }) || `${API_BASE}/subgroups?group_slug=${groupSlug}`),
                         fetch(window.CONFIG?.getApiUrl('data/list', { group_slug: groupSlug }) || `${API_BASE}/data/list?group_slug=${groupSlug}`)
                 ]);
 
@@ -57,6 +57,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 
                 if (!group) {
                         throw new Error('Group not found');
+                }
+                
+                // Обновляем URL на красивый, если зашли через старый формат
+                // Делаем это СРАЗУ после получения данных, ДО отрисовки контента
+                const currentUrl = window.location.pathname;
+                const prettyUrl = window.CONFIG?.getGroupUrl(groupSlug) || `/${groupSlug}`;
+                
+                // Если текущий URL - старый формат (/group.html), обновляем на красивый
+                if (currentUrl.includes('/group.html') && !currentUrl.startsWith(prettyUrl)) {
+                        window.history.replaceState({}, '', prettyUrl + window.location.search + window.location.hash);
                 }
                 
                 // Обновляем заголовок и описание группы
@@ -125,10 +135,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 // --- END SEO META TAGS ---
 
-                // API уже возвращает отфильтрованные данные по group_slug
-                // Но оставляем фильтрацию как fallback
-                const filteredData = data.filter(item => item.group_slug === groupSlug);
-                displaySubgroupsAndCards(filteredData, subgroups);
+                // API уже возвращает отфильтрованные данные по group_slug на сервере
+                // Не нужно фильтровать на клиенте - экономия CPU
+                displaySubgroupsAndCards(data, subgroups);
                         // Скроллим к якорю после отрисовки с задержкой 50мс
                         if (window.location.hash) {
                             setTimeout(() => {

@@ -133,8 +133,8 @@ function displayCards(data) {
     if (skeletons) skeletons.remove();
 
     // API уже возвращает только опубликованные карточки (status_slug=published)
-    // Но оставляем фильтрацию как fallback на случай ошибок API
-    const publishedCards = data.filter(item => item.status_slug === 'published');
+    // Убираем лишнюю фильтрацию на клиенте - экономия CPU
+    const publishedCards = data;
 
     // Обновляем количество карточек
     const cardsCountElement = document.getElementById('cards-count');

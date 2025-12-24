@@ -1,43 +1,34 @@
 <?php
 /**
- * Скрипт для перенаправления красивых SEO URL карточек
- * Ищет slug по url_seo_yandex и перенаправляет на detail.html?slug=...
+ * Скрипт для обработки красивых SEO URL карточек
+ * Отдает detail.html напрямую, без редиректа
+ * JavaScript сам извлечет url_seo_yandex из пути и загрузит данные
  */
 
-require_once __DIR__ . '/api/config.php';
-
-// Получаем url_seo_yandex из параметра
-$urlSeoYandex = $_GET['url_seo_yandex'] ?? '';
-
-if (empty($urlSeoYandex)) {
-    http_response_code(404);
-    echo '<h1>Карточка не найдена</h1>';
-    exit;
-}
-
-try {
-    // Подключаемся к БД
-    $db = getDBConnection();
+// Отдаем detail.html с правильным базовым путем
+$detailFile = __DIR__ . '/detail.html';
+if (file_exists($detailFile)) {
+    header('Content-Type: text/html; charset=utf-8');
     
-    // Ищем карточку по url_seo_yandex
-    $sql = "SELECT slug FROM data WHERE url_seo_yandex = ? LIMIT 1";
-    $stmt = $db->prepare($sql);
-    $stmt->execute([$urlSeoYandex]);
-    $result = $stmt->fetch();
+    // Читаем содержимое файла
+    $content = file_get_contents($detailFile);
     
-    if ($result && isset($result['slug'])) {
-        // Перенаправляем на detail.html с найденным slug
-        header('Location: /detail.html?slug=' . urlencode($result['slug']), true, 301);
-        exit;
-    } else {
-        // Карточка не найдена
-        http_response_code(404);
-        echo '<h1>Карточка не найдена</h1>';
-        echo '<p>URL: ' . htmlspecialchars($urlSeoYandex) . '</p>';
+    // Добавляем <base> тег после <head> или после первых тегов для правильного разрешения относительных путей
+    // Это нужно, чтобы при URL /card/... пути к ресурсам разрешались от корня сайта
+    if (strpos($content, '<base') === false) {
+        // Ищем <head> и добавляем <base> сразу после него
+        $content = preg_replace(
+            '/(<head[^>]*>)/i',
+            '$1' . "\n    " . '<base href="/">',
+            $content,
+            1
+        );
     }
-} catch (Exception $e) {
-    http_response_code(500);
-    echo '<h1>Ошибка сервера</h1>';
-    error_log('detail-seo.php error: ' . $e->getMessage());
+    
+    echo $content;
+    exit;
+} else {
+    http_response_code(404);
+    echo '<h1>Страница не найдена</h1>';
 }
 

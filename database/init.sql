@@ -46,9 +46,14 @@ CREATE TABLE IF NOT EXISTS `subgroups` (
   `title_en` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
   `description_ru` text COLLATE utf8mb4_unicode_ci,
   `status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `group_slug` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sort` int DEFAULT 0,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`slug`)
+  PRIMARY KEY (`slug`),
+  KEY `idx_group_slug` (`group_slug`),
+  KEY `idx_group_sort` (`group_slug`,`sort`),
+  CONSTRAINT `fk_subgroups_group` FOREIGN KEY (`group_slug`) REFERENCES `groups` (`slug`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Таблица versions (Версии/релизы)
@@ -89,8 +94,8 @@ CREATE TABLE IF NOT EXISTS `data` (
   `description` text COLLATE utf8mb4_unicode_ci,
   `author_slug` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
   `status_slug` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
-  `group_slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `subgroup_slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `group_slug` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `subgroup_slug` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `url_title_1` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
   `url_1` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `url_title_2` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
@@ -120,8 +125,8 @@ CREATE TABLE IF NOT EXISTS `data` (
   KEY `idx_status_slug` (`status_slug`),
   KEY `idx_group_subgroup` (`group_slug`,`subgroup_slug`),
   KEY `idx_version_slug` (`version_slug`),
-  CONSTRAINT `data_ibfk_1` FOREIGN KEY (`group_slug`) REFERENCES `groups` (`slug`) ON DELETE CASCADE,
-  CONSTRAINT `data_ibfk_2` FOREIGN KEY (`subgroup_slug`) REFERENCES `subgroups` (`slug`) ON DELETE CASCADE,
+  CONSTRAINT `data_ibfk_1` FOREIGN KEY (`group_slug`) REFERENCES `groups` (`slug`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `data_ibfk_2` FOREIGN KEY (`subgroup_slug`) REFERENCES `subgroups` (`slug`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `fk_data_version` FOREIGN KEY (`version_slug`) REFERENCES `versions` (`slug`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

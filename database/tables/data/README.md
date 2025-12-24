@@ -73,8 +73,8 @@
 
 ## Внешние ключи
 
-- `data.group_slug` → `groups.slug` (ON DELETE CASCADE)
-- `data.subgroup_slug` → `subgroups.slug` (ON DELETE CASCADE)
+- `data.group_slug` → `groups.slug` (ON DELETE SET NULL, ON UPDATE CASCADE)
+- `data.subgroup_slug` → `subgroups.slug` (ON DELETE SET NULL, ON UPDATE CASCADE)
 - `data.version_slug` → `versions.slug` (ON DELETE SET NULL, ON UPDATE CASCADE)
 
 ## Примеры запросов

@@ -77,7 +77,9 @@ function handleGroups($db, $pathParts, $queryParams) {
                 ORDER BY sort";
         $stmt = $db->query($sql);
         $results = $stmt->fetchAll();
-        sendJSON($results);
+        // Список групп меняется редко - кэшируем на 1 час
+        sendJSON($results, 200, 3600);
+        return;
     }
     
     // GET /api/v1/groups?slug=... - полная группа
@@ -86,7 +88,9 @@ function handleGroups($db, $pathParts, $queryParams) {
         $stmt = $db->prepare($sql);
         $stmt->execute([$queryParams['slug']]);
         $results = $stmt->fetchAll();
-        sendJSON($results);
+        // Отдельная группа - кэшируем на 1 час
+        sendJSON($results, 200, 3600);
+        return;
     }
     
     sendError('slug parameter required', 400);
@@ -96,10 +100,23 @@ function handleGroups($db, $pathParts, $queryParams) {
  * Обработка запросов подгрупп
  */
 function handleSubgroups($db, $queryParams) {
+    // Если указан group_slug, фильтруем на сервере (критично для производительности!)
+    if (isset($queryParams['group_slug'])) {
+        $sql = "SELECT * FROM subgroups WHERE group_slug = ? ORDER BY sort, title_ru";
+        $stmt = $db->prepare($sql);
+        $stmt->execute([$queryParams['group_slug']]);
+        $results = $stmt->fetchAll();
+        // Подгруппы меняются редко - кэшируем на 1 час
+        sendJSON($results, 200, 3600);
+        return;
+    }
+    
+    // Если не указан group_slug, возвращаем все (для детальной страницы)
     $sql = "SELECT * FROM subgroups ORDER BY title_ru";
     $stmt = $db->query($sql);
     $results = $stmt->fetchAll();
-    sendJSON($results);
+    // Все подгруппы - кэшируем на 1 час
+    sendJSON($results, 200, 3600);
 }
 
 /**
@@ -113,11 +130,13 @@ function handleData($db, $pathParts, $queryParams) {
         $sql = "SELECT a.slug, a.title_ru, a.title_en, a.avatar
                 FROM authors a
                 INNER JOIN card_authors ca ON a.slug = ca.author_slug
-                WHERE ca.card_slug = ?";
+                WHERE ca.card_slug = ?
+                ORDER BY a.title_ru";
         $stmt = $db->prepare($sql);
         $stmt->execute([$cardSlug]);
         $results = $stmt->fetchAll();
-        sendJSON($results);
+        // Авторы меняются редко - кэшируем на 1 час
+        sendJSON($results, 200, 3600);
         return;
     }
     
@@ -133,7 +152,7 @@ function handleData($db, $pathParts, $queryParams) {
         if (isset($queryParams['status_slug'])) {
             $sql .= " AND status_slug = ?";
             $params[] = $queryParams['status_slug'];
-}
+        }
 
         if (isset($queryParams['group_slug'])) {
             $sql .= " AND group_slug = ?";
@@ -145,19 +164,32 @@ function handleData($db, $pathParts, $queryParams) {
         $stmt = $db->prepare($sql);
         $stmt->execute($params);
         $results = $stmt->fetchAll();
-        sendJSON($results);
+        // Список карточек - кэшируем на 5 минут
+        sendJSON($results, 200, 300);
         return;
     }
     
-    // GET /api/v1/data?slug=... - полная карточка
+    // GET /api/v1/data?slug=... - полная карточка по slug
+    // GET /api/v1/data?url_seo_yandex=... - полная карточка по url_seo_yandex (для красивых URL)
     if (isset($queryParams['slug'])) {
-        $sql = "SELECT * FROM data WHERE slug = ?";
+        $sql = "SELECT * FROM data WHERE slug = ? LIMIT 1";
         $stmt = $db->prepare($sql);
         $stmt->execute([$queryParams['slug']]);
         $results = $stmt->fetchAll();
-        sendJSON($results);
+        // Отдельная карточка - кэшируем на 1 час
+        sendJSON($results, 200, 3600);
         return;
     }
     
-    sendError('slug parameter required or use /list endpoint', 400);
+    if (isset($queryParams['url_seo_yandex'])) {
+        $sql = "SELECT * FROM data WHERE url_seo_yandex = ? LIMIT 1";
+        $stmt = $db->prepare($sql);
+        $stmt->execute([$queryParams['url_seo_yandex']]);
+        $results = $stmt->fetchAll();
+        // Отдельная карточка - кэшируем на 1 час
+        sendJSON($results, 200, 3600);
+        return;
+    }
+    
+    sendError('slug or url_seo_yandex parameter required or use /list endpoint', 400);
 }

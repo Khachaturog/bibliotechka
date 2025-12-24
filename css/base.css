@@ -1495,6 +1495,8 @@ body {
   display: grid;
   row-gap: 12px;
   column-gap: 12px;
+  /* display: grid-lanes;
+  gap: 12px; */
   flex: 1 0 0;
   align-self: stretch;
   width: 100%;
@@ -1705,11 +1707,11 @@ body {
 }
 
 .detail-block2-list-item:hover {
-  background: var(--05-layer-neutral-soft-hover);
+  background: var(--06-theme-violet-layer-soft-hover);
 }
 
 .detail-block2-list-item:active {
-  background: var(--05-layer-neutral-soft-pressed);
+  background: var(--06-theme-violet-layer-soft-pressed);
 }
 
 .detail-block2-text {

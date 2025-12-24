@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Получаем slug из query параметров или из пути URL (для красивых URL)
     const params = new URLSearchParams(window.location.search);
     let slug = params.get('slug');
+    let urlSeoYandex = null;
     
     // Если slug нет в query параметрах, пытаемся получить из пути URL
     // Это нужно для красивых URL типа /card/gajd-po-tekstam-v-interfejse-001
@@ -18,61 +19,42 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Проверяем, является ли путь красивым URL карточки
         if (path.startsWith('/card/')) {
             // Извлекаем url_seo_yandex из пути
-            const urlSeoYandex = path.replace('/card/', '').split('/')[0];
-            // Нужно будет найти slug по url_seo_yandex через API
-            // Пока используем fallback - загрузим все карточки и найдем нужную
-            try {
-                const response = await fetch(window.CONFIG?.getApiUrl('data/list', { status_slug: 'published' }) || `${API_BASE}/data/list?status_slug=published`);
-                if (response.ok) {
-                    const cards = await response.json();
-                    const foundCard = cards.find(card => card.url_seo_yandex === urlSeoYandex);
-                    if (foundCard) {
-                        slug = foundCard.slug;
-                    }
-                }
-            } catch (e) {
-                console.error('Ошибка поиска карточки по url_seo_yandex:', e);
-            }
+            urlSeoYandex = path.replace('/card/', '').split('/')[0];
+            // Сохраняем url_seo_yandex, чтобы использовать его при загрузке данных
+            // slug найдем после загрузки карточки
+        } else if (path.startsWith('/detail.html')) {
+            // Если это старый формат URL, обновим его на красивый после загрузки данных
+            // Пока просто продолжаем с текущим slug
         }
-    }
-    
-    if (!slug) {
-        document.body.innerHTML = '<h1>Материал не найден (slug не указан)</h1>';
-        return;
     }
     
     try {
         // Для детальной страницы нужны:
-        // 1. Полный card (все поля карточки)
-        // 2. Авторы карточки (отдельный запрос)
+        // 1. Полный card (все поля карточки) - по slug или url_seo_yandex
+        // 2. Авторы карточки (отдельный запрос, нужен slug)
         // 3. Groups и subgroups (для breadcrumbs)
-        const [cardResponse, authorsResponse, groupsResponse, subgroupsResponse] = await Promise.all([
-            fetch(window.CONFIG?.getApiUrl('data', { slug: slug }) || `${API_BASE}/data?slug=${slug}`),
-            fetch(window.CONFIG?.getApiUrl(`data/${slug}/authors`) || `${API_BASE}/data/${slug}/authors`),
-            fetch(window.CONFIG?.getApiUrl('groups/list') || `${API_BASE}/groups/list`),
-            fetch(window.CONFIG?.getApiUrl('subgroups') || `${API_BASE}/subgroups`)
-        ]);
-
+        
+        // Определяем, как запрашивать карточку
+        const cardApiParams = slug 
+            ? { slug: slug }
+            : (urlSeoYandex ? { url_seo_yandex: urlSeoYandex } : null);
+        
+        if (!cardApiParams) {
+            document.body.innerHTML = '<h1>Материал не найден (slug или url_seo_yandex не указан)</h1>';
+            return;
+        }
+        
+        // Загружаем карточку (по slug или url_seo_yandex)
+        const cardResponse = await fetch(
+            window.CONFIG?.getApiUrl('data', cardApiParams) || 
+            `${API_BASE}/data?${new URLSearchParams(cardApiParams).toString()}`
+        );
+        
         if (!cardResponse.ok) {
             throw new Error(`HTTP error! status: ${cardResponse.status}`);
         }
-        if (!authorsResponse.ok && authorsResponse.status !== 404) {
-            // 404 для авторов - это нормально, если авторов нет
-            console.warn('Authors not found');
-        }
-        if (!groupsResponse.ok) {
-            throw new Error(`HTTP error! status: ${groupsResponse.status}`);
-        }
-        if (!subgroupsResponse.ok) {
-            throw new Error(`HTTP error! status: ${subgroupsResponse.status}`);
-        }
-
-        const cards = await cardResponse.json();
-        const authors = authorsResponse.ok ? await authorsResponse.json() : [];
-        const groups = await groupsResponse.json();
-        const subgroups = await subgroupsResponse.json();
         
-        // API возвращает массив, берем первый элемент
+        const cards = await cardResponse.json();
         const card = cards[0];
         
         if (!card) {
@@ -80,20 +62,53 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
         
+        // Теперь у нас есть slug из загруженной карточки
+        const cardSlug = card.slug;
+        
+        // Загружаем только необходимые данные ПАРАЛЛЕЛЬНО для максимальной скорости:
+        // 1. Авторы карточки
+        // 2. Только нужная группа (не все группы!) для breadcrumbs
+        // 3. Только нужная подгруппа (не все подгруппы!) для breadcrumbs
+        const [authorsResponse, groupResponse, subgroupResponse] = await Promise.all([
+            fetch(window.CONFIG?.getApiUrl(`data/${cardSlug}/authors`) || `${API_BASE}/data/${cardSlug}/authors`),
+            fetch(window.CONFIG?.getApiUrl('groups', { slug: card.group_slug }) || `${API_BASE}/groups?slug=${card.group_slug}`),
+            fetch(window.CONFIG?.getApiUrl('subgroups', { group_slug: card.group_slug }) || `${API_BASE}/subgroups?group_slug=${card.group_slug}`)
+        ]);
+
+        if (!authorsResponse.ok && authorsResponse.status !== 404) {
+            // 404 для авторов - это нормально, если авторов нет
+            console.warn('Authors not found');
+        }
+        if (!groupResponse.ok) {
+            throw new Error(`HTTP error! status: ${groupResponse.status}`);
+        }
+        if (!subgroupResponse.ok) {
+            throw new Error(`HTTP error! status: ${subgroupResponse.status}`);
+        }
+
+        const authors = authorsResponse.ok ? await authorsResponse.json() : [];
+        const groupsData = await groupResponse.json();
+        const subgroupsData = await subgroupResponse.json();
+        
+        // Формируем массивы в ожидаемом формате для displayDetail
+        const groups = groupsData; // уже массив
+        const subgroups = subgroupsData; // уже массив
+        
+        // ОБНОВЛЯЕМ URL СРАЗУ после получения данных, ДО отрисовки контента
+        // Это критично для избежания видимой смены URL
+        const currentUrl = window.location.pathname;
+        const prettyUrl = window.CONFIG?.getCardUrl(card.slug, card.url_seo_yandex) || `/detail.html?slug=${card.slug}`;
+        
+        // Если текущий URL - старый формат, обновляем на красивый немедленно
+        if (currentUrl.startsWith('/detail.html') && prettyUrl.startsWith('/card/')) {
+            window.history.replaceState({}, '', prettyUrl);
+        }
+        
         // Объединяем авторов с карточкой для совместимости
         card.authors = authors.map(a => a.title_ru || a.title_en || a.slug);
         
         // Сохраняем карточку в глобальной переменной для функции shareCard
         currentCard = card;
-        
-        // Обновляем URL в браузере на красивый, если зашли через старый URL
-        const currentUrl = window.location.pathname;
-        const prettyUrl = window.CONFIG?.getCardUrl(card.slug, card.url_seo_yandex) || `/detail.html?slug=${card.slug}`;
-        
-        // Если текущий URL - старый формат, обновляем на красивый
-        if (currentUrl.startsWith('/detail.html') && prettyUrl.startsWith('/card/')) {
-            window.history.replaceState({}, '', prettyUrl);
-        }
         
         displayDetail(card, groups, subgroups);
     } catch (error) {
