@@ -314,7 +314,7 @@ function createCard(item) {
     const card = clone.querySelector('.card');
     card.href = window.CONFIG?.getCardUrl(item.slug, item.url_seo_yandex) || `/detail.html?slug=${item.slug}`;
     const img = clone.querySelector('img');
-    img.src = item.cover;
+    img.src = item.cover_short;
     img.alt = item.title || 'Image';
     const title = clone.querySelector('.card-title');
     title.textContent = item.title;

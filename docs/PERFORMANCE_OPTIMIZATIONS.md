@@ -65,4 +65,3 @@ mysql -u USER -p DATABASE < database/migrations/017_performance_optimization.sql
 3. **Service Worker**: Для офлайн-кэширования
 4. **Database query caching**: Настроить на уровне MySQL
 5. **Redis кэш**: Для горячих данных API
-

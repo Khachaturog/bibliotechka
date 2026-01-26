@@ -102,7 +102,7 @@ function handleGroups($db, $pathParts, $queryParams) {
 function handleSubgroups($db, $queryParams) {
     // Если указан group_slug, фильтруем на сервере (критично для производительности!)
     if (isset($queryParams['group_slug'])) {
-        $sql = "SELECT * FROM subgroups WHERE group_slug = ? ORDER BY sort, title_ru";
+        $sql = "SELECT * FROM subgroups WHERE group_slug = ? ORDER BY sort";
         $stmt = $db->prepare($sql);
         $stmt->execute([$queryParams['group_slug']]);
         $results = $stmt->fetchAll();
@@ -142,7 +142,7 @@ function handleData($db, $pathParts, $queryParams) {
     
     // GET /api/v1/data/list - легковесный список
     if (isset($pathParts[1]) && $pathParts[1] === 'list') {
-        $sql = "SELECT slug, title, cover, description, 
+        $sql = "SELECT slug, title, cover_short, description, 
                        group_slug, subgroup_slug, status_slug,
                        url_seo_yandex
                 FROM data

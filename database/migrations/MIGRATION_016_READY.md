@@ -105,11 +105,10 @@ SELECT COUNT(*) FROM card_authors;  -- Должно быть 715
 
 - **Подробная документация:** `database/migrations/016_README.md`
 - **Финальный чек-лист:** `database/migrations/016_FINAL_CHECKLIST.md`
-- **Быстрый старт:** `QUICK_START_016.md`
+- **Быстрый старт:** `database/migrations/QUICK_START_016.md`
 
 ---
 
 ## ✨ Всё готово! Можно выполнять миграцию! 🚀
 
 **Файл для выполнения:** `database/migrations/016_sync_with_backup.sql`
-

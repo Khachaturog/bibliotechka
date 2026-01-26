@@ -246,11 +246,11 @@ function displayDetail(item, groups, subgroups) {
         const mainImage = imageContainer.querySelector('.image:not(.image-blur)');
         
         if (blurImage) {
-            blurImage.src = item.cover;
+            blurImage.src = item.cover_large;
             blurImage.alt = '';
         }
         if (mainImage) {
-            mainImage.src = item.cover;
+            mainImage.src = item.cover_large;
             mainImage.alt = item.title;
         }
     }

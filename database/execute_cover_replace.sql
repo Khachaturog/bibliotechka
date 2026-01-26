@@ -1,7 +1,3 @@
-USE bibliotechka;
-
--- Замена /images/covers на https://35401aca832c.hosting.myjino.ru в поле cover
-UPDATE `data` 
-SET `cover` = REPLACE(`cover`, '/images/covers', 'https://35401aca832c.hosting.myjino.ru')
-WHERE `cover` LIKE '%/images/covers%';
-
+-- Устарело: колонка data.cover удалена миграцией 019.
+-- Обложки: cover_short, cover_large (заполняются из slug в 019).
+-- Замена путей в текстовых полях: см. replace_cover_paths.sql

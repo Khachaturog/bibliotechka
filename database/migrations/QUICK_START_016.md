@@ -86,4 +86,3 @@ INSERT INTO card_authors SELECT * FROM card_authors_backup_20251223;
 ---
 
 **Готово! Можно выполнять миграцию! 🎉**
-

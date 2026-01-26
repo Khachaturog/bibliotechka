@@ -41,4 +41,3 @@ ORDER BY INDEX_NAME, SEQ_IN_INDEX;
 1. ✅ Миграция выполнена
 2. ✅ Код оптимизирован (см. PERFORMANCE_OPTIMIZATIONS.md)
 3. 🎯 Проверьте работу сайта - должно быть заметно быстрее!
-

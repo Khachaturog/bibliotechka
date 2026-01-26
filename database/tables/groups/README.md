@@ -13,7 +13,6 @@
 | `title_en` | VARCHAR(255) | YES | | Английское название группы (равно slug) |
 | `badge` | VARCHAR(255) | YES | | Бейдж группы |
 | `cover` | VARCHAR(500) | YES | | Путь к обложке группы |
-| `cover_notion` | VARCHAR(500) | YES | | URL обложки из Notion |
 | `description_ru` | TEXT | YES | | Русское описание группы |
 | `description_seo` | TEXT | YES | | SEO описание |
 | `keywords_seo` | VARCHAR(500) | YES | | SEO ключевые слова |

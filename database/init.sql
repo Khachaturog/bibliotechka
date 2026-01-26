@@ -24,7 +24,6 @@ CREATE TABLE IF NOT EXISTS `groups` (
   `title_en` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
   `badge` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
   `cover` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT '',
-  `cover_notion` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT '',
   `description_ru` text COLLATE utf8mb4_unicode_ci,
   `description_seo` text COLLATE utf8mb4_unicode_ci,
   `keywords_seo` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT '',
@@ -87,8 +86,8 @@ CREATE TABLE IF NOT EXISTS `authors` (
 CREATE TABLE IF NOT EXISTS `data` (
   `slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `cover` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT '',
-  `cover_notion` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `cover_short` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `cover_large` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT '',
   `url_seo_yandex` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `url_seo_google` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `description` text COLLATE utf8mb4_unicode_ci,

@@ -26,8 +26,8 @@ DB_CONFIG = {
 
 # Маппинг таблиц и их текстовых колонок
 TABLE_COLUMNS = {
-    'data': ['title', 'description', 'detail', 'comment', 'summary_ai', 'cover', 'cover_notion', 'url_1', 'url_2', 'url_3', 'url_4', 'url_5', 'url_6', 'url_seo_yandex', 'url_seo_google'],
-    'groups': ['title_ru', 'title_en', 'description_ru', 'cover', 'cover_notion'],
+    'data': ['title', 'description', 'detail', 'comment', 'summary_ai', 'cover_short', 'cover_large', 'url_1', 'url_2', 'url_3', 'url_4', 'url_5', 'url_6', 'url_seo_yandex', 'url_seo_google'],
+    'groups': ['title_ru', 'title_en', 'description_ru', 'cover'],
     'subgroups': ['title_ru', 'title_en', 'description_ru'],
     'authors': ['title_ru', 'title_en', 'avatar'],
     'versions': ['title', 'description', 'url'],

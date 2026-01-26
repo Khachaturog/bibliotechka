@@ -13,7 +13,7 @@ try {
         SELECT 
             slug,
             title,
-            cover,
+            cover_short,
             description,
             group_slug,
             subgroup_slug,

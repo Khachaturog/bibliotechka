@@ -14,8 +14,8 @@
 |------|-----|------|------|----------|
 | `slug` | VARCHAR(255) | NO | PRI | Первичный ключ, уникальный идентификатор элемента |
 | `title` | VARCHAR(255) | NO | | Название элемента |
-| `cover` | VARCHAR(500) | YES | | Путь к обложке |
-| `cover_notion` | VARCHAR(500) | YES | | URL обложки из Notion |
+| `cover_short` | VARCHAR(500) | YES | | URL обложки для списков (short) |
+| `cover_large` | VARCHAR(500) | YES | | URL обложки для страницы карточки (large) |
 | `description` | TEXT | YES | | Описание элемента |
 
 ### SEO поля
