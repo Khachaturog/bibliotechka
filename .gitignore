@@ -43,10 +43,3 @@ backups/
 # Migration web interfaces (temporary, should be deleted after use)
 *-web.php
 run-migration-*-web.php
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
