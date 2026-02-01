@@ -32,10 +32,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // 1. Полный group (со всеми SEO полями)
                 // 2. Подгруппы ТОЛЬКО для этой группы (оптимизация!)
                 // 3. Легковесный cards (только для списка)
-                const [groupResponse, subgroupsResponse, dataResponse] = await Promise.all([
+                const [groupResponse, subgroupsResponse, dataResponse, groupsListResponse] = await Promise.all([
                         fetch(window.CONFIG?.getApiUrl('groups', { slug: groupSlug }) || `${API_BASE}/groups?slug=${groupSlug}`),
                         fetch(window.CONFIG?.getApiUrl('subgroups', { group_slug: groupSlug }) || `${API_BASE}/subgroups?group_slug=${groupSlug}`),
-                        fetch(window.CONFIG?.getApiUrl('data/list', { group_slug: groupSlug }) || `${API_BASE}/data/list?group_slug=${groupSlug}`)
+                        fetch(window.CONFIG?.getApiUrl('data/list', { group_slug: groupSlug }) || `${API_BASE}/data/list?group_slug=${groupSlug}`),
+                        fetch(window.CONFIG?.getApiUrl('groups/list') || `${API_BASE}/groups/list`)
                 ]);
 
                 if (!groupResponse.ok) {
@@ -47,10 +48,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (!dataResponse.ok) {
                         throw new Error(`HTTP error! status: ${dataResponse.status}`);
                 }
+                if (!groupsListResponse.ok) {
+                        throw new Error(`HTTP error! status: ${groupsListResponse.status}`);
+                }
 
                 const groups = await groupResponse.json();
                 const subgroups = await subgroupsResponse.json();
                 const data = await dataResponse.json();
+                const groupsList = await groupsListResponse.json();
                 
                 // API возвращает массив, берем первый элемент
                 const group = groups[0];
@@ -138,6 +143,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // API уже возвращает отфильтрованные данные по group_slug на сервере
                 // Не нужно фильтровать на клиенте - экономия CPU
                 displaySubgroupsAndCards(data, subgroups);
+                displayOtherGroups(groupsList, groupSlug);
                         // Скроллим к якорю после отрисовки с задержкой 50мс
                         if (window.location.hash) {
                             setTimeout(() => {
@@ -172,25 +178,84 @@ function displaySubgroupsAndCards(data, subgroups) {
     const container = document.querySelector('.subgroups-wrap');
     container.innerHTML = ''; // Clear existing content
 
-    const subgroupsContainer = document.querySelector('.badge-wrap');
-    subgroupsContainer.innerHTML = ''; // Clear existing badges
+    const subgroupsContainers = document.querySelectorAll('.subgroups-badge-wrap');
+    if (subgroupsContainers.length === 0) {
+        console.error('Subgroups badge container not found');
+        return;
+    }
 
-    subgroups.forEach(subgroup => {
+    const subgroupsToRender = subgroups.filter(subgroup => {
         const subgroupData = data.filter(item => item.subgroup_slug === subgroup.slug);
-        if (subgroupData.length > 0) {
-            const badge = createBadge(subgroup);
-            subgroupsContainer.appendChild(badge);
+        return subgroupData.length > 0;
+    });
 
-            const subgroupElement = createSubgroup(subgroup, subgroupData);
-            container.appendChild(subgroupElement);
-        }
+    // Рендерим бейджи подгрупп во все контейнеры (на случай дубликатов)
+    subgroupsContainers.forEach(subgroupsContainer => {
+        const template = subgroupsContainer.querySelector('template.badge-template');
+        if (!template) return;
+
+        // Очищаем всё, кроме template
+        Array.from(subgroupsContainer.children).forEach(child => {
+            if (child.tagName !== 'TEMPLATE') child.remove();
+        });
+
+        subgroupsToRender.forEach(subgroup => {
+            const badge = createBadge(subgroup, template);
+            subgroupsContainer.appendChild(badge);
+        });
+    });
+
+    // Рендерим контент подгрупп (карточки) один раз
+    subgroupsToRender.forEach(subgroup => {
+        const subgroupData = data.filter(item => item.subgroup_slug === subgroup.slug);
+        const subgroupElement = createSubgroup(subgroup, subgroupData);
+        container.appendChild(subgroupElement);
     });
 }
 
-// Бейджи
-const badgeTemplate = document.getElementById('badge-template');
+// Другие группы (кроме текущей)
+function displayOtherGroups(groupsList, currentGroupSlug) {
+    const containers = document.querySelectorAll('.other-groups-wrap');
+    if (containers.length === 0) return;
 
-function createBadge(subgroup) {
+    if (!Array.isArray(groupsList)) return;
+
+    const otherGroups = groupsList
+        .filter(g => g && g.slug && g.slug !== currentGroupSlug)
+        .slice()
+        .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
+
+    if (otherGroups.length === 0) return;
+
+    containers.forEach(container => {
+        const template = container.querySelector('template.other-group-badge-template');
+        if (!template) return;
+
+        // Очищаем всё, кроме template
+        Array.from(container.children).forEach(child => {
+            if (child.tagName !== 'TEMPLATE') child.remove();
+        });
+
+        otherGroups.forEach(group => {
+            const clone = template.content.cloneNode(true);
+            const link = clone.querySelector('.other-group-badge');
+            const title = clone.querySelector('.other-group-badge-title');
+
+            if (link) {
+                link.href = window.CONFIG?.getGroupUrl(group.slug) || `/${group.slug}`;
+            }
+            if (title) {
+                title.textContent = group.title_ru || group.title || group.slug;
+            }
+
+            container.appendChild(clone);
+        });
+
+        container.hidden = false;
+    });
+}
+
+function createBadge(subgroup, badgeTemplate) {
     const clone = badgeTemplate.content.cloneNode(true);
     const badge = clone.querySelector('.badge');
     badge.href = `#${subgroup.slug}`;
@@ -215,7 +280,8 @@ function createBadge(subgroup) {
 
             // Устанавливаем класс active для текущего бейджа с задержкой
             setTimeout(() => {
-                document.querySelectorAll('.badge').forEach(b => b.classList.remove('active'));
+                const parentWrap = badge.closest('.subgroups-badge-wrap') || document;
+                parentWrap.querySelectorAll('.badge').forEach(b => b.classList.remove('active'));
                 badge.classList.add('active');
                 centerBadge(badge);
             }, 100); // Задержка в мс
@@ -235,18 +301,21 @@ let scrollTimeout;
 window.addEventListener('scroll', () => {
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(() => {
-        const badges = document.querySelectorAll('.badge');
-        badges.forEach(badge => {
-            const targetId = badge.getAttribute('href').substring(1);
-            const targetElement = document.getElementById(targetId);
-            if (targetElement) {
-                const rect = targetElement.getBoundingClientRect();
-                if (rect.top <= 90  && rect.bottom > 90) { // Проверяем, находится ли блок в видимой области
-                    badges.forEach(b => b.classList.remove('active'));
-                    badge.classList.add('active');
-                    centerBadge(badge);
+        const wraps = document.querySelectorAll('.subgroups-badge-wrap');
+        wraps.forEach(wrap => {
+            const badges = wrap.querySelectorAll('.badge');
+            badges.forEach(badge => {
+                const targetId = badge.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    const rect = targetElement.getBoundingClientRect();
+                    if (rect.top <= 90  && rect.bottom > 90) { // Проверяем, находится ли блок в видимой области
+                        badges.forEach(b => b.classList.remove('active'));
+                        badge.classList.add('active');
+                        centerBadge(badge);
+                    }
                 }
-            }
+            });
         });
     }, 10); // Задержка 10мс после завершения прокрутки
 });
