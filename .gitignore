@@ -29,6 +29,14 @@ yarn-error.log*
 .env.local
 .env.*.local
 
+# Website extraction (local config + outputs)
+site_extraction/extract-website-data-config.json
+site_extraction/extracted_data/
+site_extraction/__pycache__/
+
+# Extracted results (default output_dir)
+extracted_data/
+
 # Temporary files
 *.tmp
 *.temp
