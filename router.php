@@ -186,13 +186,9 @@ if (!$isExcluded && preg_match(ROUTE_GROUP_PATTERN, $path, $matches)) {
     $slug = $matches[1];
     // Проверяем, что это не файл с расширением
     if (!preg_match(ROUTE_FILE_EXT_PATTERN, $slug)) {
-        $groupFile = __DIR__ . '/group.html';
-        if (file_exists($groupFile)) {
-            // Отдаем group.html, JavaScript сам извлечет slug из пути URL
-            header('Content-Type: text/html; charset=utf-8');
-            readfile($groupFile);
-            exit;
-        }
+        $_GET['slug'] = $slug;
+        require __DIR__ . '/group-seo.php';
+        exit;
     }
 }
 
@@ -200,5 +196,13 @@ if (!$isExcluded && preg_match(ROUTE_GROUP_PATTERN, $path, $matches)) {
 $executionTime = round((microtime(true) - $startTime) * 1000, 2);
 logRoute('404 Not Found', ['path' => $path, 'time' => $executionTime . 'ms']);
 http_response_code(404);
+// Если есть 404.html — отдаем его как HTML страницу
+$notFoundPage = __DIR__ . '/404.html';
+if (file_exists($notFoundPage) && is_file($notFoundPage)) {
+    header('Content-Type: text/html; charset=utf-8');
+    readfile($notFoundPage);
+    exit;
+}
+
 echo "File not found: " . htmlspecialchars($path);
 

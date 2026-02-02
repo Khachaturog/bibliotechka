@@ -41,9 +41,12 @@
     # Перенаправление красивых URL групп на group.html
     # Формат: /designsystem
     # Исключаем известные файлы и директории
-    RewriteCond %{REQUEST_URI} !^/(index\.html|group\.html|detail\.html|api|images|css|js|scripts|other|database|data|detail-seo\.php)
-    RewriteRule ^([^/]+)/?$ /group.html?slug=$1 [QSA,L]
+    RewriteCond %{REQUEST_URI} !^/(index\.html|group\.html|detail\.html|api|images|css|js|scripts|other|database|data|detail-seo\.php|group-seo\.php|router\.php)
+    RewriteRule ^([^/]+)/?$ /group-seo.php?slug=$1 [QSA,L]
 </IfModule>
+
+# 404: отдавать отдельную страницу ошибки
+ErrorDocument 404 /404.html
 
 # Разрешаем CORS (если нужно)
 <IfModule mod_headers.c>
