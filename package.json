@@ -5,6 +5,7 @@
   "scripts": {
     "generate-sitemap": "node scripts/generate-sitemap.js",
     "generate-url-seo-yandex": "node scripts/generate-url-seo-yandex-db.js",
+    "submit-indexnow": "node scripts/submit-indexnow.js",
     "dev": "browser-sync start --proxy 'localhost:8080' --files '**/*.html,**/*.css,**/*.js,**/*.php' --no-open --port 3000"
   },
   "dependencies": {

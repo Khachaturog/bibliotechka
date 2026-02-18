@@ -1552,6 +1552,7 @@ body {
   height: 125px;
   object-fit: cover;
   margin-bottom: 12px;
+  object-position: center;
 }
 
 .card-title {
