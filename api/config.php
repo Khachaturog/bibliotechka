@@ -80,8 +80,8 @@ function sendJSON($data, $statusCode = 200, $cacheSeconds = 300) {
     // Кодируем JSON один раз для всех операций
     $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     
-    // Кэширование для статических данных (5 минут для списков, 1 час для отдельных элементов)
-    header('Cache-Control: public, max-age=' . $cacheSeconds);
+    // Кэширование (0 = не кэшировать для ответов на запись)
+    header('Cache-Control: ' . ($cacheSeconds > 0 ? 'public, max-age=' . $cacheSeconds : 'no-store, no-cache'));
     header('Expires: ' . gmdate('D, d M Y H:i:s', time() + $cacheSeconds) . ' GMT');
     
     // ETag для валидации кэша

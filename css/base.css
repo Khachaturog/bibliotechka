@@ -1332,7 +1332,46 @@ body {
     margin: 0 8px 8px 8px;
 }
 
+/* Скелетоны страницы детали */
 
+.detail-skeleton-breadcrumb-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    align-self: stretch;
+}
+
+.skeleton-detail-icon {
+    width: 46px;
+    height: 34px;
+    flex-shrink: 0;
+}
+
+.skeleton-detail-chip {
+    width: 60px;
+    height: 32px;
+}
+
+.skeleton-detail-chip--wide {
+    width: 80px;
+}
+
+.detail-skeleton-title-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-self: stretch;
+}
+
+.skeleton-detail-title {
+    width: 80%;
+    height: 32px;
+}
+
+.skeleton-detail-subtitle {
+    width: 55%;
+    height: 20px;
+}
 
 
 /* //////////////////////////////////////////////////////////////////////////////// */
@@ -1485,6 +1524,79 @@ body {
   gap: 12px;
 }
 
+/* Страница «О проекте» */
+
+.versions-wrap {
+  width: 100%;
+  display: grid;
+  gap: 12px;
+}
+
+.versions-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton-versions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton-version {
+  height: fit-content;
+}
+
+.version-card, .skeleton-version {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: var(--radius-200);
+  background: var(--01-layer-2);
+  border: 1px solid var(--04-border-on-layer-2);
+}
+
+.version-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.version-label {
+  color: var(--02-content-secondary);
+}
+
+.version-date {
+  color: var(--02-content-secondary);
+}
+
+.version-title {
+  color: var(--02-content-primary);
+}
+
+.version-description {
+  color: var(--02-content-secondary);
+  white-space: pre-line;
+}
+
+.version-link {
+  color: var(--01-layer-accent-solid);
+  text-decoration: none;
+}
+
+.version-link:hover {
+  text-decoration: underline;
+}
+
+.version-link-button {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
 .cards-container-0-header {
   display: grid;
   gap: 2px;
@@ -1584,6 +1696,7 @@ body {
 
 /* Subtle · Violet · 32px */
 .subtle-violet-24 {
+    background: var(--06-theme-violet-layer-soft);    
     display: flex;
     justify-content: center; /* Центрирование по горизонтали */
     align-items: center; /* Центрирование по вертикали */
@@ -1616,11 +1729,24 @@ body {
   pointer-events: auto;
 }
 
+.subtle-violet-24 svg {
+  fill: var(--06-theme-violet-content);
+}
+
+.subtle-violet-24:hover svg {
+  fill: var(--06-theme-violet-content);
+}
+
+.subtle-violet-24:active svg {
+  fill: var(--06-theme-violet-content-pressed);
+}
+
 
 /* ///////////////////////////////////////////////////////// */
 
 
 #detail-container-0 {
+  display: grid;
   gap: var(--gap-regular);
   width: 100%;
   /* min-height: 100vh; Минимальная высота равна высоте окна */
@@ -1641,12 +1767,13 @@ body {
   align-self: stretch;
 }
 
+
+
 .detail-container-image {
   position: relative;
-  width: 100%;
-  height: 400px;
-  /* min-height: 400px; */
-  /* aspect-ratio: 16 / 9; */
+  /* width: 100%; */
+  aspect-ratio: 16/9;
+  min-height: 200px;
   border-radius: 12px;
   background: var(--01-layer-1);
   overflow: hidden;
@@ -1767,8 +1894,9 @@ body {
 }
 
 .detail-ai {
-  display: grid;
-  gap: 2px;
+  display: none;  /* TODO: убрать когда появятся summary по сайтам */
+  /* display: grid; */
+  /* gap: 2px; */
 }
 
 .detail-ai-summary {
@@ -1804,6 +1932,19 @@ body {
 
 .detail-meta-row span:last-child {
   color: var(--02-content-primary);
+}
+
+.detail-meta-row--empty {
+  display: none;
+}
+
+/* TODO: убрать когда придумаешь применение этих полей */
+.detail-meta-row:has(.group-slug),
+.detail-meta-row:has(.detail),
+.detail-meta-row:has(.subgroup-slug),
+.detail-meta-row:has(.version-slug),
+.detail-meta-row:has(.status-slug) {
+  display: none;
 }
 
 
@@ -2025,6 +2166,10 @@ drawer-component {
   display: none;
 }
 
+.list-desktop .item-active {
+  color: var(--01-layer-accent-solid);
+}
+
 .header-0 .switcher-theme {
   display: none;
 }
@@ -2067,10 +2212,10 @@ drawer-component {
     z-index: 1;
   }
 
-  .detail-container-image {
+  /* .detail-container-image {
     height: 250px;
     min-height: 250px;
-  }
+  } */
 
   .cards-container {
     grid-template-columns: 1fr 1fr;

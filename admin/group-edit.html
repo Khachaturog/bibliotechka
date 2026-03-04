@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="robots" content="noindex, nofollow">
+
+    <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+    <title>Группа — Админка Библиотечки</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/@adminkit/core@latest/dist/css/app.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap">
+</head>
+
+<body>
+    <div class="wrapper">
+        <nav id="sidebar" class="sidebar js-sidebar">
+            <div class="sidebar-content js-simplebar">
+                <a class="sidebar-brand" href="/admin/"><span class="align-middle">Библиотечка</span></a>
+                <ul class="sidebar-nav">
+                    <li class="sidebar-header">Панель</li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="/admin/"><i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboard</span></a></li>
+                    <li class="sidebar-header">Контент</li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="/admin/cards.html"><i class="align-middle" data-feather="book"></i> <span class="align-middle">Карточки</span></a></li>
+                    <li class="sidebar-item active"><a class="sidebar-link" href="/admin/groups.html"><i class="align-middle" data-feather="folder"></i> <span class="align-middle">Группы</span></a></li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="/admin/subgroups.html"><i class="align-middle" data-feather="layers"></i> <span class="align-middle">Подгруппы</span></a></li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="/admin/versions.html"><i class="align-middle" data-feather="git-branch"></i> <span class="align-middle">Версии</span></a></li>
+                    <li class="sidebar-header">Инструменты</li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="/admin/forms.html"><i class="align-middle" data-feather="edit-3"></i> <span class="align-middle">Формы</span></a></li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="../" target="_blank"><i class="align-middle" data-feather="external-link"></i> <span class="align-middle">На сайт</span></a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="main">
+            <nav class="navbar navbar-expand navbar-light navbar-bg">
+                <a class="sidebar-toggle js-sidebar-toggle"><i class="hamburger align-self-center"></i></a>
+                <div class="navbar-collapse collapse">
+                    <ul class="navbar-nav navbar-align">
+                        <li class="nav-item"><a class="nav-link" href="/admin/groups.html"><i class="align-middle" data-feather="arrow-left"></i> <span class="align-middle">К группам</span></a></li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main class="content">
+                <div class="container-fluid p-0">
+                    <h1 class="h3 mb-3"><strong id="pageTitle">Создать группу</strong></h1>
+
+                    <div id="formError" class="alert alert-danger d-none"></div>
+                    <div id="formSuccess" class="alert alert-success d-none"></div>
+
+                    <form id="groupForm" class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Slug <span class="text-danger">*</span></label>
+                                        <input type="text" name="slug" id="slug" class="form-control" required placeholder="books">
+                                        <small class="text-muted">Уникальный идентификатор, нельзя менять при редактировании</small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Название RU <span class="text-danger">*</span></label>
+                                        <input type="text" name="title_ru" id="title_ru" class="form-control" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Название EN</label>
+                                        <input type="text" name="title_en" id="title_en" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Бейдж</label>
+                                        <input type="text" name="badge" id="badge" class="form-control" placeholder="❇️ Новый раздел">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Обложка</label>
+                                        <input type="text" name="cover" id="cover" class="form-control" placeholder="images/groups/book.webp">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Описание RU</label>
+                                        <textarea name="description_ru" id="description_ru" class="form-control" rows="3"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Порядок (sort)</label>
+                                        <input type="number" name="sort" id="sort" class="form-control" placeholder="1">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-muted mb-2">SEO</h6>
+                                    <div class="mb-3">
+                                        <label class="form-label">Title SEO</label>
+                                        <input type="text" name="title_seo" id="title_seo" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Description SEO</label>
+                                        <textarea name="description_seo" id="description_seo" class="form-control" rows="2"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Keywords SEO</label>
+                                        <input type="text" name="keywords_seo" id="keywords_seo" class="form-control">
+                                    </div>
+                                    <h6 class="text-muted mb-2 mt-3">Open Graph</h6>
+                                    <div class="mb-3">
+                                        <label class="form-label">OG Title</label>
+                                        <input type="text" name="og_title" id="og_title" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">OG Description</label>
+                                        <textarea name="og_description" id="og_description" class="form-control" rows="2"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">OG Image</label>
+                                        <input type="text" name="og_image" id="og_image" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Создано (created_at)</label>
+                                        <input type="text" name="created_at" id="created_at" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Обновлено (updated_at)</label>
+                                        <input type="text" name="updated_at" id="updated_at" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Создано в БД</label>
+                                        <input type="text" id="created_at_db" class="form-control" readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Обновлено в БД</label>
+                                        <input type="text" id="updated_at_db" class="form-control" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <button type="submit" class="btn btn-primary" id="submitBtn">Сохранить</button>
+                                <a href="/admin/groups.html" class="btn btn-outline-secondary ms-2">Отмена</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </main>
+
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row text-muted">
+                        <div class="col-6 text-start"><p class="mb-0"><a class="text-muted" href="https://adminkit.io/" target="_blank">AdminKit</a> · Библиотечка</p></div>
+                        <div class="col-6 text-end"><a class="text-muted" href="/admin/groups.html">К группам</a></div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@adminkit/core@latest/dist/js/app.js"></script>
+    <script src="../js/config.js"></script>
+    <script>
+        const API_BASE = window.CONFIG?.API_BASE || '/api/v1';
+        const params = new URLSearchParams(location.search);
+        const slug = params.get('slug');
+        const isEdit = !!slug;
+
+        document.getElementById('pageTitle').textContent = isEdit ? 'Редактировать группу' : 'Создать группу';
+        if (isEdit) document.getElementById('slug').setAttribute('readonly', true);
+
+        const fetchOpts = { credentials: 'include' };
+
+        const editableFields = [
+            'slug', 'title_ru', 'title_en', 'badge', 'cover', 'description_ru',
+            'description_seo', 'keywords_seo', 'og_description', 'og_image', 'og_title',
+            'sort', 'title_seo', 'created_at', 'updated_at'
+        ];
+
+        async function loadGroup() {
+            const res = await fetch(`${API_BASE}/groups?slug=${slug}`, fetchOpts);
+            if (!res.ok) throw new Error('Группа не найдена');
+            const groups = await res.json();
+            const group = Array.isArray(groups) ? groups[0] : groups;
+
+            editableFields.forEach(f => {
+                const el = document.getElementById(f);
+                if (!el || group[f] == null) return;
+                el.value = group[f];
+            });
+
+            if (group.created_at_db && document.getElementById('created_at_db')) {
+                document.getElementById('created_at_db').value = group.created_at_db;
+            }
+            if (group.updated_at_db && document.getElementById('updated_at_db')) {
+                document.getElementById('updated_at_db').value = group.updated_at_db;
+            }
+        }
+
+        document.getElementById('groupForm').addEventListener('submit', async e => {
+            e.preventDefault();
+            const errEl = document.getElementById('formError');
+            const okEl = document.getElementById('formSuccess');
+            errEl.classList.add('d-none');
+            okEl.classList.add('d-none');
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+
+            const data = {};
+            editableFields.forEach(f => {
+                const el = document.getElementById(f);
+                if (!el) return;
+                const value = el.value;
+                data[f] = value === '' ? null : value;
+            });
+
+            try {
+                let res;
+                if (isEdit) {
+                    res = await fetch(`${API_BASE}/groups?slug=${slug}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data),
+                        credentials: 'include'
+                    });
+                } else {
+                    res = await fetch(`${API_BASE}/groups`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data),
+                        credentials: 'include'
+                    });
+                }
+                const json = await res.json();
+                if (!res.ok) {
+                    throw new Error(json.error || 'Ошибка сохранения');
+                }
+                okEl.textContent = 'Сохранено';
+                okEl.classList.remove('d-none');
+                if (!isEdit) setTimeout(() => location.href = '/admin/group-edit.html?slug=' + data.slug, 1000);
+            } catch (err) {
+                errEl.textContent = err.message;
+                errEl.classList.remove('d-none');
+            }
+            btn.disabled = false;
+        });
+
+        (async () => {
+            if (isEdit) await loadGroup();
+        })();
+    </script>
+</body>
+
+</html>

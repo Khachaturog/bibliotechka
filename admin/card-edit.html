@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="robots" content="noindex, nofollow">
+
+    <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+    <title>Карточка — Админка Библиотечки</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/@adminkit/core@latest/dist/css/app.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap">
+</head>
+
+<body>
+    <div class="wrapper">
+        <nav id="sidebar" class="sidebar js-sidebar">
+            <div class="sidebar-content js-simplebar">
+                <a class="sidebar-brand" href="/admin/"><span class="align-middle">Библиотечка</span></a>
+                <ul class="sidebar-nav">
+                    <li class="sidebar-header">Панель</li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="/admin/"><i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboard</span></a></li>
+                    <li class="sidebar-header">Контент</li>
+                    <li class="sidebar-item active"><a class="sidebar-link" href="/admin/cards.html"><i class="align-middle" data-feather="book"></i> <span class="align-middle">Карточки</span></a></li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="/admin/groups.html"><i class="align-middle" data-feather="folder"></i> <span class="align-middle">Группы</span></a></li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="/admin/subgroups.html"><i class="align-middle" data-feather="layers"></i> <span class="align-middle">Подгруппы</span></a></li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="/admin/versions.html"><i class="align-middle" data-feather="git-branch"></i> <span class="align-middle">Версии</span></a></li>
+                    <li class="sidebar-header">Инструменты</li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="/admin/forms.html"><i class="align-middle" data-feather="edit-3"></i> <span class="align-middle">Формы</span></a></li>
+                    <li class="sidebar-item"><a class="sidebar-link" href="../" target="_blank"><i class="align-middle" data-feather="external-link"></i> <span class="align-middle">На сайт</span></a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="main">
+            <nav class="navbar navbar-expand navbar-light navbar-bg">
+                <a class="sidebar-toggle js-sidebar-toggle"><i class="hamburger align-self-center"></i></a>
+                <div class="navbar-collapse collapse">
+                    <ul class="navbar-nav navbar-align">
+                        <li class="nav-item"><a class="nav-link" href="/admin/cards.html"><i class="align-middle" data-feather="arrow-left"></i> <span class="align-middle">К карточкам</span></a></li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main class="content">
+                <div class="container-fluid p-0">
+                    <h1 class="h3 mb-3"><strong id="pageTitle">Создать карточку</strong></h1>
+
+                    <div id="formError" class="alert alert-danger d-none"></div>
+                    <div id="formSuccess" class="alert alert-success d-none"></div>
+
+                    <form id="cardForm" class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12 col-lg-8 col-xl-9">
+                                    <div class="mb-3">
+                                        <label class="form-label">Slug <span class="text-danger">*</span></label>
+                                        <input type="text" name="slug" id="slug" class="form-control" required placeholder="001">
+                                        <small class="text-muted">Уникальный идентификатор, нельзя менять при редактировании</small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Название <span class="text-danger">*</span></label>
+                                        <input type="text" name="title" id="title" class="form-control" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Статус</label>
+                                        <select name="status_slug" id="status_slug" class="form-select">
+                                            <option value="draft">Черновик</option>
+                                            <option value="published">Опубликовано</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Группа</label>
+                                        <select name="group_slug" id="group_slug" class="form-select">
+                                            <option value="">—</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Подгруппа</label>
+                                        <select name="subgroup_slug" id="subgroup_slug" class="form-select">
+                                            <option value="">—</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Автор (slug)</label>
+                                        <input type="text" name="author_slug" id="author_slug" class="form-control" placeholder="osnovnoj-avtor">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Версия (slug)</label>
+                                        <input type="text" name="version_slug" id="version_slug" class="form-control" placeholder="v1">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">URL SEO (Яндекс)</label>
+                                        <input type="text" name="url_seo_yandex" id="url_seo_yandex" class="form-control" placeholder="gajd-po-tekstam-001">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">URL SEO (Google)</label>
+                                        <input type="text" name="url_seo_google" id="url_seo_google" class="form-control" placeholder="guide-about-texts-001">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Обложка (короткая)</label>
+                                        <input type="text" name="cover_short" id="cover_short" class="form-control" placeholder="/images/covers/...">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Обложка (полная)</label>
+                                        <input type="text" name="cover_large" id="cover_large" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Дата начала</label>
+                                        <input type="text" name="start_date" id="start_date" class="form-control" placeholder="2025-01-01">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Дата окончания</label>
+                                        <input type="text" name="end_date" id="end_date" class="form-control" placeholder="2025-12-31">
+                                    </div>
+                                    <div class="mb-3 form-check">
+                                        <input class="form-check-input" type="checkbox" id="published" name="published" value="1">
+                                        <label class="form-check-label" for="published">Опубликовано (поле published)</label>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Описание</label>
+                                        <textarea name="description" id="description" class="form-control" rows="3"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Ссылка 1 (название)</label>
+                                        <input type="text" name="url_title_1" id="url_title_1" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Ссылка 1 (URL)</label>
+                                        <input type="url" name="url_1" id="url_1" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Ссылка 2 (название)</label>
+                                        <input type="text" name="url_title_2" id="url_title_2" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Ссылка 2 (URL)</label>
+                                        <input type="url" name="url_2" id="url_2" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Ссылка 3 (название)</label>
+                                        <input type="text" name="url_title_3" id="url_title_3" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Ссылка 3 (URL)</label>
+                                        <input type="url" name="url_3" id="url_3" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Ссылка 4 (название)</label>
+                                        <input type="text" name="url_title_4" id="url_title_4" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Ссылка 4 (URL)</label>
+                                        <input type="url" name="url_4" id="url_4" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Ссылка 5 (название)</label>
+                                        <input type="text" name="url_title_5" id="url_title_5" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Ссылка 5 (URL)</label>
+                                        <input type="url" name="url_5" id="url_5" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Ссылка 6 (название)</label>
+                                        <input type="text" name="url_title_6" id="url_title_6" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Ссылка 6 (URL)</label>
+                                        <input type="url" name="url_6" id="url_6" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Detail (HTML)</label>
+                                        <textarea name="detail" id="detail" class="form-control" rows="6" style="font-family: monospace"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Summary AI</label>
+                                        <textarea name="summary_ai" id="summary_ai" class="form-control" rows="3"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Комментарий</label>
+                                        <textarea name="comment" id="comment" class="form-control" rows="3" placeholder="Внутренний комментарий, не показывается на сайте"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Создано (created_at)</label>
+                                        <input type="text" name="created_at" id="created_at" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Обновлено (updated_at)</label>
+                                        <input type="text" name="updated_at" id="updated_at" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Создано в БД</label>
+                                        <input type="text" id="created_at_db" class="form-control" readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Обновлено в БД</label>
+                                        <input type="text" id="updated_at_db" class="form-control" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <button type="submit" class="btn btn-primary" id="submitBtn">Сохранить</button>
+                                <a href="/admin/cards.html" class="btn btn-outline-secondary ms-2">Отмена</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </main>
+
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row text-muted">
+                        <div class="col-6 text-start"><p class="mb-0"><a class="text-muted" href="https://adminkit.io/" target="_blank">AdminKit</a> · Библиотечка</p></div>
+                        <div class="col-6 text-end"><a class="text-muted" href="/admin/cards.html">К карточкам</a></div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@adminkit/core@latest/dist/js/app.js"></script>
+    <script src="../js/config.js"></script>
+    <script>
+        const API_BASE = window.CONFIG?.API_BASE || '/api/v1';
+        const params = new URLSearchParams(location.search);
+        const slug = params.get('slug');
+        const isEdit = !!slug;
+
+        document.getElementById('pageTitle').textContent = isEdit ? 'Редактировать карточку' : 'Создать карточку';
+        if (isEdit) document.getElementById('slug').setAttribute('readonly', true);
+
+        const fetchOpts = { credentials: 'include' };
+
+        async function loadGroups() {
+            const res = await fetch(`${API_BASE}/groups/list`, fetchOpts);
+            const groups = await res.json();
+            const sel = document.getElementById('group_slug');
+            groups.forEach(g => {
+                const opt = document.createElement('option');
+                opt.value = g.slug;
+                opt.textContent = g.title_ru || g.slug;
+                sel.appendChild(opt);
+            });
+        }
+
+        async function loadSubgroups(groupSlug) {
+            const sel = document.getElementById('subgroup_slug');
+            sel.innerHTML = '<option value="">—</option>';
+            if (!groupSlug) return;
+            const res = await fetch(`${API_BASE}/subgroups?group_slug=${groupSlug}`, fetchOpts);
+            const subs = await res.json();
+            subs.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.slug;
+                opt.textContent = s.title_ru || s.slug;
+                sel.appendChild(opt);
+            });
+        }
+
+        document.getElementById('group_slug').addEventListener('change', e => loadSubgroups(e.target.value));
+
+        async function loadCard() {
+            const res = await fetch(`${API_BASE}/data?slug=${slug}`, fetchOpts);
+            if (!res.ok) throw new Error('Карточка не найдена');
+            const cards = await res.json();
+            const card = Array.isArray(cards) ? cards[0] : cards;
+
+            // Все редактируемые поля карточки
+            const editableFields = [
+                'slug',
+                'title',
+                'status_slug',
+                'group_slug',
+                'subgroup_slug',
+                'author_slug',
+                'version_slug',
+                'url_seo_yandex',
+                'url_seo_google',
+                'cover_short',
+                'cover_large',
+                'description',
+                'url_title_1',
+                'url_1',
+                'url_title_2',
+                'url_2',
+                'url_title_3',
+                'url_3',
+                'url_title_4',
+                'url_4',
+                'url_title_5',
+                'url_5',
+                'url_title_6',
+                'url_6',
+                'start_date',
+                'end_date',
+                'created_at',
+                'updated_at',
+                'summary_ai',
+                'detail',
+                'comment'
+            ];
+
+            editableFields.forEach(f => {
+                const el = document.getElementById(f) || document.getElementsByName(f)[0];
+                if (!el || card[f] == null) return;
+
+                if (f === 'published') {
+                    // published — отдельный чекбокс, обрабатывается ниже
+                    return;
+                }
+
+                el.value = card[f];
+            });
+
+            // Поле published — чекбокс, в базе строка
+            if (card.hasOwnProperty('published')) {
+                const publishedEl = document.getElementById('published');
+                if (publishedEl) {
+                    publishedEl.checked = card.published === '1' || card.published === 'true' || card.published === 'Y' || card.published === 'yes';
+                }
+            }
+
+            // Технические таймстемпы из БД (read-only)
+            if (card.created_at_db && document.getElementById('created_at_db')) {
+                document.getElementById('created_at_db').value = card.created_at_db;
+            }
+            if (card.updated_at_db && document.getElementById('updated_at_db')) {
+                document.getElementById('updated_at_db').value = card.updated_at_db;
+            }
+            if (card.group_slug) await loadSubgroups(card.group_slug);
+        }
+
+        document.getElementById('cardForm').addEventListener('submit', async e => {
+            e.preventDefault();
+            const errEl = document.getElementById('formError');
+            const okEl = document.getElementById('formSuccess');
+            errEl.classList.add('d-none');
+            okEl.classList.add('d-none');
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+
+            const data = {};
+            const editableFields = [
+                'slug',
+                'title',
+                'status_slug',
+                'group_slug',
+                'subgroup_slug',
+                'author_slug',
+                'version_slug',
+                'url_seo_yandex',
+                'url_seo_google',
+                'cover_short',
+                'cover_large',
+                'description',
+                'url_title_1',
+                'url_1',
+                'url_title_2',
+                'url_2',
+                'url_title_3',
+                'url_3',
+                'url_title_4',
+                'url_4',
+                'url_title_5',
+                'url_5',
+                'url_title_6',
+                'url_6',
+                'start_date',
+                'end_date',
+                'created_at',
+                'updated_at',
+                'summary_ai',
+                'detail',
+                'comment'
+            ];
+
+            editableFields.forEach(f => {
+                const el = document.getElementById(f) || document.getElementsByName(f)[0];
+                if (!el) return;
+                const value = el.value;
+                data[f] = value === '' ? null : value;
+            });
+
+            // published — отдельный чекбокс, маппим в строку/NULL
+            const publishedEl = document.getElementById('published');
+            if (publishedEl) {
+                data.published = publishedEl.checked ? '1' : null;
+            }
+
+            try {
+                let res;
+                if (isEdit) {
+                    res = await fetch(`${API_BASE}/data?slug=${slug}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data),
+                        credentials: 'include'
+                    });
+                } else {
+                    res = await fetch(`${API_BASE}/data`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data),
+                        credentials: 'include'
+                    });
+                }
+                const json = await res.json();
+                if (!res.ok) {
+                    throw new Error(json.error || 'Ошибка сохранения');
+                }
+                okEl.textContent = 'Сохранено';
+                okEl.classList.remove('d-none');
+                if (!isEdit) setTimeout(() => location.href = '/admin/card-edit.html?slug=' + data.slug, 1000);
+            } catch (err) {
+                errEl.textContent = err.message;
+                errEl.classList.remove('d-none');
+            }
+            btn.disabled = false;
+        });
+
+        (async () => {
+            await loadGroups();
+            if (isEdit) await loadCard();
+            else loadSubgroups(document.getElementById('group_slug').value);
+        })();
+    </script>
+</body>
+
+</html>

@@ -8,18 +8,34 @@
 pip install -r requirements.txt
 ```
 
+Если планируете извлечение с JS-рендерингом (SPA/Figma и т.п.), один раз установите браузер:
+
+```bash
+python -m playwright install chromium
+```
+
 Или вручную:
 ```bash
-pip install requests beautifulsoup4 pymysql lxml
+pip install requests beautifulsoup4 pymysql lxml playwright
 ```
 
-### 2. Запуск теста на 5 сайтах
+### 2. Настройка конфига (БД)
+
+Скопируйте пример и заполните доступы (локально, файл не должен попадать в git):
 
 ```bash
-python scripts/extract-website-data.py --limit 5
+cp site_extraction/extract-website-data-config.example.json site_extraction/extract-website-data-config.json
 ```
 
-### 3. Проверка результатов
+Либо укажите путь к конфигу через переменную окружения `EXTRACT_WEBSITE_DATA_CONFIG`.
+
+### 3. Запуск теста на 5 сайтах
+
+```bash
+python site_extraction/extract-website-data.py --limit 5
+```
+
+### 4. Проверка результатов
 
 Результаты будут в папке `extracted_data/`:
 - `001.json`, `002.json`, ... - JSON файлы с данными
@@ -30,18 +46,24 @@ python scripts/extract-website-data.py --limit 5
 
 - `--limit N` - обработать только N сайтов (по умолчанию 5)
 - `--skip-existing` - пропустить уже обработанные сайты
+- `--render-js` - всегда рендерить страницу в headless-браузере (нужно для SPA/страниц без контента в сыром HTML, но медленнее)
+- `--smart-render` - сначала `requests`, а Playwright только если контент пустой/короткий (обычно быстрее)
 
 ## Примеры
 
 ```bash
 # Тест на 5 сайтах
-python scripts/extract-website-data.py --limit 5
+python site_extraction/extract-website-data.py --limit 5
 
 # Обработать все сайты
-python scripts/extract-website-data.py
+python site_extraction/extract-website-data.py
 
 # Пропустить уже обработанные
-python scripts/extract-website-data.py --skip-existing
+python site_extraction/extract-website-data.py --skip-existing
+
+# Сгенерировать отчет по "проваленным" ссылкам (по extraction.log)
+# (создаст extracted_data/failed.jsonl; опционально можно включить CSV)
+python site_extraction/build-failed-report.py --only-missing-files
 ```
 
 ## Структура JSON файла

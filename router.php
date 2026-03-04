@@ -111,6 +111,13 @@ function checkAndServeFile($basePath, $requestPath) {
     // Проверяем существующий файл
     $file = $basePath . $requestPath;
     if (file_exists($file) && is_file($file)) {
+        // Для PHP-файлов отдаём управление встроенному серверу,
+        // чтобы они выполнялись, а не скачивались как файлы
+        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+        if ($ext === 'php') {
+            return false;
+        }
+
         serveStaticFile($file);
         return true;
     }
@@ -138,6 +145,25 @@ $path = parse_url($requestUri, PHP_URL_PATH);
 $startTime = microtime(true);
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
+// Защита админки — проверка авторизации (login и logout не требуют авторизации)
+if (strpos($path, '/admin') === 0 && $path !== '/admin/login.php' && $path !== '/admin/logout.php') {
+    session_start();
+    if (empty($_SESSION['admin_logged_in'])) {
+        header('Location: /admin/login.php');
+        exit;
+    }
+}
+
+// Все PHP-файлы внутри /admin/ (login.php, logout.php и т.п.)
+// отдаем встроенному PHP-серверу, чтобы они выполнялись как скрипты.
+// Это предотвращает 404 от роутера для /admin/login.php.
+if (strpos($path, '/admin/') === 0) {
+    $adminFile = __DIR__ . $path;
+    if (is_file($adminFile) && strtolower(pathinfo($adminFile, PATHINFO_EXTENSION)) === 'php') {
+        return false;
+    }
+}
+
 // Логируем запрос в режиме разработки
 logRoute('Request', [
     'method' => $method,
@@ -154,11 +180,11 @@ if (checkAndServeFile(__DIR__, $path)) {
 // Если запрос к API, обрабатываем напрямую через api/index.php
 if (strpos($path, '/api/') === 0) {
     // Проверяем HTTP-метод (API поддерживает только GET)
-    if ($method !== 'GET') {
+    if (!in_array($method, ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])) {
         logRoute('405 Method Not Allowed', ['method' => $method, 'path' => $path]);
         http_response_code(405);
         header('Content-Type: application/json');
-        echo json_encode(['error' => 'Method not allowed. Only GET is supported.']);
+        echo json_encode(['error' => 'Method not allowed']);
         exit;
     }
     

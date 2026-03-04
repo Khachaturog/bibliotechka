@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     temp.select();
                     document.execCommand('copy');
                     document.body.removeChild(temp);
-                    alert('Ссылкана страницу скопирована!');
+                    alert('Ссылка на страницу скопирована!');
                 }
             }
         };
@@ -205,6 +205,10 @@ function navigateToSubgroupFromBreadcrumb(groupSlug, subgroupSlug) {
 
 // Функция для отображения деталей
 function displayDetail(item, groups, subgroups) {
+    document.getElementById('detail-image-placeholder')?.remove();
+    document.getElementById('detail-breadcrumb-placeholder')?.remove();
+    document.getElementById('detail-title-placeholder')?.remove();
+
     // item уже является объектом карточки (не массивом)
     if (!item) {
         document.body.innerHTML = '<h1>Материал не найден</h1>';
@@ -322,6 +326,15 @@ function displayDetail(item, groups, subgroups) {
         miscContainer.querySelector('.created-at').textContent = item.created_at || '-';
         miscContainer.querySelector('.version-slug').textContent = item.version_slug || '-';
         miscContainer.querySelector('.status-slug').textContent = item.status_slug || '-';
+
+        // Скрываем строки без данных (прочерки)
+        const hasDates = (item.start_date && item.start_date !== '-') || (item.end_date && item.end_date !== '-');
+        const datesRow = miscContainer.querySelector('.start-date')?.closest('.detail-meta-row');
+        if (datesRow && !hasDates) datesRow.classList.add('detail-meta-row--empty');
+
+        const hasPublished = item.published && item.published !== '-';
+        const publishedRow = miscContainer.querySelector('.published')?.closest('.detail-meta-row');
+        if (publishedRow && !hasPublished) publishedRow.classList.add('detail-meta-row--empty');
     }
 
     // Добавляем данные в блок "От ИИ"

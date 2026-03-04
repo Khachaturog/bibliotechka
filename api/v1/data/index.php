@@ -22,7 +22,7 @@ if (isset($_GET['slug'])) {
     }
     
     try {
-        $query = "SELECT * FROM data WHERE slug = ? LIMIT 1";
+        $query = "SELECT * FROM data WHERE slug = ? AND status_slug = 'published' LIMIT 1";
         $stmt = $pdo->prepare($query);
         $stmt->execute([$slug]);
         $card = $stmt->fetch();
@@ -48,7 +48,7 @@ if (isset($_GET['url_seo_yandex'])) {
     }
     
     try {
-        $query = "SELECT * FROM data WHERE url_seo_yandex = ? LIMIT 1";
+        $query = "SELECT * FROM data WHERE url_seo_yandex = ? AND status_slug = 'published' LIMIT 1";
         $stmt = $pdo->prepare($query);
         $stmt->execute([$urlSeoYandex]);
         $card = $stmt->fetch();

@@ -1,10 +1,10 @@
 {
   "database": {
-    "host": "mysql.35401aca832c.hosting.myjino.ru",
+    "host": "127.0.0.1",
     "port": 3306,
-    "user": "j35045845_biblio",
-    "password": "tuhrih-zoqmYp",
-    "database": "j35045845_biblio",
+    "user": "bibliotechka_user",
+    "password": "user_password_change_me",
+    "database": "bibliotechka",
     "charset": "utf8mb4"
   },
   "extraction": {

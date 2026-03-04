@@ -9,10 +9,9 @@ class DrawerComponent extends HTMLElement {
 
         <div class="header-wrap-center">
             <div class="list-mobile">
-                <!-- <a class="h3 item">Главная</a> -->
-                <!-- <a class="h3 item">О проекте</a> -->
-                <!-- <a class="h3 item">Дорожная карта</a> -->
-                <a class="h3 item" href="https://t.me/khachatur1" target="_blank" rel="noopener">Написать мне</a>
+                <a class="h3 item ${window.location.pathname === '/about.html' ? 'item-active' : ''}" href="/about.html" rel="noopener">О проекте</a>
+                <a class="h3 item" href="https://t.me/khachatur1" target="_blank" rel="noopener">Написать</a>
+                <a class="h3 item" href="https://pay.cloudtips.ru/p/3cd13ee0" target="_blank" rel="noopener">Поддержать меня</a>
             </div>
         </div>
         

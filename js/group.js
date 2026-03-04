@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const [groupResponse, subgroupsResponse, dataResponse, groupsListResponse] = await Promise.all([
                         fetch(window.CONFIG?.getApiUrl('groups', { slug: groupSlug }) || `${API_BASE}/groups?slug=${groupSlug}`),
                         fetch(window.CONFIG?.getApiUrl('subgroups', { group_slug: groupSlug }) || `${API_BASE}/subgroups?group_slug=${groupSlug}`),
-                        fetch(window.CONFIG?.getApiUrl('data/list', { group_slug: groupSlug }) || `${API_BASE}/data/list?group_slug=${groupSlug}`),
+                        fetch(window.CONFIG?.getApiUrl('data/list', { group_slug: groupSlug, status_slug: 'published' }) || `${API_BASE}/data/list?group_slug=${groupSlug}&status_slug=published`),
                         fetch(window.CONFIG?.getApiUrl('groups/list') || `${API_BASE}/groups/list`)
                 ]);
 

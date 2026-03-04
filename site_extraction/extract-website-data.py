@@ -13,7 +13,7 @@ import os
 import json
 import time
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 from typing import Dict, List, Optional, Any
@@ -23,15 +23,76 @@ from bs4 import BeautifulSoup
 import pymysql
 from pymysql.cursors import DictCursor
 
+# Playwright импортируем лениво: он нужен только для режима --render-js
+
+_PW = None
+_PW_BROWSER = None
+_PW_CONTEXT = None
+
 # Добавляем путь к скриптам в sys.path
 SCRIPT_DIR = Path(__file__).parent
 PROJECT_ROOT = SCRIPT_DIR.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-# Загружаем конфигурацию
-CONFIG_PATH = SCRIPT_DIR / 'extract-website-data-config.json'
-with open(CONFIG_PATH, 'r', encoding='utf-8') as f:
-    CONFIG = json.load(f)
+def load_config() -> Dict[str, Any]:
+    """
+    Загружает конфигурацию.
+
+    Приоритет:
+    1) env EXTRACT_WEBSITE_DATA_CONFIG (путь к json)
+    2) site_extraction/extract-website-data-config.json (локально, НЕ в git)
+    3) site_extraction/extract-website-data-config.example.json (пример)
+    """
+    env_path = os.getenv("EXTRACT_WEBSITE_DATA_CONFIG")
+    if env_path:
+        config_path = Path(env_path).expanduser()
+    else:
+        config_path = SCRIPT_DIR / "extract-website-data-config.json"
+        if not config_path.exists():
+            config_path = SCRIPT_DIR / "extract-website-data-config.example.json"
+
+    if not config_path.exists():
+        raise FileNotFoundError(
+            "Не найден конфиг. Создайте `site_extraction/extract-website-data-config.json` "
+            "или задайте env `EXTRACT_WEBSITE_DATA_CONFIG`."
+        )
+
+    with open(config_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def apply_env_overrides(config: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Переопределяет конфиг из env (удобно для CI/локалки, без секретов в репо).
+
+    Поддерживаемые переменные:
+    - EXTRACT_DB_HOST, EXTRACT_DB_PORT, EXTRACT_DB_USER, EXTRACT_DB_PASSWORD, EXTRACT_DB_NAME, EXTRACT_DB_CHARSET
+    """
+    cfg = dict(config)
+    cfg.setdefault("database", {})
+
+    db = dict(cfg["database"])
+    if os.getenv("EXTRACT_DB_HOST"):
+        db["host"] = os.getenv("EXTRACT_DB_HOST")
+    if os.getenv("EXTRACT_DB_PORT"):
+        try:
+            db["port"] = int(os.getenv("EXTRACT_DB_PORT", "3306"))
+        except ValueError:
+            pass
+    if os.getenv("EXTRACT_DB_USER"):
+        db["user"] = os.getenv("EXTRACT_DB_USER")
+    if os.getenv("EXTRACT_DB_PASSWORD"):
+        db["password"] = os.getenv("EXTRACT_DB_PASSWORD")
+    if os.getenv("EXTRACT_DB_NAME"):
+        db["database"] = os.getenv("EXTRACT_DB_NAME")
+    if os.getenv("EXTRACT_DB_CHARSET"):
+        db["charset"] = os.getenv("EXTRACT_DB_CHARSET")
+
+    cfg["database"] = db
+    return cfg
+
+
+CONFIG = apply_env_overrides(load_config())
 
 DB_CONFIG = CONFIG['database']
 EXTRACTION_CONFIG = CONFIG['extraction']
@@ -146,6 +207,117 @@ def download_html(url: str) -> Optional[str]:
     except Exception as e:
         logger.error(f"Неожиданная ошибка при загрузке {url}: {e}")
         return None
+
+
+def _get_playwright_page():
+    """Ленивая инициализация Playwright + Chromium (переиспользуем между URL)."""
+    global _PW, _PW_BROWSER, _PW_CONTEXT
+    if _PW_CONTEXT is not None:
+        return _PW_CONTEXT.new_page()
+
+    try:
+        from playwright.sync_api import sync_playwright
+    except Exception as e:
+        logger.error(
+            "Playwright не установлен или не импортируется. "
+            "Установите зависимости и выполните `python -m playwright install chromium`."
+        )
+        logger.debug(f"Playwright import error: {e}")
+        return None
+
+    _PW = sync_playwright().start()
+    _PW_BROWSER = _PW.chromium.launch(headless=True)
+
+    user_agent = EXTRACTION_CONFIG.get("user_agent", "")
+    accept_language = "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7"
+    _PW_CONTEXT = _PW_BROWSER.new_context(
+        user_agent=user_agent or None,
+        locale="ru-RU",
+        extra_http_headers={"Accept-Language": accept_language},
+        viewport={"width": 1280, "height": 720},
+    )
+    return _PW_CONTEXT.new_page()
+
+
+def close_playwright():
+    """Закрывает Playwright, если был запущен."""
+    global _PW, _PW_BROWSER, _PW_CONTEXT
+    try:
+        if _PW_CONTEXT is not None:
+            _PW_CONTEXT.close()
+    except Exception:
+        pass
+    try:
+        if _PW_BROWSER is not None:
+            _PW_BROWSER.close()
+    except Exception:
+        pass
+    try:
+        if _PW is not None:
+            _PW.stop()
+    except Exception:
+        pass
+    _PW_CONTEXT = None
+    _PW_BROWSER = None
+    _PW = None
+
+
+def render_html_with_playwright(url: str) -> Optional[str]:
+    """Рендерит страницу в headless-браузере и возвращает HTML после выполнения JS."""
+    timeout_ms = int(EXTRACTION_CONFIG.get("timeout", 30) * 1000)
+    # Для SPA часто нужен больший таймаут, если явно не задан.
+    timeout_ms = int(EXTRACTION_CONFIG.get("render_timeout_ms", max(timeout_ms, 60000)))
+
+    try:
+        page = _get_playwright_page()
+        if page is None:
+            return None
+
+        # Иногда networkidle висит на SPA, поэтому делаем мягко:
+        page.goto(url, wait_until="domcontentloaded", timeout=timeout_ms)
+        try:
+            page.wait_for_load_state("networkidle", timeout=5000)
+        except Exception:
+            pass
+
+        # Дадим JS дорендерить контент
+        page.wait_for_timeout(int(EXTRACTION_CONFIG.get("render_wait_ms", 2000)))
+
+        html = page.content()
+        try:
+            page.close()
+        except Exception:
+            pass
+        return html
+    except Exception as e:
+        logger.warning(f"Playwright render failed for {url}: {e}")
+        return None
+
+
+def extract_from_html(html: str):
+    """Единая точка извлечения данных из HTML."""
+    soup_raw = BeautifulSoup(html, 'html.parser')
+    metadata = extract_metadata(soup_raw)
+    seo_data = extract_seo_data(soup_raw)
+
+    soup_clean = clean_html(html)
+    content = extract_content(soup_clean)
+    stats = calculate_stats(content, metadata)
+    return metadata, content, seo_data, stats
+
+
+def should_smart_render(metadata: Dict[str, Any], stats: Dict[str, Any]) -> bool:
+    """
+    Решение для smart-render: если контента мало, пробуем Playwright.
+    Порог настраивается: extraction.smart_render_min_chars (по умолчанию 200).
+    """
+    min_chars = int(EXTRACTION_CONFIG.get("smart_render_min_chars", 200))
+    char_count = int(stats.get("char_count", 0) or 0)
+    if char_count >= min_chars:
+        return False
+    # Даже если текста мало, но есть хороший title/description, иногда этого достаточно —
+    # но для простоты: если текста мало, пытаемся рендерить.
+    return True
 
 
 def clean_html(html: str) -> BeautifulSoup:
@@ -386,7 +558,7 @@ def save_extracted_data(slug: str, url: str, url_title: str, metadata: Dict, con
             'card_slug': slug,
             'url': url,
             'url_title': url_title,
-            'extracted_at': datetime.utcnow().isoformat() + 'Z'
+            'extracted_at': datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
         },
         'title': metadata.get('title', ''),
         'description': metadata.get('description', ''),
@@ -430,21 +602,50 @@ def process_url(url_data: Dict[str, str]) -> bool:
     
     logger.info(f"Обработка {slug}: {url}")
     
-    # Скачивание HTML
-    html = download_html(url)
-    if not html:
-        logger.error(f"Не удалось скачать {url}")
-        return False
-    
     try:
-        # Очистка HTML
-        soup = clean_html(html)
-        
-        # Извлечение данных
-        metadata = extract_metadata(soup)
-        content = extract_content(soup)
-        seo_data = extract_seo_data(soup)
-        stats = calculate_stats(content, metadata)
+        render_mode = url_data.get("render_mode", "off")  # off | force | smart
+        html_requests = None
+        metadata = content = seo_data = stats = None
+
+        # 1) requests (если не force)
+        if render_mode != "force":
+            html_requests = download_html(url)
+            if html_requests:
+                metadata, content, seo_data, stats = extract_from_html(html_requests)
+
+        # 2) решаем, нужен ли рендер
+        need_render = False
+        if render_mode == "force":
+            need_render = True
+        elif render_mode == "smart":
+            # если requests не дал HTML или дал слишком мало текста — пробуем Playwright
+            if not html_requests:
+                need_render = True
+            elif stats is not None and should_smart_render(metadata or {}, stats):
+                need_render = True
+
+        if need_render:
+            html_rendered = render_html_with_playwright(url)
+            if html_rendered:
+                m2, c2, s2, st2 = extract_from_html(html_rendered)
+                # В smart режиме берем рендер только если он реально улучшил текст
+                if render_mode == "smart" and stats is not None:
+                    if int(st2.get("char_count", 0) or 0) >= int(stats.get("char_count", 0) or 0):
+                        metadata, content, seo_data, stats = m2, c2, s2, st2
+                else:
+                    metadata, content, seo_data, stats = m2, c2, s2, st2
+            else:
+                if render_mode == "force":
+                    logger.warning("Render не дал HTML, пробуем обычную загрузку requests.")
+                    html_fallback = download_html(url)
+                    if not html_fallback:
+                        logger.error(f"Не удалось скачать {url}")
+                        return False
+                    metadata, content, seo_data, stats = extract_from_html(html_fallback)
+
+        if metadata is None or content is None or seo_data is None or stats is None:
+            logger.error(f"Не удалось скачать {url}")
+            return False
         
         # Сохранение
         save_extracted_data(slug, url, url_title, metadata, content, seo_data, stats)
@@ -464,8 +665,14 @@ def main():
                        help='Ограничение количества сайтов для обработки')
     parser.add_argument('--skip-existing', action='store_true',
                        help='Пропускать уже обработанные сайты')
+    parser.add_argument('--render-js', action='store_true',
+                       help='Всегда рендерить страницу в headless-браузере (медленнее, но нужно для SPA/страниц с JS)')
+    parser.add_argument('--smart-render', action='store_true',
+                       help='Сначала requests, а Playwright только если контент пустой/короткий (быстрее)')
     
     args = parser.parse_args()
+    if args.render_js and args.smart_render:
+        parser.error("Нельзя использовать одновременно --render-js и --smart-render")
     
     logger.info("=" * 60)
     logger.info("Начало извлечения данных с сайтов")
@@ -475,6 +682,14 @@ def main():
     
     # Получение URL из БД
     urls = get_urls_from_db(limit=args.limit, skip_existing=args.skip_existing)
+    render_mode = "off"
+    if args.render_js:
+        render_mode = "force"
+    elif args.smart_render:
+        render_mode = "smart"
+    if render_mode != "off":
+        for u in urls:
+            u["render_mode"] = render_mode
     
     if not urls:
         logger.warning("Не найдено URL для обработки")
@@ -515,10 +730,11 @@ def main():
         'success': success_count,
         'errors': error_count,
         'elapsed_time_seconds': round(elapsed_time, 2),
-        'timestamp': datetime.utcnow().isoformat() + 'Z'
+        'timestamp': datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     }
     with open(stats_file, 'w', encoding='utf-8') as f:
         json.dump(stats_data, f, ensure_ascii=False, indent=2)
+    close_playwright()
 
 
 if __name__ == '__main__':

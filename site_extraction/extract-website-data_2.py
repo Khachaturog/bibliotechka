@@ -13,7 +13,7 @@ import os
 import json
 import time
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 from typing import Dict, List, Optional, Any
@@ -28,10 +28,65 @@ SCRIPT_DIR = Path(__file__).parent
 PROJECT_ROOT = SCRIPT_DIR.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-# Загружаем конфигурацию
-CONFIG_PATH = SCRIPT_DIR / 'extract-website-data-config.json'
-with open(CONFIG_PATH, 'r', encoding='utf-8') as f:
-    CONFIG = json.load(f)
+def load_config() -> Dict[str, Any]:
+    """
+    Загружает конфигурацию.
+
+    Приоритет:
+    1) env EXTRACT_WEBSITE_DATA_CONFIG (путь к json)
+    2) site_extraction/extract-website-data-config.json (локально, НЕ в git)
+    3) site_extraction/extract-website-data-config.example.json (пример)
+    """
+    env_path = os.getenv("EXTRACT_WEBSITE_DATA_CONFIG")
+    if env_path:
+        config_path = Path(env_path).expanduser()
+    else:
+        config_path = SCRIPT_DIR / "extract-website-data-config.json"
+        if not config_path.exists():
+            config_path = SCRIPT_DIR / "extract-website-data-config.example.json"
+
+    if not config_path.exists():
+        raise FileNotFoundError(
+            "Не найден конфиг. Создайте `site_extraction/extract-website-data-config.json` "
+            "или задайте env `EXTRACT_WEBSITE_DATA_CONFIG`."
+        )
+
+    with open(config_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def apply_env_overrides(config: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Переопределяет конфиг из env (удобно для CI/локалки, без секретов в репо).
+
+    Поддерживаемые переменные:
+    - EXTRACT_DB_HOST, EXTRACT_DB_PORT, EXTRACT_DB_USER, EXTRACT_DB_PASSWORD, EXTRACT_DB_NAME, EXTRACT_DB_CHARSET
+    """
+    cfg = dict(config)
+    cfg.setdefault("database", {})
+
+    db = dict(cfg["database"])
+    if os.getenv("EXTRACT_DB_HOST"):
+        db["host"] = os.getenv("EXTRACT_DB_HOST")
+    if os.getenv("EXTRACT_DB_PORT"):
+        try:
+            db["port"] = int(os.getenv("EXTRACT_DB_PORT", "3306"))
+        except ValueError:
+            pass
+    if os.getenv("EXTRACT_DB_USER"):
+        db["user"] = os.getenv("EXTRACT_DB_USER")
+    if os.getenv("EXTRACT_DB_PASSWORD"):
+        db["password"] = os.getenv("EXTRACT_DB_PASSWORD")
+    if os.getenv("EXTRACT_DB_NAME"):
+        db["database"] = os.getenv("EXTRACT_DB_NAME")
+    if os.getenv("EXTRACT_DB_CHARSET"):
+        db["charset"] = os.getenv("EXTRACT_DB_CHARSET")
+
+    cfg["database"] = db
+    return cfg
+
+
+CONFIG = apply_env_overrides(load_config())
 
 DB_CONFIG = CONFIG['database']
 EXTRACTION_CONFIG = CONFIG['extraction']
@@ -386,7 +441,7 @@ def save_extracted_data(slug: str, url: str, url_title: str, metadata: Dict, con
             'card_slug': slug,
             'url': url,
             'url_title': url_title,
-            'extracted_at': datetime.utcnow().isoformat() + 'Z'
+            'extracted_at': datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
         },
         'title': metadata.get('title', ''),
         'description': metadata.get('description', ''),
@@ -440,13 +495,15 @@ def process_url(url_data: Dict[str, str]) -> bool:
         return False
     
     try:
-        # Очистка HTML
-        soup = clean_html(html)
-        
-        # Извлечение данных
-        metadata = extract_metadata(soup)
-        content = extract_content(soup)
-        seo_data = extract_seo_data(soup)
+        # Важно: метаданные и structured data извлекаем из сырого HTML,
+        # иначе очистка (удаление <script>) может выкинуть JSON-LD и т.п.
+        soup_raw = BeautifulSoup(html, 'html.parser')
+        metadata = extract_metadata(soup_raw)
+        seo_data = extract_seo_data(soup_raw)
+
+        # Контент извлекаем уже из очищенного HTML
+        soup_clean = clean_html(html)
+        content = extract_content(soup_clean)
         stats = calculate_stats(content, metadata)
         
         # Сохранение
@@ -518,7 +575,7 @@ def main():
         'success': success_count,
         'errors': error_count,
         'elapsed_time_seconds': round(elapsed_time, 2),
-        'timestamp': datetime.utcnow().isoformat() + 'Z'
+        'timestamp': datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     }
     with open(stats_file, 'w', encoding='utf-8') as f:
         json.dump(stats_data, f, ensure_ascii=False, indent=2)

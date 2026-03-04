@@ -1,0 +1,45 @@
+{
+  "database": {
+    "host": "127.0.0.1",
+    "port": 3306,
+    "user": "CHANGE_ME",
+    "password": "CHANGE_ME",
+    "database": "CHANGE_ME",
+    "charset": "utf8mb4"
+  },
+  "extraction": {
+    "output_dir": "extracted_data",
+    "limit": 5,
+    "timeout": 30,
+    "render_timeout_ms": 60000,
+    "render_wait_ms": 2000,
+    "smart_render_min_chars": 200,
+    "retry_delay": 5,
+    "retry_attempts": 1,
+    "delay_between_requests": 2,
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  },
+  "cleaning": {
+    "remove_scripts": true,
+    "remove_styles": true,
+    "remove_comments": true,
+    "remove_navigation": true,
+    "remove_footer": true,
+    "remove_ads": true,
+    "normalize_whitespace": true
+  },
+  "selectors_to_remove": [
+    "nav",
+    "header",
+    "footer",
+    ".navigation",
+    ".nav",
+    ".menu",
+    ".sidebar",
+    ".advertisement",
+    ".ads",
+    ".ad",
+    "[class*='ad-']",
+    "[id*='ad-']"
+  ]
+}

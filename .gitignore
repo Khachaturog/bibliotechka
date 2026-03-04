@@ -51,3 +51,7 @@ backups/
 # Migration web interfaces (temporary, should be deleted after use)
 *-web.php
 run-migration-*-web.php
+
+# Admin config (contains password hash)
+admin/config.php
+admin/data/attempts.json
