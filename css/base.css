@@ -975,10 +975,10 @@
 
 .secondary-text-lg p {
     color: var(--02-content-primary);
-    font-family: var(--font-secondary);
-    font-size: var(--module-350);
-    font-weight: var(--fw-medium);
-    line-height: var(--module-500);
+    /* font-family: var(--font-secondary); */
+    /* font-size: var(--module-350); */
+    /* font-weight: var(--fw-medium); */
+    /* line-height: var(--module-500); */
     text-align: center;
 }
 

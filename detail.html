@@ -17,18 +17,13 @@
     
     <!-- Принудительное использование HTTPS для всех запросов -->
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    
-    <!-- Cache Control -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
+
     <link rel="stylesheet" href="css/base.css">
-    
-  <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-    </style>
     
     <meta name="theme-color" content="#FFFFFF">
 
@@ -219,22 +214,21 @@
     </div>
 
     <div class="wrap-center detail-meta">
-        <button style="width: 100%; border-radius: 12px;" class="secondary-text-lg" onclick="window.open('https://forms.yandex.ru/u/69386a2c02848f99bdd0ee07', '_blank')"><p>Написать мне</p></button>
+        <button style="width: 100%; border-radius: 12px;" class="secondary-text-lg" onclick="window.open('https://forms.yandex.ru/u/69386a2c02848f99bdd0ee07', '_blank')"><p class="md-regular">Форма обратной связи</p></button>
     </div>
 
+    <footer-component></footer-component>
+    <drawer-component></drawer-component>
+    <search-component></search-component>
+
+    <script src="js/component/header.js"></script>
+    <script src="js/component/footer.js"></script>
+    <script src="js/component/drawer.js"></script>
+    <script src="js/component/search.js"></script>
+
+    <script src="js/config.js"></script>
+    <script src="js/detail.js"></script>
+    <script src="js/drawer.js"></script>
+
 </body>
-
-<footer-component></footer-component>
-<drawer-component></drawer-component>
-<search-component></search-component>
-
-<script src="js/component/header.js"></script>
-<script src="js/component/footer.js"></script>
-<script src="js/component/drawer.js"></script>
-<script src="js/component/search.js"></script>
-
-<script src="js/config.js"></script>
-<script src="js/detail.js"></script>
-<script src="js/drawer.js"></script>
-
 </html>

@@ -11,33 +11,32 @@
     <!-- Принудительное использование HTTPS для всех запросов -->
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     
-    <!-- Cache Control: кэш на 1 день (86400 секунд) -->
-    <meta http-equiv="Cache-Control" content="public, max-age=86400">
+    <title>Библиотечка — коллекция материалов для дизайнеров</title>
+    <meta name="description" content="Библиотечка — коллекция лучших материалов по дизайну, UX/UI, типографике и вдохновению. Ресурсы, дизайн-системы, портфолио и книги для дизайнеров.">
 
-    <title>Библиотечка</title>
-    <meta name="description" content="Лучший сборник дизайн материалов, очень полезна для B2B/B2C/B2E дизайнеров, а также графам.">
-    <meta name="keywords" content="книги, библиотека, образование, чтение, ...">
-
-    <meta property="og:title" content="Библиотечка">
-    <meta property="og:description" content="Лучший сборник дизайн материалов">
-    <meta property="og:image" content="/images/preview.webp">
+    <meta property="og:title" content="Библиотечка — коллекция материалов для дизайнеров">
+    <meta property="og:description" content="Коллекция лучших материалов по дизайну, UX/UI, типографике и вдохновению.">
+    <meta property="og:image" content="https://bibliotechka.online/images/preview.webp">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bibliotechka.online">
+    <meta property="og:locale" content="ru_RU">
 
     <meta name="twitter:site" content="@bibliotechka">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Библиотечка">
-    <meta name="twitter:description" content="Лучший сборник дизайн материалов">
-    <meta name="twitter:image" content="/images/preview.webp">
+    <meta name="twitter:title" content="Библиотечка — коллекция материалов для дизайнеров">
+    <meta name="twitter:description" content="Коллекция лучших материалов по дизайну, UX/UI, типографике и вдохновению.">
+    <meta name="twitter:image" content="https://bibliotechka.online/images/preview.webp">
 
     <link rel="canonical" href="https://bibliotechka.online">
+    <link rel="alternate" hreflang="ru" href="https://bibliotechka.online">
+    <link rel="alternate" hreflang="x-default" href="https://bibliotechka.online">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
 
     <link rel="stylesheet" href="css/base.css">
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-    </style>
 
 
     <meta name="robots" content="index, follow">
@@ -127,19 +126,18 @@
         </div>
     </section>
 
+    <footer-component></footer-component>
+    <drawer-component></drawer-component>
+    <search-component></search-component>
+
+    <script src="js/component/header.js"></script>
+    <script src="js/component/footer.js"></script>
+    <script src="js/component/drawer.js"></script>
+    <script src="js/component/search.js"></script>
+
+    <script src="js/config.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/drawer.js"></script>
+
 </body>
-
-<footer-component></footer-component>
-<drawer-component></drawer-component>
-<search-component></search-component>
-
-<script src="js/component/header.js"></script>
-<script src="js/component/footer.js"></script>
-<script src="js/component/drawer.js"></script>
-<script src="js/component/search.js"></script>
-
-<script src="js/config.js"></script>
-<script src="js/index.js"></script>
-<script src="js/drawer.js"></script>
-
 </html>

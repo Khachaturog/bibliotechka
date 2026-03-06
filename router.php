@@ -98,8 +98,12 @@ function serveStaticFile($filePath) {
  * Объединяет логику проверки файлов и директорий
  */
 function checkAndServeFile($basePath, $requestPath) {
-    // Проверяем корневой файл
+    // Корневой URL → index-seo.php (SSR главная)
     if ($requestPath === '/' || $requestPath === '') {
+        $ssrIndex = $basePath . '/index-seo.php';
+        if (file_exists($ssrIndex)) {
+            return false; // Отдаём PHP-серверу для выполнения как скрипт
+        }
         $file = $basePath . '/index.html';
         if (file_exists($file) && is_file($file)) {
             serveStaticFile($file);
@@ -138,7 +142,7 @@ function checkAndServeFile($basePath, $requestPath) {
 define('ROUTE_CARD_PATTERN', '#^/card/([a-z0-9-]+)/?$#');
 define('ROUTE_GROUP_PATTERN', '#^/([^/]+)/?$#');
 define('ROUTE_FILE_EXT_PATTERN', '/\.(html|css|js|php|json|xml|png|jpg|jpeg|gif|svg|webp|ico)$/i');
-define('ROUTE_EXCLUDED_PATTERN', '#^/(index\.html|group\.html|detail\.html|api|images|css|js|scripts|other|database|data|detail-seo\.php|router\.php)(/|$)#');
+define('ROUTE_EXCLUDED_PATTERN', '#^/(index\.html|index-seo\.php|group\.html|detail\.html|api|images|css|js|scripts|other|database|data|cache|partials|detail-seo\.php|group-seo\.php|router\.php|sitemap\.xml|robots\.txt)(/|$)#');
 
 $requestUri = $_SERVER['REQUEST_URI'];
 $path = parse_url($requestUri, PHP_URL_PATH);
@@ -171,10 +175,22 @@ logRoute('Request', [
     'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
 ]);
 
+// sitemap.xml → sitemap.php (динамический, до проверки статических файлов)
+if ($path === '/sitemap.xml') {
+    require __DIR__ . '/sitemap.php';
+    exit;
+}
+
 // Оптимизация: сначала проверяем статические файлы (более частые запросы)
 // Объединенная проверка файлов и директорий
 if (checkAndServeFile(__DIR__, $path)) {
     return false; // Файл найден и отдан
+}
+
+// Корневой URL → index-seo.php (SSR главная страница)
+if ($path === '/' || $path === '') {
+    require __DIR__ . '/index-seo.php';
+    exit;
 }
 
 // Если запрос к API, обрабатываем напрямую через api/index.php

@@ -58,18 +58,70 @@ function buildSeoHeadHtml(array $card, string $canonicalUrl): string {
     $canonEsc = e($canonicalUrl);
     $imageEsc = $image ? e($image) : null;
 
-    $og = '';
-    $og .= "\n    " . '<meta property="og:site_name" content="Библиотечка">';
-    $og .= "\n    " . '<meta property="og:type" content="article">';
-    $og .= "\n    " . '<meta property="og:title" content="' . $titleEsc . '">';
-    $og .= "\n    " . '<meta property="og:description" content="' . $descEsc . '">';
-    $og .= "\n    " . '<meta property="og:url" content="' . $canonEsc . '">';
+    // OG-теги
+    $tags  = "\n    " . '<meta property="og:site_name" content="Библиотечка">';
+    $tags .= "\n    " . '<meta property="og:type" content="article">';
+    $tags .= "\n    " . '<meta property="og:title" content="' . $titleEsc . '">';
+    $tags .= "\n    " . '<meta property="og:description" content="' . $descEsc . '">';
+    $tags .= "\n    " . '<meta property="og:url" content="' . $canonEsc . '">';
+    $tags .= "\n    " . '<meta property="og:locale" content="ru_RU">';
     if ($imageEsc) {
-        $og .= "\n    " . '<meta property="og:image" content="' . $imageEsc . '">';
+        $tags .= "\n    " . '<meta property="og:image" content="' . $imageEsc . '">';
     }
-    $og .= "\n";
 
-    return $og;
+    // Twitter card
+    $tags .= "\n    " . '<meta name="twitter:card" content="summary_large_image">';
+    $tags .= "\n    " . '<meta name="twitter:site" content="@bibliotechka">';
+    $tags .= "\n    " . '<meta name="twitter:title" content="' . $titleEsc . '">';
+    $tags .= "\n    " . '<meta name="twitter:description" content="' . $descEsc . '">';
+    if ($imageEsc) {
+        $tags .= "\n    " . '<meta name="twitter:image" content="' . $imageEsc . '">';
+    }
+
+    // hreflang
+    $tags .= "\n    " . '<link rel="alternate" hreflang="ru" href="' . $canonEsc . '">';
+    $tags .= "\n    " . '<link rel="alternate" hreflang="x-default" href="' . $canonEsc . '">';
+
+    // Schema.org Article
+    $datePublished = '';
+    if (!empty($card['published'])) {
+        $ts = strtotime((string)$card['published']);
+        if ($ts) $datePublished = date('Y-m-d', $ts);
+    }
+    $dateModified = '';
+    if (!empty($card['updated_at'])) {
+        $ts = strtotime((string)$card['updated_at']);
+        if ($ts) $dateModified = date('Y-m-dTH:i:sP', $ts);
+    }
+
+    $schema = [
+        '@context' => 'https://schema.org',
+        '@type'    => 'Article',
+        'headline' => $title,
+        'url'      => $canonicalUrl,
+        'description' => $description,
+    ];
+    if ($imageEsc) {
+        $schema['image'] = $image;
+    }
+    if ($datePublished) {
+        $schema['datePublished'] = $datePublished;
+    }
+    if ($dateModified) {
+        $schema['dateModified'] = $dateModified;
+    }
+    $schema['publisher'] = [
+        '@type' => 'Organization',
+        'name'  => 'Библиотечка',
+        'url'   => 'https://bibliotechka.online',
+    ];
+
+    $tags .= "\n    " . '<script type="application/ld+json">'
+          . "\n    " . json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)
+          . "\n    " . '</script>';
+
+    $tags .= "\n";
+    return $tags;
 }
 
 function buildSsrContentHtml(array $card, string $canonicalUrl): string {
@@ -191,6 +243,11 @@ if (preg_match('/<link\\s+rel=[\"\']canonical[\"\'][^>]*>/i', $content)) {
 if (stripos($content, 'property="og:title"') === false) {
     $content = preg_replace('/<\/head>/i', $seoHead . "\n</head>", $content, 1);
 }
+
+// Убираем устаревшие meta Cache-Control из HTML-шаблона
+$content = preg_replace('/<meta\s+http-equiv=["\']Cache-Control["\'][^>]*>\s*/i', '', $content);
+$content = preg_replace('/<meta\s+http-equiv=["\']Pragma["\'][^>]*>\s*/i', '', $content);
+$content = preg_replace('/<meta\s+http-equiv=["\']Expires["\'][^>]*>\s*/i', '', $content);
 
 // Вставляем SSR-блок в начало <body> — он будет скрыт для JS-браузеров (см. detail.html)
 $ssr = buildSsrContentHtml($card, $canonicalUrl);

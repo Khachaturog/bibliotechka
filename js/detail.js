@@ -220,7 +220,7 @@ function displayDetail(item, groups, subgroups) {
     if (item.title) {
         document.title = item.title;
     }
-    
+
     // Description
     if (item.description) {
         let metaDesc = document.querySelector('meta[name="description"]');
@@ -230,6 +230,18 @@ function displayDetail(item, groups, subgroups) {
             document.head.appendChild(metaDesc);
         }
         metaDesc.content = item.description;
+    }
+
+    // Canonical URL
+    if (item.url_seo_yandex) {
+        const canonicalUrl = `${window.location.origin}/card/${item.url_seo_yandex}`;
+        let canonical = document.querySelector('link[rel="canonical"]');
+        if (!canonical) {
+            canonical = document.createElement('link');
+            canonical.rel = 'canonical';
+            document.head.appendChild(canonical);
+        }
+        canonical.href = canonicalUrl;
     }
     // --- END SEO META TAGS ---
 
