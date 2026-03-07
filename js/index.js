@@ -153,7 +153,7 @@ function displayCards(data) {
         const title = clone.querySelector('.card-title');
         const description = clone.querySelector('.card-description');
 
-        card.href = window.CONFIG?.getCardUrl(item.slug, item.url_seo_yandex) || `/detail.html?slug=${item.slug}`;
+        card.href = window.CONFIG?.getCardUrl(item.slug, item.url_seo_yandex) || `/card/${item.slug}`;
         img.src = item.cover_short;
         img.alt = item.title;
         title.textContent = item.title;

@@ -12,9 +12,18 @@ define('DB_USER', 'j35045845_biblio');
 define('DB_PASSWORD', 'tuhrih-zoqmYp');
 define('DB_NAME', 'j35045845_biblio');
 
+// Продакшен-домен (используется для canonical, OG, Schema.org)
+define('SITE_BASE_URL', 'https://bibliotechka.online');
+
 // Настройки API
 define('API_VERSION', 'v1');
 define('API_BASE_PATH', '/api/' . API_VERSION);
+
+// Строит абсолютный URL из пути (если уже абсолютный — возвращает как есть)
+function absoluteUrl(string $path): string {
+    if (str_starts_with($path, 'http')) return $path;
+    return SITE_BASE_URL . '/' . ltrim($path, '/');
+}
 
 // Функция для подключения к БД
 function getDBConnection() {

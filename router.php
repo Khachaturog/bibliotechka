@@ -98,9 +98,9 @@ function serveStaticFile($filePath) {
  * Объединяет логику проверки файлов и директорий
  */
 function checkAndServeFile($basePath, $requestPath) {
-    // Корневой URL → index-seo.php (SSR главная)
+    // Корневой URL → index.php (SSR главная)
     if ($requestPath === '/' || $requestPath === '') {
-        $ssrIndex = $basePath . '/index-seo.php';
+        $ssrIndex = $basePath . '/index.php';
         if (file_exists($ssrIndex)) {
             return false; // Отдаём PHP-серверу для выполнения как скрипт
         }
@@ -142,7 +142,7 @@ function checkAndServeFile($basePath, $requestPath) {
 define('ROUTE_CARD_PATTERN', '#^/card/([a-z0-9-]+)/?$#');
 define('ROUTE_GROUP_PATTERN', '#^/([^/]+)/?$#');
 define('ROUTE_FILE_EXT_PATTERN', '/\.(html|css|js|php|json|xml|png|jpg|jpeg|gif|svg|webp|ico)$/i');
-define('ROUTE_EXCLUDED_PATTERN', '#^/(index\.html|index-seo\.php|group\.html|detail\.html|api|images|css|js|scripts|other|database|data|cache|partials|detail-seo\.php|group-seo\.php|router\.php|sitemap\.xml|robots\.txt)(/|$)#');
+define('ROUTE_EXCLUDED_PATTERN', '#^/(index\.php|group\.php|detail\.php|about\.php|api|images|css|js|scripts|other|database|data|cache|partials|router\.php|sitemap\.xml|robots\.txt)(/|$)#');
 
 $requestUri = $_SERVER['REQUEST_URI'];
 $path = parse_url($requestUri, PHP_URL_PATH);
@@ -181,15 +181,21 @@ if ($path === '/sitemap.xml') {
     exit;
 }
 
+// /about и /about.html → about.php
+if ($path === '/about' || $path === '/about.html') {
+    require __DIR__ . '/about.php';
+    exit;
+}
+
 // Оптимизация: сначала проверяем статические файлы (более частые запросы)
 // Объединенная проверка файлов и директорий
 if (checkAndServeFile(__DIR__, $path)) {
     return false; // Файл найден и отдан
 }
 
-// Корневой URL → index-seo.php (SSR главная страница)
+// Корневой URL → index.php (SSR главная страница)
 if ($path === '/' || $path === '') {
-    require __DIR__ . '/index-seo.php';
+    require __DIR__ . '/index.php';
     exit;
 }
 
@@ -219,7 +225,7 @@ $isExcluded = preg_match(ROUTE_EXCLUDED_PATTERN, $path);
 // Обработка красивых URL карточек: /card/url-seo-yandex
 if (preg_match(ROUTE_CARD_PATTERN, $path, $matches)) {
     $_GET['url_seo_yandex'] = $matches[1];
-    require __DIR__ . '/detail-seo.php';
+    require __DIR__ . '/detail.php';
     exit;
 }
 
@@ -229,7 +235,7 @@ if (!$isExcluded && preg_match(ROUTE_GROUP_PATTERN, $path, $matches)) {
     // Проверяем, что это не файл с расширением
     if (!preg_match(ROUTE_FILE_EXT_PATTERN, $slug)) {
         $_GET['slug'] = $slug;
-        require __DIR__ . '/group-seo.php';
+        require __DIR__ . '/group.php';
         exit;
     }
 }
@@ -238,11 +244,10 @@ if (!$isExcluded && preg_match(ROUTE_GROUP_PATTERN, $path, $matches)) {
 $executionTime = round((microtime(true) - $startTime) * 1000, 2);
 logRoute('404 Not Found', ['path' => $path, 'time' => $executionTime . 'ms']);
 http_response_code(404);
-// Если есть 404.html — отдаем его как HTML страницу
-$notFoundPage = __DIR__ . '/404.html';
+// Если есть 404.php — выполняем его как PHP-скрипт
+$notFoundPage = __DIR__ . '/404.php';
 if (file_exists($notFoundPage) && is_file($notFoundPage)) {
-    header('Content-Type: text/html; charset=utf-8');
-    readfile($notFoundPage);
+    require $notFoundPage;
     exit;
 }
 

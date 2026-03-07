@@ -16,15 +16,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Это нужно для красивых URL типа /card/gajd-po-tekstam-v-interfejse-001
     if (!slug) {
         const path = window.location.pathname;
-        // Проверяем, является ли путь красивым URL карточки
         if (path.startsWith('/card/')) {
-            // Извлекаем url_seo_yandex из пути
             urlSeoYandex = path.replace('/card/', '').split('/')[0];
-            // Сохраняем url_seo_yandex, чтобы использовать его при загрузке данных
-            // slug найдем после загрузки карточки
-        } else if (path.startsWith('/detail.html')) {
-            // Если это старый формат URL, обновим его на красивый после загрузки данных
-            // Пока просто продолжаем с текущим slug
         }
     }
     
@@ -97,10 +90,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         // ОБНОВЛЯЕМ URL СРАЗУ после получения данных, ДО отрисовки контента
         // Это критично для избежания видимой смены URL
         const currentUrl = window.location.pathname;
-        const prettyUrl = window.CONFIG?.getCardUrl(card.slug, card.url_seo_yandex) || `/detail.html?slug=${card.slug}`;
+        const prettyUrl = window.CONFIG?.getCardUrl(card.slug, card.url_seo_yandex) || `/card/${card.slug}`;
         
-        // Если текущий URL - старый формат, обновляем на красивый немедленно
-        if (currentUrl.startsWith('/detail.html') && prettyUrl.startsWith('/card/')) {
+        if (!currentUrl.startsWith(prettyUrl)) {
             window.history.replaceState({}, '', prettyUrl);
         }
         
@@ -132,7 +124,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const randomIndex = Math.floor(Math.random() * data.length);
             const randomCard = data[randomIndex];
             // Используем красивый URL, если есть url_seo_yandex
-            const cardUrl = window.CONFIG?.getCardUrl(randomCard.slug, randomCard.url_seo_yandex) || `/detail.html?slug=${randomCard.slug}`;
+            const cardUrl = window.CONFIG?.getCardUrl(randomCard.slug, randomCard.url_seo_yandex) || `/card/${randomCard.slug}`;
             window.location.href = cardUrl;
         } catch (error) {
             console.error('Ошибка загрузки случайной карточки:', error);
@@ -155,7 +147,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
             
-            const prettyUrl = window.CONFIG?.getCardUrl(currentCard.slug, currentCard.url_seo_yandex) || `/detail.html?slug=${currentCard.slug}`;
+            const prettyUrl = window.CONFIG?.getCardUrl(currentCard.slug, currentCard.url_seo_yandex) || `/card/${currentCard.slug}`;
             const url = `${window.location.origin}${prettyUrl}`;
             const title = document.title;
             if (navigator.share) {

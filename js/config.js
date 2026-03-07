@@ -36,11 +36,10 @@ const CONFIG = {
     // Функция для генерации красивых URL карточек
     getCardUrl: function(slug, urlSeoYandex = '') {
         // Если есть url_seo_yandex, используем красивый URL: /card/gajd-po-tekstam-v-interfejse-001
-        // Иначе fallback на обычный URL: /detail.html?slug=001
         if (urlSeoYandex) {
             return `/card/${urlSeoYandex}`;
         }
-        return `/detail.html?slug=${slug}`;
+        return `/card/${slug}`;
     },
     
     // Для продакшена (если API на другом домене)

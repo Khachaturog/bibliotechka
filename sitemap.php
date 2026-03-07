@@ -8,7 +8,7 @@ require_once __DIR__ . '/api/config.php';
 
 // ─── Файловый кэш ─────────────────────────────────────────────────────────────
 $cacheFile = __DIR__ . '/cache/sitemap.xml';
-$cacheTtl  = 3600; // 1 час
+$cacheTtl  = 86400; // 24 часа
 
 if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTtl) {
     header('Content-Type: application/xml; charset=utf-8');
@@ -48,7 +48,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
 
   <!-- Страница «О проекте» -->
   <url>
-    <loc><?= $base ?>/about.html</loc>
+    <loc><?= $base ?>/about</loc>
     <lastmod><?= $today ?></lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>

@@ -98,7 +98,7 @@ data (N) >── (1) versions
 
 ## Миграция кода с JSON на MySQL
 
-📖 **[Правила миграции кода](CODE_MIGRATION_RULES.md)** - подробное руководство по изменению JavaScript кода для работы с MySQL через API вместо JSON файлов.
+📖 **[Правила миграции кода](../docs/archive/CODE_MIGRATION_RULES.md)** - подробное руководство по изменению JavaScript кода для работы с MySQL через API вместо JSON файлов.
 
 ## Инициализация базы данных
 
@@ -115,11 +115,11 @@ data (N) >── (1) versions
 
 📖 **Дополнительная документация:**
 - [`backup_restore.md`](backup_restore.md) - создание бэкапов и восстановление данных
-- [`connection_troubleshooting.md`](connection_troubleshooting.md) - решение проблем с подключением
+- [docs/](docs/) - прочие гайды: [MASS_TEXT_REPLACE](docs/MASS_TEXT_REPLACE.md), [TABLEPLUS_REPLACE_GUIDE](docs/TABLEPLUS_REPLACE_GUIDE.md), [FILTER_SOLUTIONS](docs/FILTER_SOLUTIONS.md), [SUBGROUPS_ANALYSIS](docs/SUBGROUPS_ANALYSIS.md), [SUBGROUPS_STATISTICS](docs/SUBGROUPS_STATISTICS.md)
 
 ## Миграции
 
-Миграции находятся в папке `database/migrations/`. Это исторические изменения схемы базы данных. Для применения миграции:
+Миграции находятся в папке [`migrations/`](migrations/). Подробные описания и чек-листы — в подпапке [migrations/docs/](migrations/docs/). Это исторические изменения схемы базы данных. Для применения миграции:
 
 ```bash
 # Через Docker
@@ -165,7 +165,7 @@ Database: bibliotechka
 
 ### Решение проблем с подключением
 
-Если возникают проблемы с подключением, см. [`connection_troubleshooting.md`](connection_troubleshooting.md).
+При проблемах с подключением проверьте доступ к MySQL для IP веб-сервера в панели хостинга и корректность данных в `api/config.php`.
 
 ## Полезные команды Docker
 

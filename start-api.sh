@@ -1,5 +1,12 @@
 #!/bin/bash
 # Скрипт для запуска PHP API сервера
+# **macOS / Linux:** `.sh` (Bash), например `start-api.sh`
+#
+# В терминале (из корня проекта):
+#   ./start-api.sh
+#
+# Или вручную:
+#   php -S 0.0.0.0:8000 -t . router.php
 
 # Получаем локальный IP адрес
 LOCAL_IP=$(ifconfig | grep "inet " | grep -v 127.0.0.1 | head -1 | awk '{print $2}' || ipconfig getifaddr en0 2>/dev/null || echo "localhost")

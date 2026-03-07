@@ -1,181 +1,153 @@
 # Библиотечка
 
-Веб-приложение для организации и отображения коллекции материалов (книги, ресурсы, инструменты) с категоризацией по группам и подгруппам.
+Коллекция материалов для дизайнеров: ресурсы, дизайн-системы, насмотренность, книги и многое другое.
 
-## 🚀 Быстрый старт
+Сайт: **https://bibliotechka.online**
 
-### Требования
+## Требования
+
 - PHP 8.0+ (рекомендуется 8.4+)
-- MySQL 8.0+ (используется серверная база данных)
-- Apache с mod_rewrite и mod_headers
-- Node.js 14+ (для разработки и скриптов)
+- MySQL 8.0+ (удалённая БД)
+- Apache с `mod_rewrite` и `mod_headers`
+- Node.js 14+ (только для dev-скриптов)
 
-### Установка
+## Быстрый старт (локально)
 
-1. Клонируйте репозиторий
-2. Установите зависимости: `npm install`
-3. Настройте подключение к БД в `api/config.php`
-4. Импортируйте базу данных (см. `database/README.md`)
-5. Загрузите файлы на сервер
-6. Убедитесь, что Apache поддерживает `.htaccess` и `mod_rewrite`
-7. Настройте доступ к MySQL для IP вашего веб-сервера
+```bash
+npm install           # один раз
+./start-api.sh        # macOS/Linux
+.\start-api.ps1       # Windows (PowerShell)
+```
 
-Приложение будет доступно на вашем домене.
+Сервер: **http://localhost:8000**
 
-## 📁 Структура проекта
+Подробнее: [docs/guides/LOCAL_DEV.md](docs/guides/LOCAL_DEV.md)
+
+## Архитектура
+
+- **Рендеринг**: полный SSR на PHP — поисковики видят весь контент без JS
+- **Шаблоны**: PHP-файлы страниц с подключением partials (`partials/*.php`)
+- **JavaScript**: клиентский JS подгружает контент после загрузки страницы
+- **Кэш**: HTML страниц и sitemap кэшируются в `cache/` на 24 часа (TTL сбрасывается удалением файла)
+- **Деплой**: обычный хостинг Apache + PHP
+
+### Страницы
+
+| URL | Файл | Описание |
+|-----|------|----------|
+| `/` | `index.php` | Главная: группы + карточки (SSR + кэш) |
+| `/{slug}` | `group.php` | Страница группы (SSR + кэш) |
+| `/card/{url_seo}` | `detail.php` | Страница карточки |
+| `/about` | `about.php` | О проекте |
+| `/sitemap.xml` | `sitemap.php` | Динамический sitemap (кэш 24ч) |
+| `/*` | `404.php` | Страница ошибки 404 |
+
+### Partials (переиспользуемые компоненты)
+
+```
+partials/
+├── header.php   # Хедер с навигацией
+├── footer.php   # Футер
+├── drawer.php   # Мобильное меню
+└── search.php   # Оверлей поиска
+```
+
+Все страницы подключают одни и те же partials — правка хедера в `partials/header.php` обновляет весь сайт.
+
+## Структура проекта
 
 ```
 bibliotechka-4/
-├── api/                      # PHP API сервер
-│   ├── config.php           # Конфигурация БД
-│   ├── index.php            # Fallback роутер
-│   └── v1/                  # API версия 1
-│       ├── groups/
-│       │   ├── list.php     # GET /api/v1/groups/list
-│       │   └── index.php    # GET /api/v1/groups?slug=...
-│       ├── data/
-│       │   ├── list.php     # GET /api/v1/data/list
-│       │   ├── index.php    # GET /api/v1/data?slug=...
-│       │   └── authors.php  # GET /api/v1/data/{slug}/authors
-│       └── subgroups/
-│           └── index.php    # GET /api/v1/subgroups
-├── database/                 # База данных MySQL
-│   ├── init.sql             # Инициализация БД
-│   ├── migrations/          # Миграции
-│   └── tables/             # Документация таблиц
-├── js/                      # JavaScript клиентский код
-│   ├── config.js           # Конфигурация API
-│   ├── index.js            # Главная страница
-│   ├── group.js            # Страница группы
-│   ├── detail.js           # Страница карточки
-│   └── component/          # Компоненты
-├── css/                     # Стили
-├── images/                  # Изображения (обложки, группы)
-├── docs/                    # Документация
-│   ├── archive/            # Архивные документы
-│   └── *.md                # Документация проекта
-├── scripts/                 # Вспомогательные скрипты
-├── backups/                # Резервные копии БД
-└── other/                  # Прочие файлы
+├── index.php              # Главная страница (SSR)
+├── group.php              # Страница группы (SSR)
+├── detail.php             # Страница карточки (SSR)
+├── about.php              # О проекте
+├── sitemap.php            # Динамический sitemap.xml
+├── 404.php                # Страница ошибки
+├── router.php             # Роутер для PHP встроенного сервера (локальная разработка)
+├── .htaccess              # Apache: URL rewriting, Cache-Control, CORS
+├── partials/              # Переиспользуемые PHP-фрагменты (header, footer, drawer, search)
+├── api/                   # PHP API
+│   ├── config.php         # Конфигурация БД, SITE_BASE_URL, absoluteUrl()
+│   └── v1/                # Эндпоинты
+│       ├── groups/        # GET /api/v1/groups/list, /api/v1/groups?slug=
+│       ├── data/          # GET /api/v1/data/list, /api/v1/data?slug=, /api/v1/data/{slug}/authors
+│       └── subgroups/     # GET /api/v1/subgroups
+├── js/                    # Клиентский JavaScript
+│   ├── config.js          # Конфигурация API и URL
+│   ├── index.js           # Главная страница
+│   ├── group.js           # Страница группы
+│   ├── detail.js          # Страница карточки
+│   ├── about.js           # О проекте (история версий)
+│   └── drawer.js          # Тема, дравер, поиск (toggleTheme/Drawer/Search)
+├── css/                   # Стили
+├── images/                # Статические изображения (favicon, превью групп)
+├── cache/                 # Файловый кэш HTML/XML (генерируется автоматически)
+├── database/              # SQL-схема и миграции
+├── docs/                  # Документация
+└── scripts/               # Dev-скрипты (миграции, IndexNow и др.)
 ```
 
-## Обложки
-
-Скейлить в 0,4х и 2х
-
-Изображения — https://www.figma.com/design/yiTWBpvvNWonpRqNzobDGW/%D0%91%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D1%87%D0%BA%D0%B0---%D0%9E%D0%B1%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B0-%D0%B8%D0%B7%D0%BE%D0%B1%D1%80%D0%B0%D0%B6%D0%B5%D0%BD%D0%B8%D0%B9---2?node-id=0-1&t=csVIw3dsue2AxUwT-1
-
-## 🏗️ Архитектура
-
-- **Frontend**: Статический HTML + JavaScript (Vanilla JS)
-- **Backend**: PHP API для работы с MySQL
-- **База данных**: MySQL 8.0 с 6 таблицами (groups, subgroups, data, authors, card_authors, versions)
-- **Деплой**: Обычный хостинг с Apache/PHP
-
-## 📚 Документация
-
-- **[Правила разработки](Rules.md)** - методология и принципы разработки
-- **[История изменений](сhangelog.md)** - changelog проекта
-- **[База данных](database/README.md)** - документация по БД
-- **[API](api/README.md)** - документация PHP API
-- **[Документация](docs/README.md)** - полный индекс документации
-
-## 🔧 Технологии
-
-- **Frontend**: HTML5, CSS3, Vanilla JavaScript (ES6+)
-- **Backend**: PHP 7.4+
-- **База данных**: MySQL 8.0
-- **Веб-сервер**: Apache с mod_rewrite или PHP встроенный сервер для разработки
-
-## 📝 Основные функции
-
-- Отображение материалов по группам и подгруппам
-- Поиск по карточкам
-- SEO-оптимизация страниц
-- Динамическая навигация с якорными ссылками
-- Адаптивный дизайн
-
-## 🔗 API эндпоинты
+## API эндпоинты
 
 ### Группы
-- `GET /api/v1/groups/list` - легковесный список групп (для главной страницы)
-- `GET /api/v1/groups?slug={slug}` - полная группа по slug (для страницы группы)
+- `GET /api/v1/groups/list` — список групп (для главной)
+- `GET /api/v1/groups?slug={slug}` — группа по slug
 
 ### Подгруппы
-- `GET /api/v1/subgroups` - все подгруппы
-- `GET /api/v1/subgroups?group_slug={slug}` - подгруппы конкретной группы
+- `GET /api/v1/subgroups` — все подгруппы
+- `GET /api/v1/subgroups?group_slug={slug}` — подгруппы группы
 
-### Карточки (Data)
-- `GET /api/v1/data/list` - легковесный список всех карточек
-- `GET /api/v1/data/list?status_slug=published` - только опубликованные карточки
-- `GET /api/v1/data/list?group_slug={slug}` - карточки конкретной группы
-- `GET /api/v1/data?slug={slug}` - полная карточка по slug
-- `GET /api/v1/data/{slug}/authors` - авторы конкретной карточки
+### Карточки
+- `GET /api/v1/data/list` — все карточки
+- `GET /api/v1/data/list?status_slug=published` — только опубликованные
+- `GET /api/v1/data/list?group_slug={slug}` — карточки группы
+- `GET /api/v1/data?slug={slug}` — карточка по slug
+- `GET /api/v1/data/{slug}/authors` — авторы карточки
 
 Все эндпоинты возвращают JSON. Подробнее: [api/README.md](api/README.md)
 
-## 🗄️ База данных
+## SEO
 
-База данных содержит 6 таблиц:
-- `groups` - группы материалов
-- `subgroups` - подгруппы
-- `data` - карточки материалов
-- `authors` - авторы
-- `card_authors` - связь карточек и авторов
-- `versions` - версии проектов
+- Полный SSR: Яндекс видит весь контент без выполнения JS
+- `<title>`, `<meta description>`, canonical, og:*, twitter:*, hreflang — на каждой странице
+- Schema.org (WebSite, Organization, CollectionPage, Article) — в `<head>`
+- SSR-контент скрывается от пользователей через `html.js #ssr-content { display: none }`, но виден поисковым роботам
+- Динамический `sitemap.xml` с `lastmod` и `priority` — только опубликованные карточки
+- `robots.txt` разрешает индексацию всего сайта
 
-Подробнее: [database/README.md](database/README.md)
+## Кэш
 
-## 🛠️ Разработка
+PHP-страницы кэшируют HTML в папку `cache/`:
 
-### Локальная разработка
+| Файл | TTL |
+|------|-----|
+| `cache/index.html` | 24 часа |
+| `cache/group-{slug}.html` | 24 часа |
+| `cache/sitemap.xml` | 24 часа |
 
-Для запуска локального сервера используйте:
+**Сброс кэша**: удалить нужный файл из `cache/` на сервере — при следующем запросе он пересоберётся.
 
-```bash
-./start-api.sh
-```
+## Деплой
 
-Или вручную:
-```bash
-php -S 0.0.0.0:8000 -t . router.php
-```
+1. Загрузите все файлы на сервер (кроме `node_modules/`, `cache/`, `backups/`, `extracted_data/`)
+2. Убедитесь, что `.htaccess` в корне и Apache поддерживает `mod_rewrite`, `mod_headers`
+3. Права доступа: файлы `644`, папки `755`
+4. Папка `cache/` должна быть доступна для записи (`chmod 755 cache/`)
+5. Настройте доступ к MySQL для IP веб-сервера (в `api/config.php`)
+6. После деплоя удалите файлы кэша, если они есть
 
-Сервер будет доступен на `http://localhost:8000`
+## Обложки
 
-Подробнее: [docs/LOCAL_DEV.md](docs/LOCAL_DEV.md)
+Скейлить в 0.4× (short) и 2× (large).
 
-### Правила разработки
+Figma: https://www.figma.com/design/yiTWBpvvNWonpRqNzobDGW/
 
-См. [Rules.md](Rules.md) для правил разработки проекта.
+## Документация
 
-### Деплой
-
-1. Загрузите все файлы на сервер (кроме `node_modules/`)
-2. Убедитесь, что `.htaccess` загружен в корень
-3. Проверьте права доступа: файлы `644`, папки `755`
-4. Настройте доступ к MySQL для IP веб-сервера
-5. Проверьте работу API через браузер
-
-## 📖 Дополнительная документация
-
-### Основная документация
-- **[Локальная разработка](docs/LOCAL_DEV.md)** - настройка локального окружения
-- **[Диагностика проблем](docs/DIAGNOSTICS.md)** - решение типичных проблем
-- **[Исправление API 404](docs/FIX_API_404.md)** - решение проблем с API
-- **[Проверка файлов на сервере](docs/CHECK_FILES_ON_SERVER.md)** - проверка структуры файлов
-
-### Производительность
-- **[Анализ проблем производительности](docs/PERFORMANCE_ISSUES_ANALYSIS.md)** - анализ и диагностика проблем производительности
-- **[Оптимизации производительности](docs/PERFORMANCE_OPTIMIZATIONS.md)** - выполненные оптимизации и рекомендации
-
-### Миграции БД
-- Документация по миграциям находится в `database/migrations/`
-- Каждая миграция имеет свой README с описанием изменений
-
-Полный индекс документации: [docs/README.md](docs/README.md)
-
-## 📄 Лицензия
-
-[Указать лицензию, если есть]
-
+- [Локальная разработка](docs/guides/LOCAL_DEV.md)
+- [Диагностика проблем](docs/guides/DIAGNOSTICS.md)
+- [IndexNow](docs/guides/INDEXNOW.md)
+- [База данных](database/README.md)
+- [API](api/README.md)
+- [История изменений](сhangelog.md)

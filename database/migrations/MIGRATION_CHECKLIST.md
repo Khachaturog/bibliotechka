@@ -38,7 +38,7 @@ ls -lh backups/backup_before_migration_*.sql
 ./scripts/run-migration-015.sh
 
 # Или вручную
-mysql -h HOST -u USER -p DATABASE < database/migrations/015_*.sql
+mysql -h HOST -u USER -p DATABASE < 015_*.sql
 ```
 
 ### 4. Проверка статистики ПОСЛЕ миграции ✅
@@ -90,7 +90,7 @@ ORDER BY (DATA_LENGTH + INDEX_LENGTH) DESC;
 
 3. **Исправить миграцию** и повторить процесс с самого начала
 
-## 📝 Правила (из Rules.md):
+## 📝 Правила (из [docs/SAFETY_AND_RULES.md](docs/SAFETY_AND_RULES.md)):
 
 - **Обязательно создавать бэкап** перед применением любой миграции
 - **Проверять количество записей до и после миграции** — должно быть идентично
@@ -124,11 +124,11 @@ mysql -h HOST -u USER -p DATABASE < backups/backup_before_migration_015_*.sql
 
 ```bash
 # Вариант 1: Использовать готовый SQL файл с бэкапом (рекомендуется)
-# Файл: database/migrations/016_sync_with_backup.sql
+# Файл: 016_sync_with_backup.sql (в этой папке)
 # Включает: бэкап + миграция + проверка
 
 # Выполнить через phpMyAdmin или MySQL клиент:
-mysql -h HOST -u USER -p DATABASE < database/migrations/016_sync_with_backup.sql
+mysql -h HOST -u USER -p DATABASE < 016_sync_with_backup.sql
 
 # Вариант 2: Использовать скрипт (если доступен MySQL клиент)
 ./scripts/run-migration-016.sh

@@ -13,10 +13,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!groupSlug) {
                 const path = window.location.pathname;
                 // Убираем начальный и конечный слэш, фильтруем пустые части
-                const pathParts = path.split('/').filter(part => part && part !== 'group.html' && part !== 'index.html');
+                const pathParts = path.split('/').filter(part => part && part !== 'index.php');
                 // Берем последнюю часть пути как slug
                 // Например: /designsystem -> ['designsystem']
-                // Или: /group.html -> [] (не подходит)
+                // Берём первый сегмент пути как slug группы
                 if (pathParts.length > 0) {
                         groupSlug = pathParts[pathParts.length - 1];
                 }
@@ -69,8 +69,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const currentUrl = window.location.pathname;
                 const prettyUrl = window.CONFIG?.getGroupUrl(groupSlug) || `/${groupSlug}`;
                 
-                // Если текущий URL - старый формат (/group.html), обновляем на красивый
-                if (currentUrl.includes('/group.html') && !currentUrl.startsWith(prettyUrl)) {
+                if (!currentUrl.startsWith(prettyUrl)) {
                         window.history.replaceState({}, '', prettyUrl + window.location.search + window.location.hash);
                 }
                 
@@ -381,7 +380,7 @@ function createCard(item) {
     }
     const clone = cardTemplate.content.cloneNode(true);
     const card = clone.querySelector('.card');
-    card.href = window.CONFIG?.getCardUrl(item.slug, item.url_seo_yandex) || `/detail.html?slug=${item.slug}`;
+    card.href = window.CONFIG?.getCardUrl(item.slug, item.url_seo_yandex) || `/card/${item.slug}`;
     const img = clone.querySelector('img');
     img.src = item.cover_short;
     img.alt = item.title || 'Image';

@@ -51,12 +51,3 @@ backups/
 # Migration web interfaces (temporary, should be deleted after use)
 *-web.php
 run-migration-*-web.php
-
-# Admin config (contains password hash)
-admin/config.php
-admin/data/attempts.json
-
-# PHP file cache (auto-generated, not for VCS)
-cache/*.html
-cache/*.xml
-!cache/.gitkeep

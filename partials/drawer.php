@@ -10,7 +10,7 @@ $_dIsAbout = ($_dPath === '/about.html' || $_dPath === '/about');
 
   <div class="header-wrap-center">
     <div class="list-mobile">
-      <a class="h3 item<?= $_dIsAbout ? ' item-active' : '' ?>" href="/about.html" rel="noopener">О проекте</a>
+      <a class="h3 item<?= $_dIsAbout ? ' item-active' : '' ?>" href="/about" rel="noopener">О проекте</a>
       <a class="h3 item" href="https://t.me/khachatur1" target="_blank" rel="noopener">Написать</a>
       <a class="h3 item" href="https://pay.cloudtips.ru/p/3cd13ee0" target="_blank" rel="noopener">Поддержать меня</a>
     </div>
