@@ -147,7 +147,7 @@ ob_start();
                 </svg>
             </span>
         </button>
-        <h1 class="h1">О проекте</h1>
+        <h1 class="h1 container-title">О проекте</h1>
     </div>
 </section>
 

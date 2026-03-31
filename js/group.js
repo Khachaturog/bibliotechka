@@ -257,7 +257,8 @@ function displayOtherGroups(groupsList, currentGroupSlug) {
 function createBadge(subgroup, badgeTemplate) {
     const clone = badgeTemplate.content.cloneNode(true);
     const badge = clone.querySelector('.badge');
-    badge.href = `#${subgroup.slug}`;
+    const currentPathWithQuery = `${window.location.pathname}${window.location.search}`;
+    badge.href = `${currentPathWithQuery}#${subgroup.slug}`;
     badge.querySelector('.badge-title').textContent = subgroup.title_ru || subgroup.title;
 
     // Добавляем обработчик клика для перехода к якорной ссылке
@@ -275,7 +276,7 @@ function createBadge(subgroup, badgeTemplate) {
             });
 
             // Обновляем URL с якорем
-            history.pushState(null, null, `#${subgroup.slug}`);
+            history.pushState(null, null, `${currentPathWithQuery}#${subgroup.slug}`);
 
             // Устанавливаем класс active для текущего бейджа с задержкой
             setTimeout(() => {
@@ -304,7 +305,7 @@ window.addEventListener('scroll', () => {
         wraps.forEach(wrap => {
             const badges = wrap.querySelectorAll('.badge');
             badges.forEach(badge => {
-                const targetId = badge.getAttribute('href').substring(1);
+                const targetId = new URL(badge.href, window.location.origin).hash.substring(1);
                 const targetElement = document.getElementById(targetId);
                 if (targetElement) {
                     const rect = targetElement.getBoundingClientRect();
