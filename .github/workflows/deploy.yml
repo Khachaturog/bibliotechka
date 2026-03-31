@@ -49,5 +49,4 @@ jobs:
             **/*.log
             .DS_Store
             cache/*.html
-            **/*.webp
             **/images/covers/**
