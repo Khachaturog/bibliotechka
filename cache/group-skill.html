@@ -9,9 +9,7 @@
 
     <meta name="theme-color" content="#FFFFFF">
 
-    <!-- Принудительное использование HTTPS для всех запросов -->
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-
+    
     <!-- Hide server-rendered SEO block when JS is enabled -->
     <script>document.documentElement.classList.add('js');</script>
     <style>html.js #ssr-content { display: none !important; }</style>
@@ -668,8 +666,6 @@
             </div>
             
             <div class="cards-container"></div>
-            
-        </div>
     </template>
     </main>
 
@@ -711,7 +707,29 @@
     </p>
   </div>
 </div>
-    <div id="drawer" class="drawer">
+    <style>
+/* До загрузки base.css: #drawer и #search не должны дублировать шапку в потоке документа */
+#drawer,
+#search {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: -400%;
+  z-index: 100;
+  max-width: 1036px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+.drawer.open,
+.search.open {
+  top: 0;
+}
+</style>
+<div id="drawer" class="drawer">
 
   <div class="header-wrap-start">
     <header class="header-0">

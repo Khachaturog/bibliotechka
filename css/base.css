@@ -1090,6 +1090,13 @@ html {
   overflow-y: scroll;
 }
 
+/* На тач-устройствах глобальный smooth конфликтует с нативным скроллом и sticky-блоками */
+@media (hover: none) and (pointer: coarse) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   gap: var(--gap-regular);
 
@@ -1463,6 +1470,11 @@ body {
   -ms-overflow-style: none; /* Убираем скроллбар для IE */
 }
 
+/* Вертикальный скролл страницы не уводит в горизонтальный скролл полосы бейджей (особенно при скролле вверх) */
+.subgroups-badge-wrap {
+  touch-action: pan-x pinch-zoom;
+}
+
 /* "Другие группы" на странице group.html: обычный блок (без sticky) */
 .other-groups-badge-wrap {
   display: flex;
@@ -1646,10 +1658,6 @@ body {
   position: relative;
   cursor: pointer;
   text-decoration: none;
-  
-  /* Оптимизация рендеринга: не рендерить невидимые карточки */
-  content-visibility: auto;
-  contain-intrinsic-size: 200px 184px;
 }
 
 .card:hover {

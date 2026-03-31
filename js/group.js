@@ -143,6 +143,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Не нужно фильтровать на клиенте - экономия CPU
                 displaySubgroupsAndCards(data, subgroups);
                 displayOtherGroups(groupsList, groupSlug);
+                requestAnimationFrame(() => updateSubgroupBadgesFromScroll());
                         // Скроллим к якорю после отрисовки с задержкой 50мс
                         if (window.location.hash) {
                             setTimeout(() => {
@@ -283,7 +284,7 @@ function createBadge(subgroup, badgeTemplate) {
                 const parentWrap = badge.closest('.subgroups-badge-wrap') || document;
                 parentWrap.querySelectorAll('.badge').forEach(b => b.classList.remove('active'));
                 badge.classList.add('active');
-                centerBadge(badge);
+                centerBadge(badge, true);
             }, 100); // Задержка в мс
         }
     });
@@ -291,34 +292,64 @@ function createBadge(subgroup, badgeTemplate) {
     return clone;
 }
 
-// Простое центрирование бейджа
-function centerBadge(badge) {
-    badge.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+// Горизонтальное центрирование бейджа только через scrollLeft родителя — без scrollIntoView,
+// чтобы не трогать скролл документа (особенно на iOS).
+function centerBadgeInStrip(badge, smooth) {
+    const wrap = badge.closest('.subgroups-badge-wrap');
+    if (!wrap) return;
+    const wrapRect = wrap.getBoundingClientRect();
+    const badgeRect = badge.getBoundingClientRect();
+    const badgeCenter = badgeRect.left + badgeRect.width / 2;
+    const wrapCenter = wrapRect.left + wrapRect.width / 2;
+    const delta = badgeCenter - wrapCenter;
+    const nextLeft = wrap.scrollLeft + delta;
+    const maxLeft = Math.max(0, wrap.scrollWidth - wrap.clientWidth);
+    wrap.scrollTo({
+        left: Math.max(0, Math.min(maxLeft, nextLeft)),
+        behavior: smooth ? 'smooth' : 'auto'
+    });
 }
 
-// Добавляем обработчик для изменения active бейджа при скролле
-let scrollTimeout;
-window.addEventListener('scroll', () => {
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(() => {
-        const wraps = document.querySelectorAll('.subgroups-badge-wrap');
-        wraps.forEach(wrap => {
-            const badges = wrap.querySelectorAll('.badge');
-            badges.forEach(badge => {
-                const targetId = new URL(badge.href, window.location.origin).hash.substring(1);
-                const targetElement = document.getElementById(targetId);
-                if (targetElement) {
-                    const rect = targetElement.getBoundingClientRect();
-                    if (rect.top <= 90  && rect.bottom > 90) { // Проверяем, находится ли блок в видимой области
-                        badges.forEach(b => b.classList.remove('active'));
-                        badge.classList.add('active');
-                        centerBadge(badge);
-                    }
-                }
-            });
+function centerBadge(badge, smooth) {
+    centerBadgeInStrip(badge, smooth);
+}
+
+function updateSubgroupBadgesFromScroll() {
+    document.querySelectorAll('.subgroups-badge-wrap').forEach(wrap => {
+        const badges = wrap.querySelectorAll('.badge');
+        let matched = null;
+        badges.forEach(badge => {
+            const targetId = new URL(badge.href, window.location.origin).hash.substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (!targetElement) return;
+            const rect = targetElement.getBoundingClientRect();
+            if (rect.top <= 90 && rect.bottom > 90) {
+                matched = badge;
+            }
         });
-    }, 10); // Задержка 10мс после завершения прокрутки
-});
+        if (matched) {
+            if (wrap.dataset.activeBadge === matched.href) return;
+            wrap.dataset.activeBadge = matched.href;
+            badges.forEach(b => b.classList.remove('active'));
+            matched.classList.add('active');
+            centerBadgeInStrip(matched, false);
+        } else if (wrap.dataset.activeBadge) {
+            wrap.dataset.activeBadge = '';
+            badges.forEach(b => b.classList.remove('active'));
+        }
+    });
+}
+
+let subgroupBadgeScrollRaf = 0;
+function scheduleSubgroupBadgeUpdate() {
+    if (subgroupBadgeScrollRaf) return;
+    subgroupBadgeScrollRaf = requestAnimationFrame(() => {
+        subgroupBadgeScrollRaf = 0;
+        updateSubgroupBadgesFromScroll();
+    });
+}
+
+window.addEventListener('scroll', scheduleSubgroupBadgeUpdate, { passive: true });
 
 
 

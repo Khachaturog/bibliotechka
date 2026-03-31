@@ -24,5 +24,27 @@ jobs:
           server-dir: ${{ secrets.FTP_REMOTE_PATH }}
           timeout: 600000
           exclude: |
+            **/.git/**
+            **/.github/**
+            **/.vscode/**
+            **/.idea/**
+            **/.cursor/**
+            node_modules/**
+            .env
+            .env.*
+            package.json
+            package-lock.json
+            requirements.txt
+            docker-compose.yml
+            .dockerignore
+            docs/**
+            scripts/**
+            site_extraction/**
+            database/**
+            archive/**
+            **/*.md
+            **/*.log
+            .DS_Store
+            cache/*.html
             **/*.webp
             **/images/covers/**
