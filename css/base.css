@@ -784,6 +784,7 @@
     --02-content-secondary: rgba(253, 254, 255, 0.56);
     --02-content-tertiary: #fdfeff80;
     --02-content-on-solid: var(--neutral-day-0);
+    --02-content-on-collpased: rgba(253, 254, 255, 0.56);
 
     /* 03 Icon */
 
@@ -807,6 +808,7 @@
     --06-theme-violet-content: var(--violet-night-1300);
     --06-theme-violet-content-pressed: var(--violet-night-1100);
     --06-theme-violet-icon-solid: var(--violet-night-1300);
+
 }
 
 
