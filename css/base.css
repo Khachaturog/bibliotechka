@@ -1155,32 +1155,17 @@ body {
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
 }
 
-.site-top-banner__text {
-  margin: 0;
-  color: rgba(253, 252, 255, 0.92);
-  line-height: 1.5;
-  opacity: 1;
-}
-
-.site-top-banner__text strong {
-  color: #fff;
-  font-weight: 700;
-}
-
 .site-top-banner a {
   color: #fff;
   font-weight: 700;
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 3px;
+  text-decoration: none;
+  /* text-decoration-thickness: 2px; */
+  /* text-underline-offset: 3px; */
 }
 
 .site-top-banner a:hover {
-  text-decoration-thickness: 3px;
-}
-
-.site-top-banner__nowrap {
-  white-space: nowrap;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
 }
 
 body.dark-theme .site-top-banner {
