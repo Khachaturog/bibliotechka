@@ -25,6 +25,7 @@ require_once __DIR__ . '/api/config.php';
 </head>
 
 <body>
+    <?php include __DIR__ . '/partials/top-banner.php'; ?>
     <section class="wrap-start">
         <?php include __DIR__ . '/partials/header.php'; ?>
     </section>

@@ -18,7 +18,7 @@ $cacheTtl  = 86400;
 if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTtl) {
     header('Content-Type: text/html; charset=utf-8');
     header('X-Cache: HIT');
-    readfile($cacheFile);
+    echo injectTopBannerAfterBodyOpen(file_get_contents($cacheFile));
     exit;
 }
 
@@ -51,22 +51,22 @@ ob_start();
     <title>Библиотечка — коллекция материалов для дизайнеров</title>
     <meta name="description" content="Библиотечка — коллекция <?= $cardCount ?>+ лучших материалов по дизайну, UX/UI, типографике и вдохновению. Ресурсы, дизайн-системы, портфолио и книги для дизайнеров.">
 
-    <link rel="canonical" href="https://bibliotechka.online">
-    <link rel="alternate" hreflang="ru" href="https://bibliotechka.online">
-    <link rel="alternate" hreflang="x-default" href="https://bibliotechka.online">
+    <link rel="canonical" href="https://bibliotechka.site">
+    <link rel="alternate" hreflang="ru" href="https://bibliotechka.site">
+    <link rel="alternate" hreflang="x-default" href="https://bibliotechka.site">
 
     <meta property="og:title" content="Библиотечка — коллекция материалов для дизайнеров">
     <meta property="og:description" content="Библиотечка — коллекция <?= $cardCount ?>+ лучших материалов по дизайну, UX/UI, типографике и вдохновению.">
-    <meta property="og:image" content="https://bibliotechka.online/images/preview.webp">
+    <meta property="og:image" content="https://bibliotechka.site/images/preview.webp">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://bibliotechka.online">
+    <meta property="og:url" content="https://bibliotechka.site">
     <meta property="og:locale" content="ru_RU">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@bibliotechka">
     <meta name="twitter:title" content="Библиотечка — коллекция материалов для дизайнеров">
     <meta name="twitter:description" content="Библиотечка — коллекция <?= $cardCount ?>+ лучших материалов по дизайну, UX/UI, типографике и вдохновению.">
-    <meta name="twitter:image" content="https://bibliotechka.online/images/preview.webp">
+    <meta name="twitter:image" content="https://bibliotechka.site/images/preview.webp">
 
     <meta name="robots" content="index, follow">
     <meta name="yandex-verification" content="9e48f4959071c524">
@@ -83,7 +83,7 @@ ob_start();
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "Библиотечка",
-      "url": "https://bibliotechka.online",
+      "url": "https://bibliotechka.site",
       "description": "Коллекция лучших материалов по дизайну, UX/UI, типографике и вдохновению"
     }
     </script>
@@ -92,10 +92,10 @@ ob_start();
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "Библиотечка",
-      "url": "https://bibliotechka.online",
+      "url": "https://bibliotechka.site",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://bibliotechka.online/images/preview.webp"
+        "url": "https://bibliotechka.site/images/preview.webp"
       },
       "description": "Коллекция лучших материалов для дизайнеров: UX/UI, типографика, дизайн-системы, вдохновение"
     }
@@ -105,7 +105,7 @@ ob_start();
       "@context": "https://schema.org",
       "@type": "CollectionPage",
       "name": "Библиотечка — материалы для дизайнеров",
-      "url": "https://bibliotechka.online",
+      "url": "https://bibliotechka.site",
       "description": "Коллекция <?= $cardCount ?> материалов для дизайнеров: ресурсы, дизайн-системы, книги и вдохновение",
       "numberOfItems": <?= $cardCount ?>
     }
@@ -130,6 +130,7 @@ ob_start();
 </head>
 
 <body>
+    <?php include __DIR__ . '/partials/top-banner.php'; ?>
     <section class="wrap-start">
         <?php include __DIR__ . '/partials/header.php'; ?>
     </section>

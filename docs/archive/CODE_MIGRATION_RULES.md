@@ -490,7 +490,7 @@ const CONFIG = {
     API_BASE: '/api/v1',
     
     // Для продакшена (пример)
-    // API_BASE: 'https://api.bibliotechka.online/v1',
+    // API_BASE: 'https://api.bibliotechka.site/v1',
     
     // Или использовать переменную окружения
     // API_BASE: process.env.API_BASE || '/api/v1'

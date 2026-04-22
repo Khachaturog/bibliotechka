@@ -30,7 +30,7 @@ $groups = $db->query(
     "SELECT slug FROM `groups` ORDER BY sort"
 )->fetchAll();
 
-$base = 'https://bibliotechka.online';
+$base = SITE_BASE_URL;
 $today = date('Y-m-d');
 
 ob_start();

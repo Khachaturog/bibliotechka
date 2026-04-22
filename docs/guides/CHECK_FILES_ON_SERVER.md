@@ -43,27 +43,27 @@ api/
 
 Откройте в браузере (замените на ваш домен):
 
-1. **Группы**: `https://bibliotechka.online/api/v1/groups/list`
+1. **Группы**: `https://bibliotechka.site/api/v1/groups/list`
    - Должен вернуть JSON с группами
    - Если 404 → файл `api/v1/groups/list.php` не найден
 
-2. **Карточки**: `https://bibliotechka.online/api/v1/data/list?status_slug=published`
+2. **Карточки**: `https://bibliotechka.site/api/v1/data/list?status_slug=published`
    - Должен вернуть JSON с карточками
    - Если 404 → файл `api/v1/data/list.php` не найден
 
-3. **Подгруппы**: `https://bibliotechka.online/api/v1/subgroups`
+3. **Подгруппы**: `https://bibliotechka.site/api/v1/subgroups`
    - Должен вернуть JSON с подгруппами
    - Если 404 → файл `api/v1/subgroups/index.php` не найден
 
-4. **Группа по slug**: `https://bibliotechka.online/api/v1/groups?slug=skill`
+4. **Группа по slug**: `https://bibliotechka.site/api/v1/groups?slug=skill`
    - Должен вернуть JSON с одной группой
    - Если 404 → файл `api/v1/groups/index.php` не найден
 
-5. **Карточка по slug**: `https://bibliotechka.online/api/v1/data?slug=001`
+5. **Карточка по slug**: `https://bibliotechka.site/api/v1/data?slug=001`
    - Должен вернуть JSON с одной карточкой
    - Если 404 → файл `api/v1/data/index.php` не найден
 
-6. **Авторы карточки**: `https://bibliotechka.online/api/v1/data/001/authors`
+6. **Авторы карточки**: `https://bibliotechka.site/api/v1/data/001/authors`
    - Должен вернуть JSON с авторами
    - Если 404 → файл `api/v1/data/authors.php` не найден
 
@@ -90,7 +90,7 @@ api/
 
 1. **Создайте временный файл** `api/test-connection.php` (см. пример в [DIAGNOSTICS.md](DIAGNOSTICS.md))
 2. **Загрузите на сервер**
-3. **Откройте**: `https://bibliotechka.online/api/test-connection.php`
+3. **Откройте**: `https://bibliotechka.site/api/test-connection.php`
 4. **Проверьте результаты**:
    - Если видите данные → БД работает, проблема в файлах API или роутинге
    - Если ошибка БД → см. инструкцию по настройке доступа к БД

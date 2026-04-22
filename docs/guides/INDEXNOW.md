@@ -6,7 +6,7 @@
 
 1. **Файл ключа** в корне сайта: `bibliotechka-indexnow-a1b2c3d4.txt`  
    Содержит ключ для подтверждения права собственности на домен. Доступен по адресу:  
-   `https://bibliotechka.online/bibliotechka-indexnow-a1b2c3d4.txt`
+   `https://bibliotechka.site/bibliotechka-indexnow-a1b2c3d4.txt`
 
 2. **Скрипт отправки**: `scripts/submit-indexnow.js`  
    Читает URL из sitemap и отправляет их в Яндекс и общий API IndexNow (Bing и др.).
@@ -27,8 +27,8 @@ node scripts/submit-indexnow.js path/to/sitemap.xml
 
 Перед запуском убедитесь, что:
 
-- **Файл ключа доступен на сервере** — `https://bibliotechka.online/bibliotechka-indexnow-a1b2c3d4.txt` должен возвращать текст `bibliotechka-indexnow-a1b2c3d4`. Без этого поисковики вернут 403.
-- **Sitemap актуален** — скачайте свежую версию с `https://bibliotechka.online/sitemap.xml` и передайте её скрипту, либо запустите без аргументов (скрипт сам читает локальный файл). Sitemap теперь динамический — физически генерируется `sitemap.php` и кэшируется в `cache/sitemap.xml`.
+- **Файл ключа доступен на сервере** — `https://bibliotechka.site/bibliotechka-indexnow-a1b2c3d4.txt` должен возвращать текст `bibliotechka-indexnow-a1b2c3d4`. Без этого поисковики вернут 403.
+- **Sitemap актуален** — скачайте свежую версию с `https://bibliotechka.site/sitemap.xml` и передайте её скрипту, либо запустите без аргументов (скрипт сам читает локальный файл). Sitemap теперь динамический — физически генерируется `sitemap.php` и кэшируется в `cache/sitemap.xml`.
 
 ## Ответы API
 

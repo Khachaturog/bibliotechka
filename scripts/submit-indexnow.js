@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 
-const SITE_URL = 'https://bibliotechka.online';
+const SITE_URL = 'https://bibliotechka.site';
 const INDEXNOW_KEY = 'bibliotechka-indexnow-a1b2c3d4';
 const KEY_FILE_URL = `${SITE_URL}/${INDEXNOW_KEY}.txt`;
 const MAX_URLS_PER_REQUEST = 10000;

@@ -4,6 +4,19 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    # 301: старый домен → bibliotechka.site (сохраняем путь и query)
+    RewriteCond %{HTTP_HOST} ^(www\.)?bibliotechka\.online$ [NC]
+    RewriteRule ^ https://bibliotechka.site%{REQUEST_URI} [L,R=301,QSA]
+
+    # www нового домена → канонический https без www
+    RewriteCond %{HTTP_HOST} ^www\.bibliotechka\.site$ [NC]
+    RewriteRule ^ https://bibliotechka.site%{REQUEST_URI} [L,R=301,QSA]
+
+    # HTTP → HTTPS для канонического хоста (не теряем трафик и сигналы)
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP_HOST} ^bibliotechka\.site$ [NC]
+    RewriteRule ^ https://bibliotechka.site%{REQUEST_URI} [L,R=301,QSA]
+
     # Корневой URL / → index.php (до проверки существующих файлов)
     RewriteRule ^$ /index.php [L]
 

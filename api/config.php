@@ -13,7 +13,7 @@ define('DB_PASSWORD', 'tuhrih-zoqmYp');
 define('DB_NAME', 'j35045845_biblio');
 
 // Продакшен-домен (используется для canonical, OG, Schema.org)
-define('SITE_BASE_URL', 'https://bibliotechka.online');
+define('SITE_BASE_URL', 'https://bibliotechka.site');
 
 // Настройки API
 define('API_VERSION', 'v1');
@@ -23,6 +23,22 @@ define('API_BASE_PATH', '/api/' . API_VERSION);
 function absoluteUrl(string $path): string {
     if (str_starts_with($path, 'http')) return $path;
     return SITE_BASE_URL . '/' . ltrim($path, '/');
+}
+
+/**
+ * Вставляет верхний баннер сразу после открывающего <body> — для ответа из файлового HTML-кэша,
+ * сгенерированного до появления баннера (иначе readfile отдаёт страницу без полоски).
+ */
+function injectTopBannerAfterBodyOpen(string $html): string {
+    if (str_contains($html, 'site-top-banner')) {
+        return $html;
+    }
+    ob_start();
+    include __DIR__ . '/../partials/top-banner.php';
+    $banner = ob_get_clean();
+    $count  = 0;
+    $out     = preg_replace('/(<body[^>]*>)/i', '$1' . "\n" . $banner . "\n", $html, 1, $count);
+    return ($out !== null && $count > 0) ? $out : $html;
 }
 
 // Функция для подключения к БД

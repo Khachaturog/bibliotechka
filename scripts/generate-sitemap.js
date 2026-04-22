@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const mysql = require('mysql2/promise');
 
-const SITE_URL = 'https://bibliotechka.online'; // Замените на ваш домен
+const SITE_URL = 'https://bibliotechka.site'; // Замените на ваш домен
 
 // Настройки подключения к БД
 const DB_CONFIG = {

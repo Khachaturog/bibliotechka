@@ -42,7 +42,7 @@ $cacheTtl  = 86400;
 if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTtl) {
     header('Content-Type: text/html; charset=utf-8');
     header('X-Cache: HIT');
-    readfile($cacheFile);
+    echo injectTopBannerAfterBodyOpen(file_get_contents($cacheFile));
     exit;
 }
 
@@ -202,6 +202,8 @@ ob_start();
 </head>
 
 <body style="max-width: 768px;">
+
+    <?php include __DIR__ . '/partials/top-banner.php'; ?>
 
     <!-- SSR-блок: виден поисковым роботам, скрыт при работе JS (html.js #ssr-content) -->
     <div id="ssr-content" class="wrap-center" style="padding: 16px 16px 0;">

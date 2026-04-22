@@ -4,4 +4,4 @@ Disallow: /private/
 Disallow: /temp/
 Disallow: /*.log$
 
-Sitemap: https://bibliotechka.online/sitemap.xml
+Sitemap: https://bibliotechka.site/sitemap.xml

@@ -78,7 +78,7 @@ const CONFIG = {
     },
     
     // Для продакшена (если API на другом домене)
-    // API_BASE: 'https://api.bibliotechka.online/v1',
+    // API_BASE: 'https://api.bibliotechka.site/v1',
 };
 
 CONFIG.API_BASE = normalizeApiBase(CONFIG.API_BASE);

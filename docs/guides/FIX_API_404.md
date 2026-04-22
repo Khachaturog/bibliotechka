@@ -1,7 +1,7 @@
 # Исправление ошибки 404 для API
 
 ## Проблема
-При обращении к `https://bibliotechka.online/api/v1/groups/list` получаете ошибку 404.
+При обращении к `https://bibliotechka.site/api/v1/groups/list` получаете ошибку 404.
 
 ## Решение
 
@@ -35,22 +35,22 @@ api/
 
 После загрузки файлов проверьте в браузере:
 
-1. **Группы**: `https://bibliotechka.online/api/v1/groups/list`
+1. **Группы**: `https://bibliotechka.site/api/v1/groups/list`
    - Должен вернуть JSON с группами
 
-2. **Группа по slug**: `https://bibliotechka.online/api/v1/groups?slug=skill`
+2. **Группа по slug**: `https://bibliotechka.site/api/v1/groups?slug=skill`
    - Должен вернуть JSON с одной группой
 
-3. **Карточки**: `https://bibliotechka.online/api/v1/data/list?status_slug=published`
+3. **Карточки**: `https://bibliotechka.site/api/v1/data/list?status_slug=published`
    - Должен вернуть JSON с карточками
 
-4. **Карточка по slug**: `https://bibliotechka.online/api/v1/data?slug=001`
+4. **Карточка по slug**: `https://bibliotechka.site/api/v1/data?slug=001`
    - Должен вернуть JSON с одной карточкой
 
-5. **Авторы карточки**: `https://bibliotechka.online/api/v1/data/001/authors`
+5. **Авторы карточки**: `https://bibliotechka.site/api/v1/data/001/authors`
    - Должен вернуть JSON с авторами
 
-6. **Подгруппы**: `https://bibliotechka.online/api/v1/subgroups`
+6. **Подгруппы**: `https://bibliotechka.site/api/v1/subgroups`
    - Должен вернуть JSON с подгруппами
 
 ### Шаг 3: Проверьте подключение к БД
@@ -59,7 +59,7 @@ api/
 
 1. **Создайте временный файл** `api/test-connection.php` (см. пример в [DIAGNOSTICS.md](DIAGNOSTICS.md))
 2. **Загрузите на сервер**
-3. **Откройте в браузере**: `https://bibliotechka.online/api/test-connection.php`
+3. **Откройте в браузере**: `https://bibliotechka.site/api/test-connection.php`
 4. **Проверьте результаты**:
    - Если видите ошибку подключения → см. ниже "Доступ к БД"
    - Если подключение успешно, но таблицы пустые → импортируйте данные
