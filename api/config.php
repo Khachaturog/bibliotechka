@@ -79,9 +79,8 @@ function getDBConnection() {
             
             $conn = new PDO($dsn, DB_USER, DB_PASSWORD, $options);
             
-            // Дополнительные настройки для производительности
-            $conn->exec("SET SESSION query_cache_type = OFF"); // Отключаем query cache на уровне сессии
-            $conn->exec("SET SESSION innodb_lock_wait_timeout = 5"); // Таймаут ожидания блокировок
+            // MySQL 8+ не имеет query cache — SET query_cache_type вызвал бы ошибку и 500.
+            $conn->exec("SET SESSION innodb_lock_wait_timeout = 5");
         } catch (PDOException $e) {
             http_response_code(500);
             header('Content-Type: application/json');

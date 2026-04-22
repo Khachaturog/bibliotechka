@@ -12,7 +12,9 @@
     RewriteCond %{HTTP_HOST} ^www\.bibliotechka\.site$ [NC]
     RewriteRule ^ https://bibliotechka.site%{REQUEST_URI} [L,R=301,QSA]
 
-    # HTTP → HTTPS для канонического хоста (не теряем трафик и сигналы)
+    # HTTP → HTTPS для канонического хоста (не теряем трафик и сигналы).
+    # За прокси SSL %{HTTPS} часто off — учитываем X-Forwarded-Proto, иначе петля 301.
+    RewriteCond %{HTTP:X-Forwarded-Proto} !^https$ [NC]
     RewriteCond %{HTTPS} !=on
     RewriteCond %{HTTP_HOST} ^bibliotechka\.site$ [NC]
     RewriteRule ^ https://bibliotechka.site%{REQUEST_URI} [L,R=301,QSA]
