@@ -1,3 +1,20 @@
+# FTP Deploy → Jino (legacy PHP site).
+#
+# ╔══════════════════════════════════════════════════════════════════╗
+# ║ CUTOVER (BIB-7) — DO NOT DISABLE YET                             ║
+# ║                                                                  ║
+# ║ Keep this workflow ENABLED until the user explicitly approves    ║
+# ║ DNS cutover for bibliotechka.site → GitHub Pages and verifies    ║
+# ║ the static site live.                                            ║
+# ║                                                                  ║
+# ║ After explicit OK:                                               ║
+# ║   1. Disable this workflow (uncomment `if: false` below, or      ║
+# ║      delete/rename this file).                                   ║
+# ║   2. Leave Jino files in place 1–2 weeks as rollback.            ║
+# ║   3. Then archive PHP/api/admin (see migration plan phase 5).    ║
+# ║                                                                  ║
+# ║ Pages workflow: .github/workflows/pages.yml                      ║
+# ╚══════════════════════════════════════════════════════════════════╝
 name: FTP Deploy to PROD
 
 on:
@@ -7,6 +24,8 @@ on:
 
 jobs:
   ftp-deploy:
+    # After DNS cutover + user OK, uncomment the next line to stop FTP deploys:
+    # if: false
     runs-on: ubuntu-latest
     steps:
       - name: 🚚 Get latest code

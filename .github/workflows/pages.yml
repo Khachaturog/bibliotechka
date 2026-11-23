@@ -1,0 +1,106 @@
+# Deploy Vite SSG site (web/dist) to GitHub Pages.
+# Custom domain: bibliotechka.site (CNAME in web/public/).
+#
+# Required repository secrets (Settings → Secrets and variables → Actions):
+#   VITE_SUPABASE_URL       — Supabase project URL (https://….supabase.co)
+#   VITE_SUPABASE_ANON_KEY  — Supabase anon/public key (read-only RLS)
+#
+# DNS cutover (point bibliotechka.site at GitHub Pages) needs explicit user OK.
+# Until then, keep .github/workflows/deploy.yml (FTP → Jino) enabled.
+
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Fetch catalog from Supabase
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: npm run fetch-content
+
+      - name: Build + prerender
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        # prebuild also runs fetch-content; secrets must be present for a fresh dump
+        run: npm run build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist
+
+      - name: Upload sitemap for IndexNow
+        uses: actions/upload-artifact@v4
+        with:
+          name: sitemap
+          path: web/dist/sitemap.xml
+          if-no-files-found: error
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  indexnow:
+    needs: deploy
+    runs-on: ubuntu-latest
+    # Until DNS cutover, IndexNow hits the live domain (still Jino). Soft-fail OK.
+    continue-on-error: true
+    steps:
+      - name: Checkout (IndexNow script)
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Download sitemap
+        uses: actions/download-artifact@v4
+        with:
+          name: sitemap
+          path: web/dist
+
+      - name: Submit IndexNow
+        working-directory: web
+        run: node scripts/submit-indexnow.mjs dist/sitemap.xml
