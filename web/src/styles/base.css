@@ -708,6 +708,9 @@
     --radius-400: var(--module-400);
     --radius-full: 999px;
 
+    /* Fonts */
+    --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
     /* Spacing */
     --space-0: var(--module-0);
     --space-50: var(--module-50);
@@ -937,7 +940,9 @@
 .icon-home-outline svg,
 .icon-schevron-right svg,
 .secondary-custom svg {
-    fill: var(--02-content-secondary);
+    fill: none;
+    stroke: var(--02-content-secondary);
+    color: var(--02-content-secondary);
     width: 20px;
     height: 20px;
     display: flex;
@@ -1300,7 +1305,9 @@ body.dark-theme .site-top-banner {
 
 .icon-day svg,
 .icon-night svg {
-  fill: var(--02-content-secondary);
+  fill: none;
+  stroke: var(--02-content-secondary);
+  color: var(--02-content-secondary);
   width: 24px;
   height: 24px;
   display: flex;
@@ -1801,15 +1808,21 @@ body.dark-theme .site-top-banner {
 }
 
 .subtle-violet-24 svg {
-  fill: var(--06-theme-violet-content);
+  fill: none;
+  stroke: var(--06-theme-violet-content);
+  color: var(--06-theme-violet-content);
 }
 
 .subtle-violet-24:hover svg {
-  fill: var(--06-theme-violet-content);
+  fill: none;
+  stroke: var(--06-theme-violet-content);
+  color: var(--06-theme-violet-content);
 }
 
 .subtle-violet-24:active svg {
-  fill: var(--06-theme-violet-content-pressed);
+  fill: none;
+  stroke: var(--06-theme-violet-content-pressed);
+  color: var(--06-theme-violet-content-pressed);
 }
 
 
@@ -1957,7 +1970,9 @@ body.dark-theme .site-top-banner {
 }
 
 .icon-diagonal-arrow svg {
-  fill: var(--02-content-secondary);
+  fill: none;
+  stroke: var(--02-content-secondary);
+  color: var(--02-content-secondary);
 }
 
 .detail-block3-author {

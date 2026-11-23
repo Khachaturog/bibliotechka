@@ -1,9 +1,9 @@
-/** Vite public base, always ends with `/` (e.g. `/` or `/bibliotechka-4/`). */
+/** Vite public base, always ends with `/` (e.g. `/`). */
 export function viteBase(): string {
   return import.meta.env.BASE_URL || '/'
 }
 
-/** Router basename without trailing slash (`''` at domain root, `/bibliotechka-4` on Pages). */
+/** Router basename without trailing slash (`''` at domain root). */
 export function routerBasename(): string {
   return viteBase().replace(/\/$/, '')
 }

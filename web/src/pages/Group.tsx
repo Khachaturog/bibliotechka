@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom'
+import { ArrowUp, Check, ChevronLeft, Link as LinkIcon } from 'lucide-react'
 import { Card } from '../components/Card'
 import {
   getGroup,
@@ -106,7 +107,7 @@ export function Group() {
       <section className="wrap-center">
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <Link className="secondary-sm" to="/" aria-label="Назад">
-            <ChevronLeft />
+            <ChevronLeft size={20} strokeWidth={1.75} aria-hidden />
           </Link>
           <div
             className="cards-container-0-header"
@@ -180,7 +181,7 @@ export function Group() {
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         aria-label="Наверх"
       >
-        <span className="icon-up">↑</span>
+        <ArrowUp size={20} strokeWidth={1.75} aria-hidden />
       </button>
     </>
   )
@@ -220,10 +221,10 @@ function SubgroupBlock({
             onClick={copyLink}
           >
             <span className="icon-link" style={{ display: copied ? 'none' : 'inline' }}>
-              🔗
+              <LinkIcon size={16} strokeWidth={1.75} aria-hidden />
             </span>
             <span className="icon-copied" style={{ display: copied ? 'inline' : 'none' }}>
-              ✓
+              <Check size={16} strokeWidth={1.75} aria-hidden />
             </span>
           </button>
         </div>
@@ -255,16 +256,3 @@ function centerBadge(badge: HTMLElement, smooth: boolean) {
   })
 }
 
-function ChevronLeft() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <path
-        d="M12.5 15L7.5 10L12.5 5"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}

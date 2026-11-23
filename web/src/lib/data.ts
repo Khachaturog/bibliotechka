@@ -86,6 +86,38 @@ export function getSearchCatalog() {
     .filter(Boolean) as { group: Group; subgroups: Subgroup[] }[]
 }
 
+const SEARCH_LIMIT = 40
+
+/** Free-text spotlight search over published catalog fields (no new data). */
+export function searchCards(query: string, limit = SEARCH_LIMIT): Card[] {
+  const q = query.trim().toLocaleLowerCase('ru')
+  if (!q) return []
+
+  const scored: { card: Card; score: number }[] = []
+  for (const card of cards) {
+    const title = (card.title || '').toLocaleLowerCase('ru')
+    const desc = (card.description || '').toLocaleLowerCase('ru')
+    const summary = (card.summary_ai || '').toLocaleLowerCase('ru')
+    const authors = (card.authors || [])
+      .map((a) => `${a.title_ru || ''} ${a.title_en || ''}`.toLocaleLowerCase('ru'))
+      .join(' ')
+    const hay = `${title} ${desc} ${summary} ${authors} ${card.slug}`
+
+    if (!hay.includes(q)) continue
+
+    let score = 0
+    if (title.startsWith(q)) score += 100
+    else if (title.includes(q)) score += 60
+    if (authors.includes(q)) score += 30
+    if (desc.includes(q)) score += 20
+    if (summary.includes(q)) score += 10
+    scored.push({ card, score })
+  }
+
+  scored.sort((a, b) => b.score - a.score || a.card.title.localeCompare(b.card.title, 'ru'))
+  return scored.slice(0, limit).map((s) => s.card)
+}
+
 const MONTHS_RU = [
   'января',
   'февраля',

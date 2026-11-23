@@ -52,7 +52,7 @@ function writeSitemap(paths) {
 function prefixRootPaths(html, base) {
   const b = normalizeBase(base)
   if (b === '/') return html
-  const prefix = b.slice(0, -1) // /bibliotechka-4
+  const prefix = b.slice(0, -1) // e.g. /subdir when base !== '/'
   const re = new RegExp(
     `\\b(href|src)="(/(?!/)(?!${prefix.slice(1)}(?:/|"|$))[^"]*)"`,
     'g',

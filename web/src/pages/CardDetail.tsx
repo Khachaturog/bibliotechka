@@ -1,5 +1,12 @@
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import {
+  ArrowUpRight,
+  ChevronLeft,
+  Dices,
+  Home,
+  Share,
+} from 'lucide-react'
+import {
   getCardBySeo,
   getGroup,
   getRandomCard,
@@ -58,13 +65,13 @@ export function CardDetail() {
           to={groupUrl(card.group_slug || '', card.subgroup_slug)}
           aria-label="Назад"
         >
-          <ChevronLeft />
+          <ChevronLeft size={20} strokeWidth={1.75} aria-hidden />
         </Link>
         <button type="button" className="secondary-sm" onClick={random} aria-label="Случайная">
-          🎲
+          <Dices size={20} strokeWidth={1.75} aria-hidden />
         </button>
         <button type="button" className="secondary-sm" onClick={share} aria-label="Поделиться">
-          ↗
+          <Share size={20} strokeWidth={1.75} aria-hidden />
         </button>
       </div>
 
@@ -88,7 +95,7 @@ export function CardDetail() {
         <div className="wrap-center">
           <nav className="detail-breadcrumb" aria-label="Хлебные крошки" style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
             <Link to="/" className="badge chip-neutral-label-small" aria-label="Главная">
-              ⌂
+              <Home size={14} strokeWidth={1.75} aria-hidden />
             </Link>
             <span aria-hidden>›</span>
             <Link
@@ -136,7 +143,9 @@ export function CardDetail() {
                     {link.url}
                   </div>
                 </div>
-                <span className="icon-diagonal-arrow">↗</span>
+                <span className="icon-diagonal-arrow">
+                  <ArrowUpRight size={18} strokeWidth={1.75} aria-hidden />
+                </span>
               </a>
             ))}
           </div>
@@ -214,16 +223,3 @@ function MetaRow({
   )
 }
 
-function ChevronLeft() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <path
-        d="M12.5 15L7.5 10L12.5 5"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
