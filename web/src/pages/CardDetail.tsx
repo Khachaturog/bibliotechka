@@ -5,7 +5,7 @@ import {
   getRandomCard,
   getSubgroup,
 } from '../lib/data'
-import { assetUrl, cardUrl, groupUrl } from '../lib/paths'
+import { appPath, assetUrl, cardUrl, groupUrl } from '../lib/paths'
 
 export function CardDetail() {
   const { seoSlug } = useParams<{ seoSlug: string }>()
@@ -30,7 +30,7 @@ export function CardDetail() {
   const authors = card.authors || []
 
   const share = async () => {
-    const path = cardUrl(card.slug, card.url_seo_yandex)
+    const path = appPath(cardUrl(card.slug, card.url_seo_yandex))
     const url = `${window.location.origin}${path}`
     const title = card.title
     try {

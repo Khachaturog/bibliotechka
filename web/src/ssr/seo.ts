@@ -1,5 +1,5 @@
 import { cards, groups, versions } from '../generated'
-import { assetUrl, withBase } from '../lib/paths'
+import { withBase } from '../lib/paths'
 import { getCardBySeo, getGroup } from '../lib/data'
 import {
   DEFAULT_OG_IMAGE,
@@ -18,7 +18,8 @@ export type PageSeo = {
   jsonLd: Record<string, unknown>[]
 }
 
-function absUrl(path: string): string {
+/** Absolute media URL on the production domain (never includes Vite project base). */
+function absMedia(path: string | null | undefined): string {
   if (!path) return DEFAULT_OG_IMAGE
   if (/^https?:\/\//i.test(path)) return path
   return `${SITE_URL}${path.startsWith('/') ? path : `/${path}`}`
@@ -135,9 +136,7 @@ export function buildSeo(pathname: string): PageSeo {
     if (card) {
       const title = card.title || SITE_NAME
       const description = card.description || 'Материал из Библиотечки.'
-      const image =
-        absUrl(assetUrl(card.cover_large || card.cover_short)) ||
-        DEFAULT_OG_IMAGE
+      const image = absMedia(card.cover_large || card.cover_short)
       const canonical = `${SITE_URL}/card/${card.url_seo_yandex || card.slug}`
       const article: Record<string, unknown> = {
         '@context': 'https://schema.org',
@@ -189,9 +188,9 @@ export function buildSeo(pathname: string): PageSeo {
         ? `${group.description_ru} (${groupCards.length} материалов)`
         : `Раздел «${titleBase}» — ${groupCards.length} материалов на Библиотечке.`)
     const ogImage = group.og_image
-      ? absUrl(assetUrl(group.og_image))
+      ? absMedia(group.og_image)
       : group.cover
-        ? absUrl(assetUrl(group.cover))
+        ? absMedia(group.cover)
         : DEFAULT_OG_IMAGE
     const canonical = `${SITE_URL}/${group.slug}`
     return {
