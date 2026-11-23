@@ -1,13 +1,13 @@
 import { Dialog } from '@base-ui/react/dialog'
+import { Link } from 'react-router-dom'
 import { Header } from './Header'
 import { useUi } from '../lib/ui'
+import { getSearchCatalog } from '../lib/data'
+import { groupUrl } from '../lib/paths'
 
-/**
- * Search shell — group→subgroup chips land in BIB-5.
- * Base UI Dialog for open state / focus; visual language from base.css.
- */
 export function SearchOverlay() {
   const { searchOpen, closeSearch, openSearch } = useUi()
+  const catalog = getSearchCatalog()
 
   return (
     <Dialog.Root
@@ -25,9 +25,25 @@ export function SearchOverlay() {
 
           <div className="header-wrap-footer">
             <section className="search-badge-wrap" aria-label="Поиск по разделам">
-              <p className="md-regular app-stub-note">
-                Чипы group → subgroup появятся в BIB-5 (данные из JSON / Supabase).
-              </p>
+              {catalog.map(({ group, subgroups }) => (
+                <div className="search-group-block" key={group.slug}>
+                  <h2 className="h3 group-title" style={{ marginLeft: 4 }}>
+                    {group.title_ru || group.title_en || group.slug}
+                  </h2>
+                  <div className="subgroup-badges">
+                    {subgroups.map((sg) => (
+                      <Link
+                        key={sg.slug}
+                        className="chip-neutral-label-small"
+                        to={groupUrl(group.slug, sg.slug)}
+                        onClick={closeSearch}
+                      >
+                        {sg.title_ru || sg.title_en || sg.slug}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </section>
           </div>
 

@@ -8,22 +8,23 @@ Phase 3a scaffold (BIB-4). Visual language from `css/base.css` (Playfair + Inter
 cd web
 cp .env.example .env   # set VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY (anon/publishable)
 npm install
+npm run fetch-content  # optional refresh of src/generated/*.json
 npm run dev
 ```
+
+`prebuild` refreshes JSON when env is set; otherwise committed `src/generated/` is used.
 
 ## Routes
 
 | Path | Page |
 |------|------|
-| `/` | Home (stub) |
-| `/:group` | Group (stub) |
-| `/card/:seoSlug` | Card detail (stub) |
-| `/about` | About (stub) |
+| `/` | Home — groups + shuffled cards |
+| `/:group` | Group — badges, scroll-spy, copy-link |
+| `/card/:seoSlug` | Card detail |
+| `/about` | Versions |
 
-Chrome: Header, Footer, ThemeToggle, Drawer, SearchOverlay.
+Chrome: Header, Footer, ThemeToggle, Drawer, SearchOverlay (group→subgroup chips).
 
-## Next (BIB-5)
+## Next (BIB-6)
 
-- Port full UX + data (build-time JSON from Supabase)
-- Card / GroupTile components
-- SSG prerender
+SSG prerender of all URLs.
