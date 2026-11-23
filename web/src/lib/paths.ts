@@ -10,12 +10,15 @@ export function routerBasename(): string {
 
 /**
  * Prefix a site-root path for `<img src>` / raw `<a href>` outside React Router.
- * Absolute http(s) URLs are returned unchanged.
+ * Absolute http(s) URLs are returned unchanged. Idempotent if already prefixed.
  */
 export function withBase(path: string): string {
   if (!path) return ''
   if (/^https?:\/\//i.test(path)) return path
   const base = viteBase()
+  if (base !== '/' && (path === base.slice(0, -1) || path.startsWith(base))) {
+    return path
+  }
   const normalized = path.startsWith('/') ? path.slice(1) : path
   return `${base}${normalized}`
 }
@@ -24,6 +27,14 @@ export function withBase(path: string): string {
 export function assetUrl(path: string | null | undefined): string {
   if (!path) return ''
   if (/^https?:\/\//i.test(path)) return path
+  return withBase(path.startsWith('/') ? path : `/${path}`)
+}
+
+/**
+ * Absolute URL on the current origin for share/copy (includes Vite base).
+ * React Router `to` values must NOT use this — use groupUrl/cardUrl instead.
+ */
+export function appPath(path: string): string {
   return withBase(path.startsWith('/') ? path : `/${path}`)
 }
 

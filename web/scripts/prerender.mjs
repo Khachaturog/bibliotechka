@@ -1,6 +1,9 @@
 /**
  * Post-`vite build` prerender: react-dom/server + route manifest → HTML files,
  * sitemap.xml, and 404.html under dist/.
+ *
+ * Also rewrites any remaining root-absolute href/src ( /covers, /images, /assets,
+ * in-app routes ) to include VITE_BASE so GH Pages project preview cannot 404.
  */
 import { build } from 'vite'
 import fs from 'node:fs'
@@ -12,6 +15,17 @@ const root = path.resolve(__dirname, '..')
 const distDir = path.join(root, 'dist')
 const ssrOutDir = path.join(root, 'dist-ssr')
 const SITE_URL = 'https://bibliotechka.site'
+
+function normalizeBase(raw) {
+  let base = raw || '/'
+  if (!base.startsWith('/')) base = `/${base}`
+  if (!base.endsWith('/')) base = `${base}/`
+  return base
+}
+
+function viteBaseFromEnv() {
+  return normalizeBase(process.env.VITE_BASE || '/')
+}
 
 function escapeXml(str) {
   return String(str)
@@ -31,19 +45,49 @@ function writeSitemap(paths) {
   fs.writeFileSync(path.join(distDir, 'sitemap.xml'), xml, 'utf8')
 }
 
-function injectHtml(template, { headHtml, appHtml, ssrContentHtml }) {
+/**
+ * Prefix root-absolute href/src that are missing the Vite base.
+ * Leaves https://, //cdn, and already-prefixed paths alone.
+ */
+function prefixRootPaths(html, base) {
+  const b = normalizeBase(base)
+  if (b === '/') return html
+  const prefix = b.slice(0, -1) // /bibliotechka-4
+  const re = new RegExp(
+    `\\b(href|src)="(/(?!/)(?!${prefix.slice(1)}(?:/|"|$))[^"]*)"`,
+    'g',
+  )
+  return html.replace(re, (_, attr, p) => `${attr}="${prefix}${p}"`)
+}
+
+/** Fail the build if bare asset paths remain when a non-root base is set. */
+function assertPrefixedAssets(html, file, base) {
+  const b = normalizeBase(base)
+  if (b === '/') return
+  const prefix = b.slice(0, -1)
+  const bad = []
+  const re = /\b(href|src)="(\/(?:covers|images|assets|favicon)[^"]*)"/g
+  let m
+  while ((m = re.exec(html)) !== null) {
+    if (!m[2].startsWith(`${prefix}/`) && m[2] !== prefix) {
+      bad.push(m[2])
+    }
+  }
+  if (bad.length) {
+    throw new Error(
+      `${file}: bare asset paths without base ${prefix}: ${bad.slice(0, 8).join(', ')}`,
+    )
+  }
+}
+
+function injectHtml(template, { headHtml, appHtml, ssrContentHtml }, base) {
   let html = template
 
-  // Replace default <title>…</title> and inject SEO before </head>
   html = html.replace(/<title>[^<]*<\/title>/, '')
-  html = html.replace(
-    '</head>',
-    `    ${headHtml}\n  </head>`,
-  )
+  html = html.replace('</head>', `    ${headHtml}\n  </head>`)
 
   const ssrBlock = `<div id="ssr-content">${ssrContentHtml}</div>`
-  const rootOpen = html.match(/<div id="root"><\/div>/)
-  if (rootOpen) {
+  if (html.includes('<div id="root"></div>')) {
     html = html.replace(
       '<div id="root"></div>',
       `${ssrBlock}\n    <div id="root">${appHtml}</div>`,
@@ -55,6 +99,7 @@ function injectHtml(template, { headHtml, appHtml, ssrContentHtml }) {
     )
   }
 
+  html = prefixRootPaths(html, base)
   return html
 }
 
@@ -63,6 +108,9 @@ async function main() {
     console.error('dist/index.html missing — run vite build first')
     process.exit(1)
   }
+
+  const base = viteBaseFromEnv()
+  console.log(`Prerender base: ${base}`)
 
   console.log('Building SSR bundle…')
   await build({
@@ -78,7 +126,6 @@ async function main() {
 
   const entryPath = path.join(ssrOutDir, 'entry.js')
   if (!fs.existsSync(entryPath)) {
-    // Vite may emit entry.mjs or nested path
     const files = fs.readdirSync(ssrOutDir)
     console.error('SSR entry not found at', entryPath, 'got:', files)
     process.exit(1)
@@ -95,7 +142,12 @@ async function main() {
   let ok = 0
   for (const route of routes) {
     const { appHtml, headHtml, ssrContentHtml } = render(route.path)
-    const html = injectHtml(template, { headHtml, appHtml, ssrContentHtml })
+    const html = injectHtml(
+      template,
+      { headHtml, appHtml, ssrContentHtml },
+      base,
+    )
+    assertPrefixedAssets(html, route.outFile, base)
     const outPath = path.join(distDir, route.outFile)
     fs.mkdirSync(path.dirname(outPath), { recursive: true })
     fs.writeFileSync(outPath, html, 'utf8')

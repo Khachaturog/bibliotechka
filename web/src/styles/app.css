@@ -1,4 +1,5 @@
 /* App chrome helpers on top of ported base.css */
+/* pages-base-v2: bust asset hashes after VITE_BASE path fixes */
 
 html,
 body,
