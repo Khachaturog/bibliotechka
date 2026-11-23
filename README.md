@@ -29,8 +29,8 @@ npm run dev
 cd web && npm run build
 ```
 
-`VITE_BASE=/` — корневой URL (custom domain / user Pages root).  
-Репозиторий на GitHub может по-прежнему называться `bibliotechka-4`; имя репо ≠ path на custom domain.
+Preview: `https://khachaturog.github.io/bibliotechka/` (`VITE_BASE=/bibliotechka/`).  
+После DNS cutover на `bibliotechka.site` — `VITE_BASE=/`.
 
 ## Структура
 

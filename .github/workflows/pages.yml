@@ -55,11 +55,9 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          # TEMP until DNS cutover: project Pages preview needs the repo prefix.
-          # https://khachaturog.github.io/bibliotechka-4/
+          # Repo renamed to `bibliotechka` → project preview path /bibliotechka/.
           # After DNS points bibliotechka.site → GitHub Pages, set VITE_BASE: /
-          # (custom domain serves at domain root; /bibliotechka-4/ base would break it).
-          VITE_BASE: /bibliotechka-4/
+          VITE_BASE: /bibliotechka/
         # prebuild also runs fetch-content; secrets must be present for a fresh dump
         run: npm run build
 
