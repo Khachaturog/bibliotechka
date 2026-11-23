@@ -1,18 +1,15 @@
 # FTP Deploy → Jino (legacy PHP site).
 #
+# PHP/admin/api/css/js live under archive/php-legacy/ (BIB-8).
+# This workflow syncs that folder so Jino stays a rollback until DNS cutover.
+#
 # ╔══════════════════════════════════════════════════════════════════╗
-# ║ CUTOVER (BIB-7) — DO NOT DISABLE YET                             ║
+# ║ CUTOVER — DO NOT DISABLE YET                                     ║
 # ║                                                                  ║
-# ║ Keep this workflow ENABLED until the user explicitly approves    ║
-# ║ DNS cutover for bibliotechka.site → GitHub Pages and verifies    ║
-# ║ the static site live.                                            ║
+# ║ Keep ENABLED until the user explicitly approves DNS cutover for  ║
+# ║ bibliotechka.site → GitHub Pages and verifies the static site.   ║
 # ║                                                                  ║
-# ║ After explicit OK:                                               ║
-# ║   1. Disable this workflow (uncomment `if: false` below, or      ║
-# ║      delete/rename this file).                                   ║
-# ║   2. Leave Jino files in place 1–2 weeks as rollback.            ║
-# ║   3. Then archive PHP/api/admin (see migration plan phase 5).    ║
-# ║                                                                  ║
+# ║ After explicit OK: uncomment `if: false` (or remove this file).  ║
 # ║ Pages workflow: .github/workflows/pages.yml                      ║
 # ╚══════════════════════════════════════════════════════════════════╝
 name: FTP Deploy to PROD
@@ -31,7 +28,7 @@ jobs:
       - name: 🚚 Get latest code
         uses: actions/checkout@v4
 
-      - name: 📂 Sync files
+      - name: 📂 Sync legacy PHP from archive/php-legacy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
           server: ${{ secrets.FTP_HOST }}
@@ -39,7 +36,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}
           protocol: ftp
-          local-dir: ./
+          local-dir: ./archive/php-legacy/
           server-dir: ${{ secrets.FTP_REMOTE_PATH }}
           timeout: 600000
           exclude: |
@@ -56,16 +53,10 @@ jobs:
             requirements.txt
             docker-compose.yml
             .dockerignore
-            docs/**
-            scripts/**
-            site_extraction/**
             database/**
-            archive/**
-            backups/**
-            start-api.ps1
-            start-api.sh
+            scripts/**
+            cache/**
             **/*.md
             **/*.log
             .DS_Store
-            cache/*.html
             **/images/covers/**

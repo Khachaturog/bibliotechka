@@ -4,8 +4,7 @@ import react from '@vitejs/plugin-react'
 /**
  * Public path for assets + Router basename.
  * Prefer process.env (CI `VITE_BASE`) over .env files.
- *   /bibliotechka-4/ — GH Pages project preview
- *   /                — custom domain root after DNS cutover
+ * Default `/` for bibliotechka.site (CNAME) and user/org Pages root.
  */
 function resolveBase(mode: string): string {
   const fileEnv = loadEnv(mode, process.cwd(), '')
