@@ -47,6 +47,10 @@ extracted_data/
 backups/
 *.sql
 !database/**/*.sql
+!supabase/schema.sql
+# Local MySQL→Supabase dumps (regenerate via scripts/import-mysql-to-supabase.py)
+supabase/seed.sql
+supabase/export/
 
 # Migration web interfaces (temporary, should be deleted after use)
 *-web.php
