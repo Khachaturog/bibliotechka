@@ -1,8 +1,10 @@
 #!/usr/bin/env node
-// Отправка URL в Яндекс и Bing через IndexNow для быстрой переиндексации.
-// Документация: https://www.indexnow.org/ru_ru/documentation
-// Запуск: node scripts/submit-indexnow.js [путь к sitemap.xml]
-
+/**
+ * IndexNow submitter for CI after deploy (BIB-7).
+ * Defaults to web/dist/sitemap.xml; falls back to ./sitemap.xml.
+ *
+ * Usage: node scripts/submit-indexnow.js [path/to/sitemap.xml]
+ */
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
@@ -12,11 +14,16 @@ const INDEXNOW_KEY = 'bibliotechka-indexnow-a1b2c3d4';
 const KEY_FILE_URL = `${SITE_URL}/${INDEXNOW_KEY}.txt`;
 const MAX_URLS_PER_REQUEST = 10000;
 
-// Эндпоинты IndexNow (Яндекс и общий API для Bing и др.)
 const ENDPOINTS = [
   { name: 'Yandex', url: 'https://yandex.com/indexnow' },
   { name: 'IndexNow (Bing и др.)', url: 'https://api.indexnow.org/indexnow' },
 ];
+
+function defaultSitemapPath() {
+  const webDist = path.join(__dirname, '..', 'web', 'dist', 'sitemap.xml');
+  if (fs.existsSync(webDist)) return webDist;
+  return path.join(__dirname, '..', 'sitemap.xml');
+}
 
 function extractUrlsFromSitemap(sitemapPath) {
   const xml = fs.readFileSync(sitemapPath, 'utf8');
@@ -60,14 +67,13 @@ function postJson(url, body) {
 
 async function submitBatch(endpoint, host, key, keyLocation, urlList) {
   const body = { host, key, keyLocation, urlList };
-  const result = await postJson(endpoint.url, body);
-  return result;
+  return postJson(endpoint.url, body);
 }
 
 async function main() {
   const sitemapPath = path.resolve(
     process.cwd(),
-    process.argv[2] || 'sitemap.xml'
+    process.argv[2] || defaultSitemapPath()
   );
 
   if (!fs.existsSync(sitemapPath)) {

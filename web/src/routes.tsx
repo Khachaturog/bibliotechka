@@ -18,6 +18,7 @@ export function AppRoutes() {
         <Route path="about" element={<About />} />
         <Route path="about.html" element={<Navigate to="/about" replace />} />
         <Route path="card/:seoSlug" element={<CardDetail />} />
+        <Route path="404" element={<NotFound />} />
         <Route path=":group" element={<Group />} />
         <Route path="*" element={<NotFound />} />
       </Route>
