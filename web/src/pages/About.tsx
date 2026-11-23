@@ -1,52 +1,48 @@
+import { ArrowUpRight } from 'lucide-react'
 import { getVersionsSorted, formatDateRu } from '../lib/data'
 
 export function About() {
   const versions = getVersionsSorted()
 
   return (
-    <section className="wrap-center" style={{ paddingTop: 24 }}>
-      <div className="cards-container-0-header">
-        <h1 className="h1">
-          О проекте{' '}
-          <span id="versions-count" className="md-regular">
-            {versions.length}
-          </span>
+    <section className="wrap-center about-page">
+      <header className="about-hero">
+        <h1 className="materials-title about-title">
+          О проекте
+          <span className="materials-count">{versions.length}</span>
         </h1>
-        <p className="lg-regular">
+        <p className="mono-body about-lead">
           История релизов Библиотечки — компас в мире дизайна.
         </p>
-      </div>
+      </header>
 
-      <div id="versions-container" className="versions-container">
+      <div id="versions-container" className="about-versions">
         {versions.length === 0 ? (
-          <p className="md-regular">
-            Пока здесь пусто, но скоро появятся первые релизы.
-          </p>
+          <p className="mono-body">Пока здесь пусто, но скоро появятся первые релизы.</p>
         ) : (
           versions.map((item) => (
-            <article className="version-card" key={item.slug}>
-              <div className="version-card-header">
-                {item.version ? (
-                  <p className="version-label sm-medium">Версия {item.version}</p>
-                ) : null}
+            <article className="about-version" key={item.slug}>
+              <div className="about-version-meta mono-meta">
+                {item.version ? <span>v{item.version}</span> : null}
                 {item.release_date ? (
-                  <p className="version-date sm-regular">
-                    {formatDateRu(item.release_date)}
-                  </p>
+                  <span>{formatDateRu(item.release_date)}</span>
                 ) : null}
               </div>
-              {item.title ? <h2 className="h2 version-title">{item.title}</h2> : null}
+              {item.title ? (
+                <h2 className="about-version-title mono-title">{item.title}</h2>
+              ) : null}
               {item.description ? (
-                <p className="md-regular version-description">{item.description}</p>
+                <p className="about-version-desc mono-body">{item.description}</p>
               ) : null}
               {item.url ? (
                 <a
-                  className="version-link md-medium"
+                  className="about-version-link mono-meta"
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   Подробнее
+                  <ArrowUpRight size={14} strokeWidth={1.75} aria-hidden />
                 </a>
               ) : null}
             </article>
