@@ -11,7 +11,7 @@
 - **SEO:** SSG-пререндер на `npm run build`
 - **Деплой:** GitHub Pages (`web/dist`), custom domain `bibliotechka.site` (`web/public/CNAME`)
 
-Старый PHP/FTP стек лежит в [`archive/php-legacy/`](archive/php-legacy/) (не удаляем).
+Старый PHP/FTP стек удалён (BIB-8). Живой деплой — только GitHub Pages.
 
 ## Быстрый старт
 
@@ -37,6 +37,5 @@ Preview: `https://khachaturog.github.io/bibliotechka/` (`VITE_BASE=/bibliotechka
 ```
 web/                 # Vite React app
 supabase/            # schema + RLS notes
-archive/php-legacy/  # прежний PHP/admin/api/css/js
-.github/workflows/   # Pages (+ legacy FTP until DNS cutover)
+.github/workflows/   # pages.yml (live), deploy.yml (FTP disabled)
 ```

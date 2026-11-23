@@ -1,31 +1,45 @@
-import { Monitor, Moon, Sun } from 'lucide-react'
+import { ChevronDown, Monitor, Moon, Sun } from 'lucide-react'
+import { Menu } from '@base-ui/react/menu'
 import { useTheme, type ThemePreference } from '../lib/theme'
 
-const LABELS: Record<ThemePreference, string> = {
-  system: 'Тема: системная (нажмите, чтобы сменить)',
-  light: 'Тема: светлая (нажмите, чтобы сменить)',
-  dark: 'Тема: тёмная (нажмите, чтобы сменить)',
-}
+const OPTIONS: { value: ThemePreference; label: string; Icon: typeof Sun }[] = [
+  { value: 'light', label: 'Светлая', Icon: Sun },
+  { value: 'system', label: 'Системная', Icon: Monitor },
+  { value: 'dark', label: 'Тёмная', Icon: Moon },
+]
 
-function ThemeIcon({ preference }: { preference: ThemePreference }) {
-  if (preference === 'light') return <Sun size={20} strokeWidth={1.75} aria-hidden />
-  if (preference === 'dark') return <Moon size={20} strokeWidth={1.75} aria-hidden />
-  return <Monitor size={20} strokeWidth={1.75} aria-hidden />
-}
-
-/** Single control that cycles light → system → dark. */
 export function ThemeToggle() {
-  const { preference, cyclePreference } = useTheme()
+  const { preference, setPreference } = useTheme()
+  const current = OPTIONS.find((o) => o.value === preference) || OPTIONS[1]
+  const Icon = current.Icon
 
   return (
-    <button
-      type="button"
-      className={`theme-toggle secondary-sm theme-toggle--${preference}`}
-      onClick={cyclePreference}
-      aria-label={LABELS[preference]}
-      title={LABELS[preference]}
-    >
-      <ThemeIcon preference={preference} />
-    </button>
+    <Menu.Root>
+      <Menu.Trigger
+        className="app-icon-btn theme-menu-trigger"
+        aria-label={`Тема: ${current.label}`}
+      >
+        <Icon size={18} strokeWidth={1.75} aria-hidden />
+        <ChevronDown size={14} strokeWidth={1.75} aria-hidden />
+      </Menu.Trigger>
+      <Menu.Portal>
+        <Menu.Positioner className="theme-menu-positioner" sideOffset={8} align="end">
+          <Menu.Popup className="theme-menu-popup">
+            <Menu.RadioGroup
+              value={preference}
+              onValueChange={(value) => setPreference(value as ThemePreference)}
+            >
+              {OPTIONS.map(({ value, label, Icon: OptIcon }) => (
+                <Menu.RadioItem key={value} value={value} className="theme-menu-item">
+                  <OptIcon size={16} strokeWidth={1.75} aria-hidden />
+                  <span>{label}</span>
+                  <Menu.RadioItemIndicator className="theme-menu-check" />
+                </Menu.RadioItem>
+              ))}
+            </Menu.RadioGroup>
+          </Menu.Popup>
+        </Menu.Positioner>
+      </Menu.Portal>
+    </Menu.Root>
   )
 }

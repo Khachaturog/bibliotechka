@@ -6,7 +6,7 @@
 #   VITE_SUPABASE_ANON_KEY  — Supabase anon/public key (read-only RLS)
 #
 # DNS cutover (point bibliotechka.site at GitHub Pages) needs explicit user OK.
-# Until then, keep .github/workflows/deploy.yml (FTP → Jino) enabled.
+# FTP deploy.yml is disabled (PHP archive removed).
 
 name: Deploy GitHub Pages
 
