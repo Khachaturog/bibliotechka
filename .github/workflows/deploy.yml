@@ -1,62 +1,17 @@
-# FTP Deploy → Jino (legacy PHP site).
-#
-# PHP/admin/api/css/js live under archive/php-legacy/ (BIB-8).
-# This workflow syncs that folder so Jino stays a rollback until DNS cutover.
-#
-# ╔══════════════════════════════════════════════════════════════════╗
-# ║ CUTOVER — DO NOT DISABLE YET                                     ║
-# ║                                                                  ║
-# ║ Keep ENABLED until the user explicitly approves DNS cutover for  ║
-# ║ bibliotechka.site → GitHub Pages and verifies the static site.   ║
-# ║                                                                  ║
-# ║ After explicit OK: uncomment `if: false` (or remove this file).  ║
-# ║ Pages workflow: .github/workflows/pages.yml                      ║
-# ╚══════════════════════════════════════════════════════════════════╝
+# Legacy FTP → Jino disabled: PHP archive removed (BIB-8 batch 3).
+# Keep file for history; do not re-enable without restoring a deployable PHP tree.
 name: FTP Deploy to PROD
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   ftp-deploy:
-    # After DNS cutover + user OK, uncomment the next line to stop FTP deploys:
-    # if: false
+    if: false
     runs-on: ubuntu-latest
     steps:
-      - name: 🚚 Get latest code
-        uses: actions/checkout@v4
-
-      - name: 📂 Sync legacy PHP from archive/php-legacy
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
-        with:
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: ${{ secrets.FTP_PORT }}
-          protocol: ftp
-          local-dir: ./archive/php-legacy/
-          server-dir: ${{ secrets.FTP_REMOTE_PATH }}
-          timeout: 600000
-          exclude: |
-            **/.git/**
-            **/.github/**
-            **/.vscode/**
-            **/.idea/**
-            **/.cursor/**
-            node_modules/**
-            .env
-            .env.*
-            package.json
-            package-lock.json
-            requirements.txt
-            docker-compose.yml
-            .dockerignore
-            database/**
-            scripts/**
-            cache/**
-            **/*.md
-            **/*.log
-            .DS_Store
-            **/images/covers/**
+      - name: Skipped
+        run: echo "FTP disabled — archive/php-legacy removed"

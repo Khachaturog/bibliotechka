@@ -1,7 +1,0 @@
-User-agent: *
-Disallow: /admin/
-Disallow: /private/
-Disallow: /temp/
-Disallow: /*.log$
-
-Sitemap: https://bibliotechka.site/sitemap.xml

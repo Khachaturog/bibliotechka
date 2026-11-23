@@ -9,10 +9,6 @@ import {
   type Group,
 } from '../lib/data'
 
-/**
- * Initial state is deterministic so SSR HTML matches the first client render.
- * Cards reshuffle after hydration / mount.
- */
 export function Home() {
   const [groups] = useState<Group[]>(() => getGroupsSorted())
   const [cards, setCards] = useState<CardType[]>(() => [...allCards])
@@ -24,6 +20,10 @@ export function Home() {
   return (
     <>
       <section className="wrap-center home-groups">
+        <div className="home-groups-head">
+          <h2 className="section-heading">Разделы</h2>
+          <p className="mono-body home-groups-lead">Выберите направление</p>
+        </div>
         <div className="groups-container">
           {groups.map((g) => (
             <GroupTile key={g.slug} group={g} />
@@ -31,14 +31,15 @@ export function Home() {
         </div>
       </section>
 
-      <section className="wrap-center cards-container-0">
-        <div className="cards-container-0-header materials-header">
+      <section className="wrap-center cards-container-0 home-materials">
+        <div className="materials-header">
           <h2 className="materials-title">
             Материалы
             <span id="cards-count" className="materials-count">
               {cards.length}
             </span>
           </h2>
+          <p className="mono-body materials-lead">Случайная подборка из каталога</p>
         </div>
         <div className="cards-container">
           {cards.map((c) => (

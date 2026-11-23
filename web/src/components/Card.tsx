@@ -2,9 +2,14 @@ import { Link } from 'react-router-dom'
 import type { Card as CardType } from '../lib/data'
 import { assetUrl, cardUrl } from '../lib/paths'
 
+/** Grid card → quick preview drawer via location.state.preview */
 export function Card({ card }: { card: CardType }) {
   return (
-    <Link className="card card-redesign" to={cardUrl(card.slug, card.url_seo_yandex)}>
+    <Link
+      className="card card-redesign"
+      to={cardUrl(card.slug, card.url_seo_yandex)}
+      state={{ preview: true }}
+    >
       <div className="card-cover-wrap">
         <img
           className="card-cover"

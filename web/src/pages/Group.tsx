@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom'
 import { ArrowUp, Check, ChevronLeft, Link as LinkIcon } from 'lucide-react'
+import { Button } from '@base-ui/react/button'
 import { Card } from '../components/Card'
 import {
   getGroup,
@@ -105,25 +106,22 @@ export function Group() {
   return (
     <div className="group-page">
       <section className="wrap-center group-page-hero">
-        <Link className="secondary-sm group-page-back" to="/" aria-label="Назад">
+        <Link className="app-icon-btn group-page-back" to="/" aria-label="Назад">
           <ChevronLeft size={20} strokeWidth={1.75} aria-hidden />
         </Link>
-        <div className="group-page-hero-main">
-          {group.cover ? (
-            <img
-              className="group-page-cover"
-              src={assetUrl(group.cover)}
-              alt=""
-              width={56}
-              height={56}
-            />
-          ) : null}
-          <div className="group-page-hero-text">
-            <h1 className="materials-title group-page-title">{title}</h1>
-            {description ? (
-              <p className="mono-body group-page-desc">{description}</p>
-            ) : null}
-          </div>
+        {group.cover ? (
+          <img
+            className="group-page-cover"
+            src={assetUrl(group.cover)}
+            alt=""
+            width={72}
+            height={72}
+          />
+        ) : null}
+        <div className="group-page-hero-text">
+          <h1 className="group-page-title">{title}</h1>
+          {description ? <p className="mono-body group-page-desc">{description}</p> : null}
+          <p className="mono-meta group-page-count">{cards.length} материалов</p>
         </div>
       </section>
 
@@ -161,7 +159,7 @@ export function Group() {
       </main>
 
       <section className="wrap-center group-page-others">
-        <h2 className="materials-title group-page-others-title">Другие группы</h2>
+        <h2 className="section-heading">Другие группы</h2>
         <div className="groups-container group-page-others-grid">
           {otherGroups.map((g) => (
             <Link key={g.slug} className="group group-tile" to={groupUrl(g.slug)}>
@@ -181,14 +179,13 @@ export function Group() {
         </div>
       </section>
 
-      <button
-        type="button"
+      <Button
         className={`secondary-lg-full button-up${showUp ? ' visible' : ''}`}
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         aria-label="Наверх"
       >
         <ArrowUp size={20} strokeWidth={1.75} aria-hidden />
-      </button>
+      </Button>
     </div>
   )
 }
@@ -217,7 +214,7 @@ function SubgroupBlock({
     <div className="wrap-center group-subgroup" id={subgroup.slug}>
       <div className="group-subgroup-header">
         <div className="title-with-button">
-          <p className="materials-title group-subgroup-title container-title">
+          <p className="section-heading container-title">
             {subgroup.title_ru || subgroup.title_en || subgroup.slug}
           </p>
           <button
