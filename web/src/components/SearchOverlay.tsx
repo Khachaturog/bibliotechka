@@ -1,10 +1,10 @@
-import { useDeferredValue, useMemo, useState } from 'react'
+import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { Dialog } from '@base-ui/react/dialog'
 import { Link } from 'react-router-dom'
 import { Search, LayoutGrid } from 'lucide-react'
 import { Header } from './Header'
 import { useUi } from '../lib/ui'
-import { getSearchCatalog, searchCards } from '../lib/data'
+import { getGroup, getSearchCatalog, getSubgroup, searchCards } from '../lib/data'
 import { assetUrl, cardUrl, groupUrl } from '../lib/paths'
 
 type SearchMode = 'free' | 'tabs'
@@ -20,6 +20,10 @@ export function SearchOverlay() {
     () => (mode === 'free' ? searchCards(deferredQuery) : []),
     [mode, deferredQuery],
   )
+
+  useEffect(() => {
+    if (!searchOpen) setQuery('')
+  }, [searchOpen])
 
   return (
     <Dialog.Root
@@ -85,30 +89,46 @@ export function SearchOverlay() {
                   ) : results.length === 0 ? (
                     <p className="search-hint mono-body">Ничего не найдено</p>
                   ) : (
-                    results.map((card) => (
-                      <Link
-                        key={card.slug}
-                        role="option"
-                        className="search-result-row"
-                        to={cardUrl(card.slug, card.url_seo_yandex)}
-                        onClick={closeSearch}
-                      >
-                        <img
-                          className="search-result-cover"
-                          src={assetUrl(card.cover_short)}
-                          alt=""
-                          width={56}
-                          height={36}
-                          loading="lazy"
-                        />
-                        <span className="search-result-text">
-                          <span className="mono-title search-result-title">{card.title}</span>
-                          {card.description ? (
-                            <span className="mono-body search-result-desc">{card.description}</span>
-                          ) : null}
-                        </span>
-                      </Link>
-                    ))
+                    results.map((card) => {
+                      const group = getGroup(card.group_slug || '')
+                      const subgroup = getSubgroup(card.subgroup_slug)
+                      const meta = [
+                        group?.title_ru || group?.title_en || card.group_slug,
+                        subgroup?.title_ru || subgroup?.title_en || null,
+                      ]
+                        .filter(Boolean)
+                        .join(' · ')
+
+                      return (
+                        <Link
+                          key={card.slug}
+                          role="option"
+                          className="search-result-row"
+                          to={cardUrl(card.slug, card.url_seo_yandex)}
+                          onClick={closeSearch}
+                        >
+                          <img
+                            className="search-result-cover"
+                            src={assetUrl(card.cover_short)}
+                            alt=""
+                            width={56}
+                            height={36}
+                            loading="lazy"
+                          />
+                          <span className="search-result-text">
+                            {meta ? (
+                              <span className="mono-meta search-result-meta">{meta}</span>
+                            ) : null}
+                            <span className="mono-title search-result-title">{card.title}</span>
+                            {card.description ? (
+                              <span className="mono-body search-result-desc">
+                                {card.description}
+                              </span>
+                            ) : null}
+                          </span>
+                        </Link>
+                      )
+                    })
                   )}
                 </div>
               </div>

@@ -23,7 +23,7 @@ export function Home() {
 
   return (
     <>
-      <section className="wrap-center" style={{ paddingTop: 8 }}>
+      <section className="wrap-center home-groups">
         <div className="groups-container">
           {groups.map((g) => (
             <GroupTile key={g.slug} group={g} />
@@ -32,10 +32,10 @@ export function Home() {
       </section>
 
       <section className="wrap-center cards-container-0">
-        <div className="cards-container-0-header">
-          <h2 className="h1">
-            Материалы{' '}
-            <span id="cards-count" className="md-regular">
+        <div className="cards-container-0-header materials-header">
+          <h2 className="materials-title">
+            Материалы
+            <span id="cards-count" className="materials-count">
               {cards.length}
             </span>
           </h2>

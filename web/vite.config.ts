@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react'
 /**
  * Public path for assets + Router basename.
  * Prefer process.env (CI `VITE_BASE`) over .env files.
- * CI uses `/bibliotechka-4/` for github.io preview until DNS cutover;
+ * CI uses `/bibliotechka/` for github.io preview until DNS cutover;
  * then `/` for bibliotechka.site root.
  */
 function resolveBase(mode: string): string {

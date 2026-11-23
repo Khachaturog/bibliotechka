@@ -6,6 +6,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
+import { useLocation } from 'react-router-dom'
 
 type UiContextValue = {
   drawerOpen: boolean
@@ -23,6 +24,7 @@ const UiContext = createContext<UiContextValue | null>(null)
 export function UiProvider({ children }: { children: ReactNode }) {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const location = useLocation()
 
   const openDrawer = useCallback(() => {
     setSearchOpen(false)
@@ -55,6 +57,12 @@ export function UiProvider({ children }: { children: ReactNode }) {
     document.body.classList.toggle('drawer-open', drawerOpen)
     document.body.classList.toggle('search-open', searchOpen)
   }, [drawerOpen, searchOpen])
+
+  // Dismiss overlays when the route changes (e.g. search result click)
+  useEffect(() => {
+    setSearchOpen(false)
+    setDrawerOpen(false)
+  }, [location.pathname, location.search, location.hash])
 
   return (
     <UiContext.Provider
