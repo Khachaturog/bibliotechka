@@ -1,10 +1,33 @@
+/** Vite public base, always ends with `/` (e.g. `/` or `/bibliotechka-4/`). */
+export function viteBase(): string {
+  return import.meta.env.BASE_URL || '/'
+}
+
+/** Router basename without trailing slash (`''` at domain root, `/bibliotechka-4` on Pages). */
+export function routerBasename(): string {
+  return viteBase().replace(/\/$/, '')
+}
+
+/**
+ * Prefix a site-root path for `<img src>` / raw `<a href>` outside React Router.
+ * Absolute http(s) URLs are returned unchanged.
+ */
+export function withBase(path: string): string {
+  if (!path) return ''
+  if (/^https?:\/\//i.test(path)) return path
+  const base = viteBase()
+  const normalized = path.startsWith('/') ? path.slice(1) : path
+  return `${base}${normalized}`
+}
+
 /** Normalize media paths from DB (relative or absolute). */
 export function assetUrl(path: string | null | undefined): string {
   if (!path) return ''
   if (/^https?:\/\//i.test(path)) return path
-  return path.startsWith('/') ? path : `/${path}`
+  return withBase(path.startsWith('/') ? path : `/${path}`)
 }
 
+/** React Router `to` values — no base prefix (BrowserRouter basename handles it). */
 export function groupUrl(slug: string, subgroupSlug?: string | null): string {
   return subgroupSlug ? `/${slug}#${subgroupSlug}` : `/${slug}`
 }

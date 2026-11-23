@@ -55,6 +55,9 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          # Project Pages preview at /bibliotechka-4/. After DNS cutover to
+          # bibliotechka.site (domain root), change this to `/` (or drop the var).
+          VITE_BASE: /bibliotechka-4/
         # prebuild also runs fetch-content; secrets must be present for a fresh dump
         run: npm run build
 
