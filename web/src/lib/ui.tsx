@@ -51,6 +51,7 @@ export function UiProvider({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => {
+    if (typeof document === 'undefined') return
     document.body.classList.toggle('drawer-open', drawerOpen)
     document.body.classList.toggle('search-open', searchOpen)
   }, [drawerOpen, searchOpen])
