@@ -10,7 +10,7 @@ import {
   type Card as CardType,
   type Subgroup,
 } from '../lib/data'
-import { groupUrl } from '../lib/paths'
+import { assetUrl, groupUrl } from '../lib/paths'
 
 export function Group() {
   const { group: groupSlug } = useParams<{ group: string }>()
@@ -103,26 +103,32 @@ export function Group() {
   const description = group.description_ru || ''
 
   return (
-    <>
-      <section className="wrap-center">
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <Link className="secondary-sm" to="/" aria-label="Назад">
-            <ChevronLeft size={20} strokeWidth={1.75} aria-hidden />
-          </Link>
-          <div
-            className="cards-container-0-header"
-            style={{ borderRadius: '8px 20px 20px 8px', flex: 1 }}
-          >
-            <h1 className="h1 container-title">{title}</h1>
+    <div className="group-page">
+      <section className="wrap-center group-page-hero">
+        <Link className="secondary-sm group-page-back" to="/" aria-label="Назад">
+          <ChevronLeft size={20} strokeWidth={1.75} aria-hidden />
+        </Link>
+        <div className="group-page-hero-main">
+          {group.cover ? (
+            <img
+              className="group-page-cover"
+              src={assetUrl(group.cover)}
+              alt=""
+              width={56}
+              height={56}
+            />
+          ) : null}
+          <div className="group-page-hero-text">
+            <h1 className="materials-title group-page-title">{title}</h1>
             {description ? (
-              <p className="md-regular container-description">{description}</p>
+              <p className="mono-body group-page-desc">{description}</p>
             ) : null}
           </div>
         </div>
       </section>
 
       <section
-        className="badge-wrap subgroups-badge-wrap"
+        className="group-page-badges subgroups-badge-wrap"
         ref={badgeWrapRef}
         aria-label="Подгруппы"
       >
@@ -131,7 +137,7 @@ export function Group() {
             key={sg.slug}
             href={`#${sg.slug}`}
             data-slug={sg.slug}
-            className={`badge chip-neutral-label-small${activeSlug === sg.slug ? ' active' : ''}`}
+            className={`group-page-badge${activeSlug === sg.slug ? ' is-active' : ''}`}
             onClick={(e) => {
               e.preventDefault()
               history.pushState(null, '', `${location.pathname}#${sg.slug}`)
@@ -139,9 +145,7 @@ export function Group() {
               setActiveSlug(sg.slug)
             }}
           >
-            <span className="md-medium badge-title">
-              {sg.title_ru || sg.title_en || sg.slug}
-            </span>
+            {sg.title_ru || sg.title_en || sg.slug}
           </a>
         ))}
       </section>
@@ -156,23 +160,25 @@ export function Group() {
         ))}
       </main>
 
-      <section className="wrap-center cards-container-0">
-        <h2 className="h1" style={{ color: 'var(--02-content-primary)' }}>
-          Другие группы
-        </h2>
-        <section className="other-groups-badge-wrap other-groups-wrap">
+      <section className="wrap-center group-page-others">
+        <h2 className="materials-title group-page-others-title">Другие группы</h2>
+        <div className="groups-container group-page-others-grid">
           {otherGroups.map((g) => (
-            <Link
-              key={g.slug}
-              to={groupUrl(g.slug)}
-              className="chip-neutral-label-small other-group-badge"
-            >
-              <span className="md-medium other-group-badge-title">
-                {g.title_ru || g.title_en || g.slug}
-              </span>
+            <Link key={g.slug} className="group group-tile" to={groupUrl(g.slug)}>
+              <div className="group-cover-wrap">
+                <img
+                  className="group-cover"
+                  src={assetUrl(g.cover)}
+                  alt=""
+                  loading="lazy"
+                />
+              </div>
+              <div className="group-content">
+                <p className="group-title">{g.title_ru || g.title_en || g.slug}</p>
+              </div>
             </Link>
           ))}
-        </section>
+        </div>
       </section>
 
       <button
@@ -183,7 +189,7 @@ export function Group() {
       >
         <ArrowUp size={20} strokeWidth={1.75} aria-hidden />
       </button>
-    </>
+    </div>
   )
 }
 
@@ -208,10 +214,10 @@ function SubgroupBlock({
   }
 
   return (
-    <div className="wrap-center cards-container-0" id={subgroup.slug}>
-      <div className="cards-container-0-header">
+    <div className="wrap-center group-subgroup" id={subgroup.slug}>
+      <div className="group-subgroup-header">
         <div className="title-with-button">
-          <p className="h1 container-title">
+          <p className="materials-title group-subgroup-title container-title">
             {subgroup.title_ru || subgroup.title_en || subgroup.slug}
           </p>
           <button
@@ -229,7 +235,7 @@ function SubgroupBlock({
           </button>
         </div>
         {subgroup.description_ru ? (
-          <p className="lg-regular container-description">{subgroup.description_ru}</p>
+          <p className="mono-body group-subgroup-desc">{subgroup.description_ru}</p>
         ) : null}
       </div>
       <div className="cards-container">
@@ -255,4 +261,3 @@ function centerBadge(badge: HTMLElement, smooth: boolean) {
     behavior: smooth ? 'smooth' : 'auto',
   })
 }
-
