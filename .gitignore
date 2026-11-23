@@ -55,3 +55,9 @@ supabase/export/
 # Migration web interfaces (temporary, should be deleted after use)
 *-web.php
 run-migration-*-web.php
+
+# Phase 2 covers must be committed (no Git LFS)
+!web/public/covers/
+!web/public/covers/**/*.webp
+!supabase/schema.sql
+!supabase/update_cover_paths.sql
