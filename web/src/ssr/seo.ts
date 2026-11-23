@@ -1,5 +1,5 @@
 import { cards, groups, versions } from '../generated'
-import { assetUrl } from '../lib/paths'
+import { assetUrl, withBase } from '../lib/paths'
 import { getCardBySeo, getGroup } from '../lib/data'
 import {
   DEFAULT_OG_IMAGE,
@@ -236,12 +236,12 @@ export function buildSsrContent(pathname: string): string {
       .map((g) => {
         const t = escapeHtml(g.title_ru || g.title_en || g.slug)
         const d = g.description_ru ? `<p>${escapeHtml(g.description_ru)}</p>` : ''
-        return `<a href="/${escapeHtml(g.slug)}"><h2>${t}</h2>${d}</a>`
+        return `<a href="${escapeHtml(withBase(`/${g.slug}`))}"><h2>${t}</h2>${d}</a>`
       })
       .join('\n')
     const cardLinks = cards
       .map((c) => {
-        const href = `/card/${escapeHtml(c.url_seo_yandex || c.slug)}`
+        const href = escapeHtml(withBase(`/card/${c.url_seo_yandex || c.slug}`))
         const t = escapeHtml(c.title)
         const d = c.description ? `<p>${escapeHtml(c.description)}</p>` : ''
         return `<a href="${href}"><h3>${t}</h3>${d}</a>`
@@ -267,7 +267,7 @@ export function buildSsrContent(pathname: string): string {
   }
 
   if (path === '/404' || path === '/404.html') {
-    return `<h1>404</h1><p>Страница не найдена.</p><p><a href="/">На главную</a></p>`
+    return `<h1>404</h1><p>Страница не найдена.</p><p><a href="${escapeHtml(withBase('/'))}">На главную</a></p>`
   }
 
   const cardMatch = path.match(/^\/card\/([^/]+)\/?$/)
@@ -313,7 +313,7 @@ ${authors ? `<ul>${authors}</ul>` : ''}
     const groupCards = cards.filter((c) => c.group_slug === group.slug)
     const list = groupCards
       .map((c) => {
-        const href = `/card/${escapeHtml(c.url_seo_yandex || c.slug)}`
+        const href = escapeHtml(withBase(`/card/${c.url_seo_yandex || c.slug}`))
         return `<li><a href="${href}">${escapeHtml(c.title)}</a></li>`
       })
       .join('')
