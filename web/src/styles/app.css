@@ -1,0 +1,89 @@
+/* App chrome helpers on top of ported base.css */
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--01-layer-background);
+  color: var(--02-content-primary);
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.app-frame {
+  max-width: 1036px;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.app-main {
+  flex: 1;
+  width: 100%;
+}
+
+.app-page-stub {
+  padding: 32px 0 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.app-page-stub .h1 {
+  margin: 0;
+}
+
+.app-stub-note {
+  color: var(--02-content-secondary);
+  margin: 16px 4px;
+}
+
+.app-overlay-chrome {
+  width: 100%;
+  padding: 0 16px;
+  box-sizing: border-box;
+  background: var(--01-layer-blur);
+  backdrop-filter: blur(12px);
+  position: relative;
+  z-index: 101;
+}
+
+.header-1 {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Base UI portal hosts inherit our overlay positioning via .drawer / .search */
+[data-base-ui-portal] {
+  /* keep default; panels use fixed CSS from base.css */
+}
+
+.switcher-theme {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.icon-close {
+  display: none;
+}
+
+.search.open #search-toggle .icon-search,
+.drawer.open #menu-toggle .icon-burger {
+  display: none;
+}
+
+.search.open #search-toggle .icon-close,
+.drawer.open #menu-toggle .icon-close {
+  display: inline;
+}
