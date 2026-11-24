@@ -1,14 +1,16 @@
-import { Link } from 'react-router-dom'
 import type { Card as CardType } from '../lib/data'
-import { assetUrl, cardUrl } from '../lib/paths'
+import { assetUrl } from '../lib/paths'
+import { useUi } from '../lib/ui'
 
-/** Grid card → quick preview drawer via location.state.preview */
+/** Grid card → quick preview drawer over the current page (no route change). */
 export function Card({ card }: { card: CardType }) {
+  const { openCardPreview } = useUi()
+
   return (
-    <Link
+    <button
+      type="button"
       className="card card-redesign"
-      to={cardUrl(card.slug, card.url_seo_yandex)}
-      state={{ preview: true }}
+      onClick={() => openCardPreview(card)}
     >
       <div className="card-cover-wrap">
         <img
@@ -26,7 +28,7 @@ export function Card({ card }: { card: CardType }) {
           <p className="card-description mono-body">{card.description}</p>
         ) : null}
       </div>
-    </Link>
+    </button>
   )
 }
 

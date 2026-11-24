@@ -3,6 +3,7 @@ import { Header } from './Header'
 import { Footer } from './Footer'
 import { Drawer } from './Drawer'
 import { SearchOverlay } from './SearchOverlay'
+import { CardPreview } from './CardPreview'
 
 export function Layout() {
   return (
@@ -16,6 +17,7 @@ export function Layout() {
       </div>
       <Drawer />
       <SearchOverlay />
+      <CardPreview />
     </div>
   )
 }
