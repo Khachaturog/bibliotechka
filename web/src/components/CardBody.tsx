@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ArrowUpRight, Dices, Home, Share, X, ChevronLeft } from 'lucide-react'
+import { ArrowUpRight, Dices, Home, Maximize2, Share, X, ChevronLeft } from 'lucide-react'
 import { Button } from '@base-ui/react/button'
 import type { Card as CardType } from '../lib/data'
 import { getGroup, getSubgroup } from '../lib/data'
@@ -10,6 +10,7 @@ type CardBodyProps = {
   onClose?: () => void
   onShare: () => void
   onRandom: () => void
+  onExpand?: () => void
   closeIcon?: 'x' | 'back'
   compact?: boolean
 }
@@ -19,6 +20,7 @@ export function CardBody({
   onClose,
   onShare,
   onRandom,
+  onExpand,
   closeIcon = 'back',
   compact = false,
 }: CardBodyProps) {
@@ -44,6 +46,11 @@ export function CardBody({
             ) : (
               <ChevronLeft size={20} strokeWidth={1.75} aria-hidden />
             )}
+          </Button>
+        ) : null}
+        {onExpand ? (
+          <Button className="app-icon-btn" onClick={onExpand} aria-label="На всю страницу">
+            <Maximize2 size={18} strokeWidth={1.75} aria-hidden />
           </Button>
         ) : null}
         <Button className="app-icon-btn" onClick={onRandom} aria-label="Случайная">

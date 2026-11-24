@@ -7,13 +7,8 @@ export function About() {
   return (
     <section className="wrap-center about-page">
       <header className="about-hero">
-        <h1 className="materials-title about-title">
-          О проекте
-          <span className="materials-count">{versions.length}</span>
-        </h1>
-        <p className="mono-body about-lead">
-          История релизов Библиотечки — компас в мире дизайна.
-        </p>
+        <h1 className="about-title">О проекте</h1>
+        <p className="mono-meta about-count">{versions.length} релизов</p>
       </header>
 
       <div id="versions-container" className="about-versions">

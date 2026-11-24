@@ -22,7 +22,6 @@ export function Home() {
       <section className="wrap-center home-groups">
         <div className="home-groups-head">
           <h2 className="section-heading">Разделы</h2>
-          <p className="mono-body home-groups-lead">Выберите направление</p>
         </div>
         <div className="groups-container">
           {groups.map((g) => (
@@ -31,7 +30,7 @@ export function Home() {
         </div>
       </section>
 
-      <section className="wrap-center cards-container-0 home-materials">
+      <section className="wrap-center home-materials">
         <div className="materials-header">
           <h2 className="materials-title">
             Материалы
@@ -39,7 +38,6 @@ export function Home() {
               {cards.length}
             </span>
           </h2>
-          <p className="mono-body materials-lead">Случайная подборка из каталога</p>
         </div>
         <div className="cards-container">
           {cards.map((c) => (

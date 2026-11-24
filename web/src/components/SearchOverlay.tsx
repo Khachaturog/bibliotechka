@@ -50,7 +50,11 @@ export function SearchOverlay() {
             aria-modal="true"
             aria-label="Поиск"
           >
-            <div className={`search-spotlight-panel search-spotlight-panel--${mode}`}>
+            <div
+              className={`search-spotlight-panel search-spotlight-panel--${mode}${
+                mode === 'free' ? ' search-spotlight-panel--tall' : ''
+              }`}
+            >
               <div className="search-spotlight-top">
                 <div className="search-mode-switch" role="tablist" aria-label="Режим поиска">
                   <button
@@ -95,12 +99,14 @@ export function SearchOverlay() {
                     <Input
                       id="spotlight-query"
                       className="search-input"
-                      type="search"
+                      type="text"
+                      inputMode="search"
                       autoFocus
                       placeholder="Название, описание, автор…"
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
                       autoComplete="off"
+                      spellCheck={false}
                     />
                   </label>
 
